@@ -77,14 +77,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
+      { title: "נקודת מפנה" },
+      { name: "description", content: "משרד מיתוג ופרסום המלווה בעלי עסקים בשלב הצמיחה הבא." },
       { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { property: "og:title", content: "נקודת מפנה" },
+      { property: "og:description", content: "משרד מיתוג ופרסום המלווה בעלי עסקים בשלב הצמיחה הבא." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:title", content: "נקודת מפנה" },
+      { name: "twitter:description", content: "משרד מיתוג ופרסום המלווה בעלי עסקים בשלב הצמיחה הבא." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/686d8124-5feb-4af4-b80c-c4e1eb358db1/id-preview-32e5123a--478296c5-0b71-4aef-95a5-365b5a092680.lovable.app-1783942533748.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/686d8124-5feb-4af4-b80c-c4e1eb358db1/id-preview-32e5123a--478296c5-0b71-4aef-95a5-365b5a092680.lovable.app-1783942533748.png" },
     ],
     links: [
       {
