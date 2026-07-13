@@ -37,6 +37,7 @@
     padding:0 24px; white-space:nowrap; transition:opacity .2s;
   }
   .navpill a:hover{ opacity:.55; }
+  .navpill a.navpill-contact, .mobile-menu a.navpill-contact{ color:var(--red); }
 
   .topbtn-wrap{ display:flex; justify-content:flex-end; }
   .topbtn{
@@ -852,8 +853,8 @@
     line-height:1.1;
   }
   .rec-icon{
-    width:44px;
-    height:44px;
+    width:80px;
+    height:80px;
     display:block;
     flex-shrink:0;
   }
@@ -962,7 +963,7 @@
     .rec-title-text  { font-size:38px; }
     .rec-title-bold  { font-size:50px; }
     .rec-title-line3 { font-size:38px; }
-    .rec-icon        { width:28px; height:28px; }
+    .rec-icon        { width:35px; height:35px; }
     .rec-caption     { font-size:14px; padding:8px 22px; white-space:normal; }
   }
   @media(max-width:460px){

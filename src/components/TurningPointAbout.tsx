@@ -321,7 +321,7 @@ export default function TurningPointAbout() {
             <div className="rec-title-block">
               <div className="rec-title-row1">
                 <span className="rec-title-text">מה קורה</span>
-                <img src="/Group 95 (1).svg" className="rec-icon" alt="" aria-hidden="true" />
+                <img src="/Group 161.svg" className="rec-icon" alt="" aria-hidden="true" />
               </div>
               <strong className="rec-title-bold">כשסוגרים</strong>
               <span className="rec-title-line3">את הפער</span>

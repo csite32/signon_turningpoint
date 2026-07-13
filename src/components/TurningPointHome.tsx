@@ -27,6 +27,7 @@ export default function TurningPointHome() {
           <Link to="/about">אודות והשיטה</Link>
           <a href="#">פרויקטים</a>
           <a href="#">לקוחות ממליצים</a>
+          <a href="#" className="navpill-contact">צור קשר</a>
         </nav>
         <div className="topbtn-wrap">
           <a href="#" className="topbtn">
@@ -49,6 +50,7 @@ export default function TurningPointHome() {
         <a href="#">אודות והשיטה</a>
         <a href="#">פרויקטים</a>
         <a href="#">לקוחות ממליצים</a>
+        <a href="#" className="navpill-contact">צור קשר</a>
       </div>
 
 
@@ -207,7 +209,7 @@ export default function TurningPointHome() {
                   <div className="proj-corner"><img src="/Group 68.svg" alt="" aria-hidden="true" /></div>
                 </div>
                 <div className="proj-card" data-proj-id="3" data-proj-href="#">
-                  <img src="/projects/ba9a22ef141cd47c248c5abc2fd4b037b15e5d75 (1).webp" alt="פרויקט 3" loading="lazy" />
+                  <img src="/projects/ba9a22ef141cd47c248c5abc2fd4b037b15e5d75-1.webp" alt="פרויקט 3" loading="lazy" />
                   <div className="proj-card-border"></div>
                   <div className="proj-notch-cover"></div>
                   <div className="proj-corner"><img src="/Group 68.svg" alt="" aria-hidden="true" /></div>
@@ -216,13 +218,13 @@ export default function TurningPointHome() {
 
               <div className="proj-row proj-row--3">
                 <div className="proj-card" data-proj-id="4" data-proj-href="#">
-                  <img src="/projects/ba9a22ef141cd47c248c5abc2fd4b037b15e5d75 (2).webp" alt="פרויקט 4" loading="lazy" />
+                  <img src="/projects/ba9a22ef141cd47c248c5abc2fd4b037b15e5d75-2.webp" alt="פרויקט 4" loading="lazy" />
                   <div className="proj-card-border"></div>
                   <div className="proj-notch-cover"></div>
                   <div className="proj-corner"><img src="/Group 68.svg" alt="" aria-hidden="true" /></div>
                 </div>
                 <div className="proj-card" data-proj-id="5" data-proj-href="#">
-                  <img src="/projects/ba9a22ef141cd47c248c5abc2fd4b037b15e5d75 (3).webp" alt="פרויקט 5" loading="lazy" />
+                  <img src="/projects/ba9a22ef141cd47c248c5abc2fd4b037b15e5d75-3.webp" alt="פרויקט 5" loading="lazy" />
                   <div className="proj-card-border"></div>
                   <div className="proj-notch-cover"></div>
                   <div className="proj-corner"><img src="/Group 68.svg" alt="" aria-hidden="true" /></div>
@@ -295,7 +297,7 @@ export default function TurningPointHome() {
             <div className="rec-title-block">
               <div className="rec-title-row1">
                 <span className="rec-title-text">מה קורה</span>
-                <img src="/Group 95 (1).svg" className="rec-icon" alt="" aria-hidden="true" />
+                <img src="/Group 161.svg" className="rec-icon" alt="" aria-hidden="true" />
               </div>
               <strong className="rec-title-bold">כשסוגרים</strong>
               <span className="rec-title-line3">את הפער</span>
