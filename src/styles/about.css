@@ -1,0 +1,353 @@
+/* ABOUT PAGE specific styles. Shared chrome lives in turningpoint.css, not duplicated here. */
+
+/* contact nav item color override */
+.navpill a.navpill-contact, .mobile-menu a.navpill-contact{ color:var(--red); }
+
+/* ---------- 1. HERO ---------- */
+.about-hero{ width:100%; padding:230px 28px 230px; }
+.about-hero-inner{
+  max-width:1300px; margin:0 auto;
+  display:flex; direction:rtl; align-items:flex-start; justify-content:center;
+  gap:92px; flex-wrap:wrap;
+}
+.about-hero-title-block{ display:flex; flex-direction:column; align-items:stretch; flex-shrink:0; }
+.about-hero-row1{
+  display:flex; direction:rtl; align-items:flex-start; gap:2px;
+  width:max-content; margin-bottom:-6px;
+}
+.about-hero-circle{
+  height:calc(clamp(30px,5.6vw,96px) * 1.05 + 16px - 6px); aspect-ratio:1; flex-shrink:0;
+  border:3px solid var(--white); border-radius:50%; box-sizing:border-box;
+  background:transparent; display:flex; align-items:center; justify-content:center;
+  overflow:hidden;
+}
+.about-hero-circle svg{ width:56%; height:56%; transform-origin:50% 50%; animation:starSpin 22s linear infinite; }
+.about-hero-frame{
+  border:4px solid var(--white); color:var(--white); box-sizing:border-box;
+  font-size:clamp(30px,5.6vw,96px); font-weight:400; line-height:1.05; font-family:'Polin',sans-serif;
+  padding:4px 30px; white-space:nowrap;
+  transform:translateY(-6px);
+}
+.about-hero-pill{
+  background:var(--white); color:var(--red); box-sizing:border-box;
+  font-size:clamp(30px,5.6vw,96px); font-weight:700; line-height:1.05; font-family:'Polin',sans-serif;
+  border-radius:70px; padding:4px 30px; white-space:nowrap; text-align:center;
+}
+.about-hero-intro{
+  color:var(--white); font-size:clamp(15px,1.75vw,26px); line-height:1.35;
+  max-width:640px; text-align:right; font-family:'Polin',sans-serif; font-weight:400;
+  padding-top:4px;
+}
+.about-hero-intro p{ margin:0; }
+
+/* ---------- 2. YEARS ---------- */
+.about-years{ width:100%; padding:90px 28px 10px; display:flex; flex-direction:column; align-items:center; text-align:center; }
+.about-years-badge{ display:flex; align-items:stretch; direction:rtl; margin-bottom:44px; }
+.about-years-text{
+  border:4px solid var(--white); border-radius:70px; color:var(--white); box-sizing:border-box;
+  font-size:clamp(34px,7vw,108px); font-weight:400; line-height:1.05; font-family:'Polin',sans-serif;
+  padding:6px 70px 6px 70px; white-space:nowrap; display:flex; align-items:center;
+}
+.about-years-text strong{ font-weight:700; }
+.about-years-icon{
+  position:relative; display:flex; align-items:center; justify-content:center; box-sizing:border-box;
+  border:4px solid var(--white); border-radius:9999px;
+  padding:0 34px 0 calc(clamp(34px,7vw,108px) * 1.05 + 38px);
+  min-height:calc(clamp(34px,7vw,108px) * 1.05 + 20px);
+  margin-right:-4px;
+}
+.about-years-circle{
+  position:absolute; left:-4px; top:-4px;
+  height:calc(clamp(34px,7vw,108px) * 1.05 + 20px); aspect-ratio:1; border:3px solid var(--white); border-radius:50%;
+  display:flex; align-items:center; justify-content:center; flex-shrink:0; box-sizing:border-box;
+  overflow:hidden;
+}
+.about-years-circle svg{ width:56%; height:56%; transform-origin:50% 50%; animation:starSpin 22s linear infinite; }
+.about-years-arrow{ width:clamp(80px,10vw,170px); height:auto; flex-shrink:0; }
+.about-years-copy{ max-width:800px; color:var(--white); font-size:clamp(16px,2.2vw,28px); line-height:1.5; font-family:'Polin',sans-serif; }
+.about-years-copy p{ margin:0 0 20px; }
+.about-years-copy p:last-child{ margin-bottom:0; }
+.about-years-copy p.about-years-strong{ font-weight:700; }
+
+/* ---------- 3. STORY ---------- */
+.about-story{ width:100%; padding:100px 28px; display:flex; justify-content:center; }
+.about-story-inner{
+  max-width:1180px; width:100%;
+  display:flex; direction:rtl; align-items:stretch; justify-content:center;
+  gap:0; flex-wrap:wrap;
+}
+.about-story-box{
+  background:var(--white); border-radius:36px; color:var(--blue);
+  padding:44px 54px; max-width:820px; flex:1 1 500px;
+  font-size:clamp(16px,2.2vw,28px); line-height:1.55; text-align:center; font-family:'Polin',sans-serif;
+  display:flex; flex-direction:column; justify-content:center; gap:16px;
+  box-sizing:border-box;
+}
+.about-story-box p{ margin:0; }
+.about-story-box strong{ font-weight:700; }
+
+.about-arrows-deco{ display:flex; flex-shrink:0; align-self:stretch; }
+.about-arrows-col{ display:flex; flex-direction:column; align-self:stretch; }
+.about-arrow-pill{
+  width:88px; border:4px solid var(--white); box-sizing:border-box;
+  display:flex; align-items:center; justify-content:center;
+  flex:1 1 auto; min-height:0;
+}
+.about-arrow-pill svg{ width:auto; height:70%; display:block; }
+.about-arrow-pill--white{ background:var(--white); border-radius:44px; }
+.about-arrow-square{ width:88px; height:88px; border:4px solid var(--white); box-sizing:border-box; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.about-arrow-square svg{ width:52%; height:auto; transform:rotate(225deg); }
+.about-arrow-circle{ width:88px; height:88px; border-radius:50%; border:4px solid var(--white); box-sizing:border-box; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.about-arrow-circle svg{ width:52%; height:auto; }
+.about-arrow-pill--red{ background:rgba(221,64,65,1); border-radius:44px; }
+
+/* ---------- 4. HIGHLIGHT ----------
+   Exact duplicate of .next-section/.next-box/.next-circle/.next-text (turningpoint.css).
+   Only difference: the notch/circle flip to the top (inverted mask + inverted negative margin). */
+.about-highlight{ width:100%; display:flex; flex-direction:column; align-items:center; padding:90px 28px 40px; }
+/* Reversed overlap direction: the circle (first in DOM) overlaps downward into the text box */
+.about-highlight-circle{ margin-top:0; margin-bottom:-48px; }
+.about-highlight-box{
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:26px; text-align:center; padding-top:150px; padding-bottom:80px;
+  /* Original notch mask flipped vertically (notch runs bottom-to-top) */
+  -webkit-mask-image:url('/about/mask-highlight-top-desktop.svg');
+  mask-image:url('/about/mask-highlight-top-desktop.svg');
+  -webkit-mask-position:center top; mask-position:center top;
+}
+.about-highlight-tag{
+  background:var(--red); color:var(--white); border-radius:11px;
+  font-size:clamp(15px,2vw,33px); font-weight:700; line-height:1.3;
+  padding:14px 34px; text-align:center; max-width:1050px; font-family:'Polin',sans-serif;
+  white-space:nowrap;
+}
+
+/* ---------- 5. METHOD ---------- */
+.about-method{ width:100%; padding:170px 28px 100px; display:flex; flex-direction:column; align-items:center; text-align:center; }
+.about-method-row1{ display:flex; align-items:flex-end; direction:rtl; margin-bottom:-4px; position:relative; z-index:1; }
+.about-method-pill{
+  border:4px solid var(--white); border-radius:9999px; color:var(--white); box-sizing:border-box;
+  font-size:clamp(38px,7.4vw,108px); font-weight:400; line-height:1.05; font-family:'Polin',sans-serif;
+  padding:8px 100px 8px 130px; white-space:nowrap; display:flex; align-items:center;
+}
+.about-method-circle{
+  height:calc(clamp(38px,7.4vw,108px) * 1.05 + 32px + 8px); aspect-ratio:1; border:3px solid var(--white); border-radius:50%;
+  display:flex; align-items:center; justify-content:center; flex-shrink:0; box-sizing:border-box;
+  margin-right:-4px; overflow:hidden;
+}
+.about-method-circle svg{ width:52%; height:52%; transform-origin:50% 50%; animation:starSpin 22s linear infinite; }
+
+.about-method-row2{ display:flex; align-items:stretch; direction:rtl; margin-bottom:60px; position:relative; z-index:0; }
+.about-method-frame{
+  border:4px solid var(--white); color:var(--white); box-sizing:border-box;
+  font-size:clamp(38px,7.4vw,108px); font-weight:700; line-height:1.05; font-family:'Polin',sans-serif;
+  padding:8px 62px 8px 90px; white-space:nowrap; display:flex; align-items:center;
+}
+.about-method-shel{
+  background:var(--white); color:var(--red); box-sizing:border-box;
+  font-size:clamp(38px,7.4vw,108px); font-weight:700; line-height:1.05; font-family:'Polin',sans-serif;
+  border-radius:9999px; padding:8px 90px; white-space:nowrap; margin-left:-4px;
+  display:flex; align-items:center;
+}
+.about-method-heading2{
+  color:var(--white); font-size:clamp(30px,5.2vw,72px); font-weight:400; line-height:1.15;
+  font-family:'Polin',sans-serif; margin:0 0 26px; white-space:nowrap;
+}
+.about-method-desc{
+  color:var(--white); font-size:clamp(16px,2.2vw,28px); font-weight:400; line-height:1.55;
+  max-width:820px; margin:0; font-family:'Polin',sans-serif;
+}
+
+/* ==========================================================================
+   ABOUT SERVICES STICKY SECTION — 4 alternating cards on scroll
+   Self-contained modular component. Unique class prefix: about-services-
+========================================================================== */
+.about-services-sticky-section{ width:100%; position:relative; padding-bottom:300px; }
+
+/* Scroll zone that creates the "distance" for the 4 steps; height set by JS relative to viewport only */
+.about-services-scroll-track{ position:relative; width:100%; }
+
+/* Sticky container locked in place while scrolling through the track */
+.about-services-sticky-viewport{
+  position:sticky; top:0;
+  min-height:100vh;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  padding:60px 28px; box-sizing:border-box; overflow:visible;
+}
+
+/* ---------- Nav: 4 tabs — the active one "opens" and connects to the card, 3 closed ones are circles ---------- */
+.about-services-sticky-section{ --tab-h: 96px; --circle-d: 88px; --comp-w: 970px; --tab-inset: 34px; }
+.about-services-nav{
+  display:flex; direction:rtl; align-items:flex-end; justify-content:space-between;
+  gap:18px; position:relative; z-index:5;
+  width:100%; max-width:var(--comp-w); margin:0 auto;
+  padding:0 var(--tab-inset); box-sizing:border-box;
+}
+.about-services-dot{
+  appearance:none; cursor:pointer; padding:0; margin:0;
+  width:var(--circle-d); height:var(--circle-d); border-radius:50%;
+  background:transparent; border:3px solid var(--white); box-sizing:border-box;
+  display:flex; align-items:center; justify-content:flex-start; direction:rtl;
+  position:relative; flex-shrink:0; overflow:visible;
+  transition:transform .3s ease;
+}
+.about-services-dot:hover{ transform:translateY(-2px); }
+.about-services-dot:not(.is-active){ margin-bottom:12px; }
+.about-services-nav .about-services-dot:last-child.is-active{ margin-left:12px; }
+.about-services-dot-icon-wrap{
+  display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  width:100%; height:100%; position:relative;
+}
+.about-services-dot-icon{
+  position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+  transition:opacity .3s ease;
+}
+.about-services-dot-icon--closed{ width:37px; height:37px; opacity:1; }
+.about-services-dot-icon--closed path{ fill:var(--white); }
+.about-services-dot-icon--open{ width:60%; height:auto; opacity:0; }
+.about-services-dot-icon--open path{ fill:var(--red); stroke:var(--red); stroke-width:2; }
+.about-services-dot-title{
+  overflow:hidden; max-width:0; opacity:0; white-space:nowrap;
+  color:var(--red); font-weight:700; font-family:'Polin',sans-serif;
+  font-size:clamp(20px,2.6vw,48px); line-height:1.15;
+  transform:translateY(6px);
+  transition:opacity .3s ease, transform .3s ease;
+}
+.about-services-dot.is-active{
+  width:auto; height:var(--tab-h);
+  border-radius:34px 34px 0 0; background:var(--white);
+  padding:0 36px;
+}
+.about-services-dot.is-active .about-services-dot-icon-wrap{ width:88px; height:88px; }
+.about-services-dot.is-active .about-services-dot-icon--closed{ opacity:0; }
+.about-services-dot.is-active .about-services-dot-icon--open{ opacity:1; }
+.about-services-dot.is-active .about-services-dot-title{
+  max-width:640px; opacity:1; margin-right:12px; transform:translateY(0);
+}
+
+/* ---------- Card stack (grid-stack so height comes from the tallest — no height jump) ---------- */
+.about-services-cards{ display:grid; width:100%; max-width:var(--comp-w); margin:0 auto; position:relative; z-index:1; }
+.about-services-card{
+  grid-area:1 / 1;
+  opacity:0; visibility:hidden; pointer-events:none;
+  transition:opacity .3s ease, visibility 0s linear .3s;
+  display:flex; flex-direction:column; align-items:center;
+}
+.about-services-card.is-active{
+  opacity:1; visibility:visible; pointer-events:auto;
+  transition:opacity .3s ease;
+}
+
+/* ---------- Card body ---------- */
+.about-services-card-body{
+  width:100%; box-sizing:border-box;
+  background:var(--white); border-radius:20px;
+  padding:56px 60px;
+  display:flex; direction:rtl; align-items:center; gap:50px;
+}
+.about-services-image-col{ flex:0 0 34%; }
+.about-services-image-frame{
+  width:100%; aspect-ratio:306/273; border-radius:26px; overflow:hidden; background:#d9d9d9;
+}
+.about-services-image{ width:100%; height:100%; object-fit:cover; display:block; }
+.about-services-text-col{ flex:0 1 62%; min-width:0; text-align:right; }
+
+/* Mobile tab — built into the card (hidden on desktop; the title lives on the active top tab there) */
+.about-services-mobile-tab{ display:none; }
+
+.about-services-desc{
+  margin:0; color:var(--blue); font-weight:400; font-family:'Polin',sans-serif;
+  font-size:clamp(15px,1.6vw,26px); line-height:1.6;
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+@media (max-width:1024px){
+  .about-hero-inner{ gap:40px; }
+  .about-story-inner{ gap:20px; }
+}
+
+@media (max-width:760px){
+  .about-hero{ padding:46px 20px 14px; }
+  .about-hero-inner{ flex-direction:column; align-items:center; gap:24px; }
+  .about-hero-title-block{ align-items:center; }
+  .about-hero-row1{ margin:0 auto -6px; }
+  .about-hero-intro{ text-align:center; max-width:100%; }
+
+  .about-years{ padding:60px 20px 10px; }
+  .about-years-badge{ flex-wrap:wrap; justify-content:center; }
+  .about-years-icon{ padding:0 16px 0 calc(clamp(34px,7vw,108px) * 1.05 + 38px); }
+
+  .about-story{ padding:40px 16px; }
+  .about-story-inner{ flex-direction:column; align-items:center; }
+  .about-arrows-deco{ order:2; flex-direction:row; margin-top:24px; align-self:auto; }
+  .about-arrows-col{ align-self:auto; }
+  .about-arrow-pill{ flex:none; }
+  .about-arrow-pill--white, .about-arrow-pill--red{ height:150px; border-radius:34px; }
+  .about-story-box{ order:1; max-width:100%; padding:32px 26px; }
+
+  .about-highlight{ padding:0 20px 30px; }
+  .about-highlight-circle{ margin-bottom:-32px; }
+  .about-highlight-box{
+    padding-top:120px; padding-bottom:50px;
+    -webkit-mask-image:url('/about/mask-highlight-top-tablet.svg');
+    mask-image:url('/about/mask-highlight-top-tablet.svg');
+    -webkit-mask-position:center top; mask-position:center top;
+  }
+  .about-highlight-tag{ white-space:normal; }
+
+  .about-method{ padding:50px 20px 10px; }
+  .about-method-row1, .about-method-row2{ flex-wrap:wrap; justify-content:center; }
+  .about-method-heading2{ white-space:normal; max-width:100%; }
+
+  /* ===== about-services: mobile — no sticky, 4 cards stacked vertically ===== */
+  .about-services-sticky-section{ padding-bottom:140px; }
+  .about-services-scroll-track{ height:auto !important; }
+  .about-services-sticky-viewport{
+    position:static; min-height:0; padding:20px 16px; display:block;
+  }
+  /* The shared nav isn't relevant when all 4 cards are visible at once — a built-in tab is shown on each card separately */
+  .about-services-nav{ display:none; }
+  .about-services-cards{ display:flex; flex-direction:column; gap:44px; }
+  .about-services-card{
+    grid-area:auto; position:static; opacity:1; visibility:visible; pointer-events:auto;
+    transform:none; transition:none;
+  }
+  .about-services-mobile-tab{
+    display:flex; direction:rtl; align-items:center; justify-content:center;
+    position:relative; z-index:2; gap:10px;
+    width:min(320px,88%); box-sizing:border-box;
+    background:var(--white); border-radius:22px 22px 0 0;
+    padding:14px 22px;
+  }
+  .about-services-mobile-tab-icon-wrap{ width:22px; height:22px; flex-shrink:0; display:flex; align-items:center; justify-content:center; }
+  .about-services-mobile-tab-icon{ width:80%; height:auto; }
+  .about-services-mobile-tab-icon path{ fill:var(--red); stroke:var(--red); stroke-width:3; }
+  .about-services-mobile-tab-title{
+    color:var(--red); font-weight:700; font-family:'Polin',sans-serif;
+    font-size:clamp(18px,5.2vw,28px); line-height:1.2; white-space:nowrap;
+  }
+  .about-services-card-body{
+    flex-direction:column; border-radius:20px; padding:30px 24px; gap:24px;
+  }
+  .about-services-text-col{ text-align:center; }
+  .about-services-image-col{ width:min(240px,60%); }
+}
+
+@media (max-width:460px){
+  .about-hero-frame, .about-hero-pill, .about-years-text, .about-method-pill, .about-method-frame, .about-method-shel{
+    padding-left:20px; padding-right:20px;
+  }
+  .about-arrow-pill, .about-arrow-square, .about-arrow-circle{ width:68px; }
+  .about-arrow-pill--white, .about-arrow-pill--red{ height:150px; border-radius:34px; }
+  .about-arrow-square{ height:68px; }
+  .about-arrow-circle{ height:68px; }
+  .about-highlight-circle{ margin-bottom:-23px; }
+  .about-highlight-box{
+    -webkit-mask-image:url('/about/mask-highlight-top-mobile.svg');
+    mask-image:url('/about/mask-highlight-top-mobile.svg');
+    -webkit-mask-position:center top; mask-position:center top;
+  }
+  .about-highlight-tag{ padding:12px 20px; }
+}
