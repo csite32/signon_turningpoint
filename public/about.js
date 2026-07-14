@@ -21,7 +21,6 @@
   if(!track || !viewport || !cards.length) return;
 
   var COUNT = cards.length;
-  var isDesktopMode = false;
   var activeIndex = 0;
 
   function isMobile(){ return window.matchMedia('(max-width:760px)').matches; }
@@ -42,18 +41,11 @@
   }
 
   function layout(){
-    if(isMobile()){
-      isDesktopMode = false;
-      track.style.height = '';
-      return;
-    }
-    isDesktopMode = true;
     track.style.height = computeTrackHeight() + 'px';
     update();
   }
 
   function update(){
-    if(!isDesktopMode) return;
     var vh = window.innerHeight;
     var rect = track.getBoundingClientRect();
     var scrollable = track.offsetHeight - vh;
@@ -64,11 +56,6 @@
   }
 
   function scrollToIndex(index){
-    if(isMobile()){
-      var card = cards[index];
-      if(card) card.scrollIntoView({behavior:'smooth', block:'start'});
-      return;
-    }
     var vh = window.innerHeight;
     var scrollable = track.offsetHeight - vh;
     var targetP = (index + 0.5) / COUNT;
