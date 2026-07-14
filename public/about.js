@@ -72,3 +72,28 @@
 
   layout();
 })();
+
+/* ===== Reveal on scroll — entrance animations for "לאורך השנים", the arrow composition, and "של" =====
+   Adds/removes .in-view via a single IntersectionObserver so entrance animations replay every
+   time the element re-enters the viewport. The animation styles live in about.css under .anim-ready. */
+(function(){
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var targets = document.querySelectorAll('.anim-years-group, .anim-arrows-group, .anim-shel');
+
+  if(reduceMotion || !('IntersectionObserver' in window)){
+    targets.forEach(function(el){ el.classList.add('in-view'); });
+    return;
+  }
+
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if(entry.intersectionRatio >= 0.25){
+        entry.target.classList.add('in-view');
+      } else if(!entry.isIntersecting){
+        entry.target.classList.remove('in-view');
+      }
+    });
+  }, { threshold:[0, 0.25] });
+
+  targets.forEach(function(el){ io.observe(el); });
+})();
