@@ -1,13 +1,16 @@
 // @ts-nocheck
 /* Faithful port of the Claude-built about page (prototype/about.html).
    Markup, CSS and JS are preserved 1:1. Do not redesign or refactor. */
-import { useEffect, useRef } from "react";
+import { useEffect, useLayoutEffect, useRef } from "react";
 import { Link } from "@tanstack/react-router";
 import "../styles/turningpoint.css";
 import "../styles/about.css";
 
 export default function TurningPointAbout() {
   const inited = useRef(false);
+  useLayoutEffect(() => {
+    document.documentElement.classList.add("anim-ready");
+  }, []);
   useEffect(() => {
     if (inited.current) return;
     inited.current = true;
@@ -79,9 +82,9 @@ export default function TurningPointAbout() {
       </section>
 
       <section className="about-years">
-        <div className="about-years-badge">
-          <div className="about-years-text"><span>לאורך</span>&nbsp;<strong>השנים</strong></div>
-          <div className="about-years-icon">
+        <div className="about-years-badge anim-years-group">
+          <div className="about-years-text anim-years-text"><span>לאורך</span>&nbsp;<strong>השנים</strong></div>
+          <div className="about-years-icon anim-years-icon">
             <svg className="about-years-arrow" viewBox="0 0 196 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
               <path d="M38.3397 62.1205C29.9297 43.5005 19.1298 39.6105 -0.000215021 31.9705C19.3698 23.6905 30.3598 21.0905 38.7298 1.06046L40.8297 0.0304561C41.4197 -0.259544 41.6198 1.60046 41.4298 2.24046C37.2798 15.5405 27.3498 23.2905 14.6198 30.1605L193.22 30.2605C194.07 30.2605 195.26 30.2805 195.26 30.6605L195.26 33.6505L14.8098 33.7605C27.0298 40.6705 36.6098 48.0805 41.2498 61.0905C41.4698 61.7105 41.4498 62.9005 41.1098 63.3905C40.6898 64.0005 38.6997 62.9705 38.3297 62.1505L38.3397 62.1205Z" fill="white"></path>
             </svg>
@@ -105,26 +108,26 @@ export default function TurningPointAbout() {
             <p>כשראיתי שבעלי עסקים בצמיחה זקוקים להרבה יותר מאשר ספק שיווקי בודד, <strong>הבנתי שהגיע הזמן להתרחב.</strong></p>
             <p>מתוך המומחיות שלי במשרד הפרסום &apos;סגנון 7&apos;, הקמתי את &quot;נקודת מפנה&quot; – משרד מיתוג ואסטרטגיה המהווה את השלב הבא והרחב יותר של הניסיון שצברתי.</p>
           </div>
-          <div className="about-arrows-deco">
+          <div className="about-arrows-deco anim-arrows-group">
             <div className="about-arrows-col">
-              <div className="about-arrow-circle">
+              <div className="about-arrow-circle anim-arrow-circle">
                 <svg viewBox="0 0 61 72" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                   <path d="M27.5817 68.7096C27.5676 69.3318 28.1969 71.4885 28.6283 71.3117L30.9334 70.3784L32.6658 6.85898L57.0893 33.2199C57.7469 33.9341 59.3167 34.2876 59.8187 34.3654C60.3561 34.4503 60.342 32.0885 59.7268 31.4168L31.1668 1.5357e-05L1.44703 29.748C0.916701 30.2784 0.202514 31.9825 0.0115945 32.3997C-0.179325 32.8169 1.98445 33.425 2.69863 32.7249L28.7272 7.19133L27.5888 68.7166L27.5817 68.7096Z" fill="white"></path>
                 </svg>
               </div>
-              <div className="about-arrow-pill about-arrow-pill--red">
+              <div className="about-arrow-pill about-arrow-pill--red anim-arrow-red">
                 <svg viewBox="0 0 64 152" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                   <path d="M33.7878 149.784L33.2584 151.702C33.1186 152.202 30.4419 152.297 30.4419 150.165L30.2921 11.7792C23.5805 20.3638 14.8614 29.6223 1.87765 32.4522C1.31835 32.5711 0.249688 31.3503 0 30.7162C19.8951 23.8041 23.8003 16.0358 32.03 0C40.819 16.5907 43.2959 23.3364 64 30.5973C63.4707 31.6832 62.5518 32.571 61.6729 32.3412C48.9089 28.9882 40.2497 21.1248 33.9076 11.2956L33.7878 149.784Z" fill="white"></path>
                 </svg>
               </div>
             </div>
             <div className="about-arrows-col">
-              <div className="about-arrow-pill about-arrow-pill--white">
+              <div className="about-arrow-pill about-arrow-pill--white anim-arrow-white">
                 <svg viewBox="0 0 61 172" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                   <path d="M32.6243 2.61245C32.6385 1.99019 32.0091 -0.166465 31.5778 0.0103123L29.2727 0.943634L27.5402 164.463L3.11675 138.102C2.45914 137.388 0.889381 137.034 0.387332 136.957C-0.150071 136.872 -0.135948 139.233 0.479238 139.905L29.0393 171.322L58.759 141.574C59.2893 141.044 60.0035 139.34 60.1944 138.922C60.3854 138.505 58.2216 137.897 57.5074 138.597L31.4788 164.131L32.6172 2.60538L32.6243 2.61245Z" fill="#133551"></path>
                 </svg>
               </div>
-              <div className="about-arrow-square">
+              <div className="about-arrow-square anim-arrow-square">
                 <svg viewBox="0 0 61 72" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                   <path d="M27.5817 68.7096C27.5676 69.3318 28.1969 71.4885 28.6283 71.3117L30.9334 70.3784L32.6658 6.85898L57.0893 33.2199C57.7469 33.9341 59.3167 34.2876 59.8187 34.3654C60.3561 34.4503 60.342 32.0885 59.7268 31.4168L31.1668 1.5357e-05L1.44703 29.748C0.916701 30.2784 0.202514 31.9825 0.0115945 32.3997C-0.179325 32.8169 1.98445 33.425 2.69863 32.7249L28.7272 7.19133L27.5888 68.7166L27.5817 68.7096Z" fill="white"></path>
                 </svg>
@@ -162,7 +165,7 @@ export default function TurningPointAbout() {
           </span>
         </div>
         <div className="about-method-row2">
-          <div className="about-method-shel">של</div>
+          <div className="about-method-shel anim-shel">של</div>
           <div className="about-method-frame">העסק שלך</div>
         </div>
         <p className="about-method-heading2">המעטפת המלאה לבניית מותג מוביל.</p>
