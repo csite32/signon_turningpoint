@@ -1,12 +1,15 @@
 // @ts-nocheck
 /* Faithful port of the Claude-built homepage (prototype/index_59.html).
    Markup, CSS and JS are preserved 1:1. Do not redesign or refactor. */
-import { useEffect, useRef } from "react";
+import { useEffect, useLayoutEffect, useRef } from "react";
 import { Link } from "@tanstack/react-router";
 import "../styles/turningpoint.css";
 
 export default function TurningPointHome() {
   const inited = useRef(false);
+  useLayoutEffect(() => {
+    document.documentElement.classList.add("anim-ready");
+  }, []);
   useEffect(() => {
     if (inited.current) return;
     inited.current = true;
@@ -62,7 +65,7 @@ export default function TurningPointHome() {
         <div className="overlay hero-overlay">
           <p>משרד מיתוג ופרסום המלווה בעלי עסקים בשלב הצמיחה הבא <br className="hero-br" /> מהאסטרטגיה והמיצוב דרך מיתוג ועיצוב, עד לקמפיין שיוצא לאוויר.</p>
 
-          <a href="#projects" className="about-cta">
+          <a href="#projects" className="about-cta anim-cta">
             <span className="acirc"><svg viewBox="0 0 32 31" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20.9549 2H2.00001V20.9756" stroke="white" strokeWidth="4"></path><path d="M1.75078 1.77246L30.3279 29.3771" stroke="white" strokeWidth="4"></path></svg></span>
             <span className="cta-text">להצצה<br />בפרויקטים</span>
           </a>
@@ -88,14 +91,14 @@ export default function TurningPointHome() {
         </div>
 
         <div className="pills-block">
-          <div className="outline-pill">לנקודת מפנה</div>
+          <div className="outline-pill anim-pill">לנקודת מפנה</div>
           <div className="red-row">
-            <div className="arrow-circle"><svg width="64" height="40" viewBox="0 0 64 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <div className="arrow-circle anim-circle"><svg width="64" height="40" viewBox="0 0 64 40" fill="none" xmlns="http://www.w3.org/2000/svg">
       <line x1="0.301758" y1="19.6859" x2="63.416" y2="19.6859" stroke="white" strokeWidth="2.97709"></line>
       <path d="M19.9465 0.334229C18.7557 6.58611 13.0992 19.6853 4.61226e-05 19.6853" stroke="white" strokeWidth="3.5725"></path>
       <path d="M19.9465 39.3342C18.7557 33.0823 13.0992 19.9832 4.78143e-05 19.9832" stroke="white" strokeWidth="3.5725"></path>
       </svg></div>
-            <div className="red-block">אסטרטגית</div>
+            <div className="red-block anim-block">אסטרטגית</div>
           </div>
         </div>
 
@@ -105,7 +108,7 @@ export default function TurningPointHome() {
           <span className="bold">הכל תחת ראייה אחת, מתואמת ומדויקת.</span>
         </div>
 
-        <a href="#" className="about-cta">
+        <a href="#" className="about-cta anim-cta">
           <span className="acirc"><svg viewBox="0 0 32 31" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20.9549 2H2.00001V20.9756" stroke="white" strokeWidth="4"></path><path d="M1.75078 1.77246L30.3279 29.3771" stroke="white" strokeWidth="4"></path></svg></span>
           <span className="cta-text">לשיחת אבחון<br />אסטרטגית</span>
         </a>
@@ -143,7 +146,7 @@ export default function TurningPointHome() {
             </div>
           </div>
           <div className="hero2-row hero2-row2">
-            <div className="hero2-pill-solid">הגעת</div>
+            <div className="hero2-pill-solid anim-hero2-word">הגעת</div>
             <div className="hero2-rect">לנקודת מפנה.</div>
           </div>
         </div>
