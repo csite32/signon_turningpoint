@@ -107,7 +107,7 @@
 .about-highlight{ width:100%; display:flex; flex-direction:column; align-items:center; padding:90px 28px 40px; }
 /* Reversed overlap direction: the circle (first in DOM) overlaps downward into the text box */
 .about-highlight-circle{ margin-top:0; margin-bottom:-48px; }
-.about-highlight-box{
+.about-highlight .about-highlight-box{
   display:flex; flex-direction:column; align-items:center; justify-content:center;
   gap:26px; text-align:center; padding-top:150px; padding-bottom:80px;
   /* Original notch mask flipped vertically (notch runs bottom-to-top) */
@@ -289,7 +289,7 @@
 
   .about-highlight{ padding:0 20px 30px; }
   .about-highlight-circle{ margin-bottom:-32px; }
-  .about-highlight-box{
+  .about-highlight .about-highlight-box{
     padding-top:120px; padding-bottom:50px;
     -webkit-mask-image:url('/about/mask-highlight-top-tablet.svg');
     mask-image:url('/about/mask-highlight-top-tablet.svg');
@@ -344,7 +344,7 @@
   .about-arrow-square{ height:68px; }
   .about-arrow-circle{ height:68px; }
   .about-highlight-circle{ margin-bottom:-23px; }
-  .about-highlight-box{
+  .about-highlight .about-highlight-box{
     -webkit-mask-image:url('/about/mask-highlight-top-mobile.svg');
     mask-image:url('/about/mask-highlight-top-mobile.svg');
     -webkit-mask-position:center top; mask-position:center top;
