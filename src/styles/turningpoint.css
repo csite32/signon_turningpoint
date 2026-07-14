@@ -309,6 +309,111 @@
 }
 @media(max-width:460px){ .hero-item .arrow{ width:20px; } .hero-overlay p{ font-size:15px; } }
 
+/* ===== SUBTLE ANIMATIONS (added) ===== */
+
+/* 1) red dot next to "לפרשת דרכים" — soft continuous pulse.
+   .parshat-dot already has a fixed transform (translate(-32px,0) scale(1.35)) inside the
+   existing @media(min-width:1025px) block further down — animation would otherwise override
+   it entirely, so we redefine the keyframes for that breakpoint to preserve it. */
+.parshat-dot{
+  animation: pf-dot-pulse 2.2s ease-in-out infinite;
+}
+@keyframes pf-dot-pulse{
+  0%, 100%{ opacity:1; transform:scale(1); }
+  50%{ opacity:.6; transform:scale(.88); }
+}
+@media (min-width:1025px){
+  @keyframes pf-dot-pulse{
+    0%, 100%{ opacity:1; transform:translate(-32px,0) scale(1.35); }
+    50%{ opacity:.6; transform:translate(-32px,0) scale(1.19); }
+  }
+}
+
+/* 2) arrow next to "הוא זקוק" — smooth continuous horizontal drift.
+   .longarrow already has a fixed transform (scale(1.27)) at the same breakpoint — same
+   preservation technique as above. */
+.arrow-row svg.longarrow{
+  animation: pf-arrow-drift 2s ease-in-out infinite;
+  will-change: transform;
+}
+@keyframes pf-arrow-drift{
+  0%, 100%{ transform:translateX(0); }
+  50%{ transform:translateX(-10px); }
+}
+@media (min-width:1025px){
+  @keyframes pf-arrow-drift{
+    0%, 100%{ transform:translateX(0) scale(1.27); }
+    50%{ transform:translateX(-10px) scale(1.27); }
+  }
+}
+
+/* 3) entrance for "לנקודת מפנה" + "אסטרטגית" + the round arrow — gated by JS-only .anim-ready
+   so content stays fully visible without JavaScript. .in-view is toggled by an
+   IntersectionObserver added/removed on every viewport entry/exit, so it replays. */
+.anim-ready .anim-pill{
+  opacity:0; transform:translateY(-26px);
+  transition:opacity 1.2s cubic-bezier(.22,1,.36,1), transform 1.2s cubic-bezier(.22,1,.36,1);
+}
+.anim-ready .anim-block{
+  opacity:0; transform:translateX(24px);
+  transition:opacity 1.2s cubic-bezier(.22,1,.36,1) .18s, transform 1.2s cubic-bezier(.22,1,.36,1) .18s;
+}
+.anim-ready .anim-circle{
+  opacity:0; transform:translateY(16px) scale(.8);
+  transition:opacity 1.2s cubic-bezier(.22,1,.36,1) .36s, transform 1.2s cubic-bezier(.22,1,.36,1) .36s;
+}
+.anim-ready .pills-block.in-view .anim-pill,
+.anim-ready .pills-block.in-view .anim-block,
+.anim-ready .pills-block.in-view .anim-circle{
+  opacity:1; transform:none;
+}
+
+/* 4) the red word "הגעת" — gentle right-to-left entrance, replays on every viewport re-entry */
+.anim-ready .anim-hero2-word{
+  opacity:0; transform:translateX(42px) scale(.94);
+  transition:opacity 1.3s cubic-bezier(.22,1,.36,1), transform 1.3s cubic-bezier(.22,1,.36,1);
+}
+.anim-ready .anim-hero2-word.in-view{
+  opacity:1; transform:none;
+}
+
+/* 5) CTA buttons ("להצצה בפרויקטים" / "לשיחת אבחון אסטרטגית") — fade + slight rise + scale,
+   replays on every viewport re-entry. Animates the button itself (.about-cta), not a wrapper.
+   .about-cta already has a fixed transform (scale(1.28)) at min-width:1025px — composed here
+   via a second scale() in the same transform value so the final desktop size is unchanged. */
+.anim-ready .anim-cta{
+  opacity:0; transform:translateY(22px) scale(.97);
+  transition:opacity 1.2s cubic-bezier(.22,1,.36,1), transform 1.2s cubic-bezier(.22,1,.36,1);
+}
+.anim-ready .anim-cta.in-view{
+  opacity:1; transform:translateY(0) scale(1);
+}
+@media (min-width:1025px){
+  .anim-ready .anim-cta{
+    transform:translateY(22px) scale(.97) scale(1.28);
+  }
+  .anim-ready .anim-cta.in-view{
+    transform:translateY(0) scale(1) scale(1.28);
+  }
+}
+
+@media (prefers-reduced-motion: reduce){
+  .parshat-dot,
+  .arrow-row svg.longarrow{
+    animation:none;
+  }
+  .anim-ready .anim-pill,
+  .anim-ready .anim-block,
+  .anim-ready .anim-circle,
+  .anim-ready .anim-hero2-word{
+    opacity:1; transform:none; transition:none;
+  }
+  .anim-ready .anim-cta,
+  .anim-ready .anim-cta.in-view{
+    transition:none;
+  }
+}
+
 .next-section{
     width:100%; display:flex; flex-direction:column; align-items:center;
     padding:20px 0 70px;
