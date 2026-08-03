@@ -415,7 +415,7 @@ export default function TurningPointHome() {
 
       <div className="bottom-bar">
         <div className="bottom-bar-inner">
-          <p className="bottom-bar-text">© כל הזכויות שמורות 2026</p>
+          <p className="bottom-bar-text" data-editor-id="page-index__footer-copyright-smoketest">© כל הזכויות שמורות 2026</p>
           <p className="bottom-bar-text">עיצוב: רות בנדיקט | פיתוח: חיה פוגל Csite</p>
         </div>
       </div>

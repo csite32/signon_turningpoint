@@ -12,6 +12,13 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 
+function isEditorEnvironment(): boolean {
+  if (typeof window === "undefined") return false;
+  if (import.meta.env.MODE !== "development") return false;
+  var host = window.location.hostname;
+  return host.startsWith("id-preview--") || host === "localhost" || host === "127.0.0.1";
+}
+
 function NotFoundComponent() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
@@ -120,28 +127,45 @@ function RootShell({ children }: { children: ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
 
+  useEffect(() => {
+    if (!isEditorEnvironment()) return;
+    fetch("/editor-data-smoketest.json", { cache: "no-store" })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (data) {
+        if (!data) return;
+        Object.keys(data).forEach(function (id) {
+          var el = document.querySelector('[data-editor-id="' + id + '"]');
+          if (el && typeof data[id].text === "string") {
+            el.textContent = data[id].text;
+          }
+        });
+      })
+      .catch(function () {});
+  }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <Outlet />
-      <div
-        style={{
-          position: "fixed",
-          top: "8px",
-          left: "8px",
-          zIndex: 999999,
-          background: "black",
-          color: "#0f0",
-          fontFamily: "monospace",
-          fontSize: "11px",
-          padding: "6px 10px",
-          borderRadius: "4px",
-          pointerEvents: "none",
-          whiteSpace: "pre-line",
-        }}
-      >
-        {`DEV=${String(import.meta.env.DEV)}\nMODE=${String(import.meta.env.MODE)}\nhost=${typeof window !== "undefined" ? window.location.hostname : "ssr"}\ntoken=${typeof window !== "undefined" && window.location.search.includes("__lovable_token") ? "yes" : "no"}`}
-      </div>
+      {isEditorEnvironment() && (
+        <div
+          style={{
+            position: "fixed",
+            top: "8px",
+            left: "8px",
+            zIndex: 999999,
+            background: "black",
+            color: "#0f0",
+            fontFamily: "monospace",
+            fontSize: "11px",
+            padding: "6px 10px",
+            borderRadius: "4px",
+            pointerEvents: "none",
+          }}
+        >
+          EDITOR ENV: ON
+        </div>
+      )}
     </QueryClientProvider>
   );
 }
