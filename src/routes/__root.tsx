@@ -124,6 +124,24 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <Outlet />
+      <div
+        style={{
+          position: "fixed",
+          top: "8px",
+          left: "8px",
+          zIndex: 999999,
+          background: "black",
+          color: "#0f0",
+          fontFamily: "monospace",
+          fontSize: "11px",
+          padding: "6px 10px",
+          borderRadius: "4px",
+          pointerEvents: "none",
+          whiteSpace: "pre-line",
+        }}
+      >
+        {`DEV=${String(import.meta.env.DEV)}\nMODE=${String(import.meta.env.MODE)}\nhost=${typeof window !== "undefined" ? window.location.hostname : "ssr"}\ntoken=${typeof window !== "undefined" && window.location.search.includes("__lovable_token") ? "yes" : "no"}`}
+      </div>
     </QueryClientProvider>
   );
 }
