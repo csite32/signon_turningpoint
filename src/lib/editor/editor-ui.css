@@ -1,0 +1,275 @@
+/* editor-ui.css — ADMIN ONLY. Ported from prototype/assets/editor/editor-ui.css (the
+   נקודת מפנה local project). Namespaced under #tp-editor-root / .tp-* so it never
+   collides with the site's own CSS.
+
+   NOT ported in this pass: the local project's #tp-preview-overlay / #tp-preview-frame
+   rules (device-width simulation iframe) — see the comment at the top of editor-ui.ts
+   for why that subsystem was deferred rather than ported blind. */
+
+#tp-editor-root {
+  all: initial;
+  position: fixed;
+  inset-inline-start: 20px;
+  bottom: 20px;
+  z-index: 2147483000;
+  font-family: -apple-system, "Segoe UI", Arial, sans-serif;
+  direction: rtl;
+}
+
+#tp-editor-root * {
+  box-sizing: border-box;
+  font-family: inherit;
+}
+
+#tp-editor-toggle {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: none;
+  background: #133551;
+  color: #fff;
+  font-size: 22px;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+}
+
+#tp-editor-toggle.tp-active {
+  background: #e14e50;
+}
+
+#tp-editor-panel {
+  position: fixed;
+  inset-inline-start: 20px;
+  bottom: 84px;
+  width: 320px;
+  max-height: 80vh;
+  overflow-y: auto;
+  background: #ffffff;
+  color: #133551;
+  border-radius: 14px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
+  font-size: 13px;
+}
+
+#tp-editor-panel.tp-hidden {
+  display: none;
+}
+
+.tp-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  background: #133551;
+  color: #fff;
+  border-radius: 14px 14px 0 0;
+  font-weight: 600;
+}
+
+.tp-header button {
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 18px;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.tp-body {
+  padding: 14px;
+}
+
+.tp-select-toggle {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #133551;
+  background: #fff;
+  color: #133551;
+  cursor: pointer;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.tp-select-toggle.tp-active {
+  background: #e14e50;
+  border-color: #e14e50;
+  color: #fff;
+}
+
+.tp-empty {
+  color: #667;
+  line-height: 1.5;
+}
+
+.tp-hidden {
+  display: none !important;
+}
+
+.tp-field {
+  margin-bottom: 12px;
+}
+
+.tp-field label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: #133551;
+}
+
+.tp-label-box {
+  padding: 8px 10px;
+  background: #f3f5f7;
+  border-radius: 6px;
+  color: #133551;
+}
+
+.tp-field textarea,
+.tp-field select,
+.tp-field input {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #ccd3da;
+  border-radius: 6px;
+  font-size: 13px;
+  color: #133551;
+  background: #fff;
+}
+
+.tp-field input[type="color"] {
+  padding: 3px;
+  height: 34px;
+  cursor: pointer;
+}
+
+.tp-actions {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.tp-btn {
+  flex: 1;
+  padding: 9px 10px;
+  border-radius: 7px;
+  border: 1px solid #ccd3da;
+  background: #fff;
+  color: #133551;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.tp-btn.tp-primary {
+  background: #133551;
+  border-color: #133551;
+  color: #fff;
+}
+
+.tp-btn.tp-danger-outline {
+  border-color: #e14e50;
+  color: #e14e50;
+}
+
+.tp-btn:disabled,
+.tp-select-toggle:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.tp-status {
+  min-height: 18px;
+  color: #2a7d46;
+  font-weight: 600;
+}
+
+.tp-hint {
+  margin-top: 4px;
+  font-size: 11px;
+  font-weight: 400;
+  color: #778;
+  line-height: 1.4;
+}
+
+.tp-link-error {
+  color: #e14e50;
+  font-weight: 600;
+}
+
+/* ---- media field (images/icons) ---- */
+
+.tp-media-preview {
+  display: block;
+  max-width: 100%;
+  max-height: 120px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border: 1px solid #ccd3da;
+  border-radius: 6px;
+  background: repeating-conic-gradient(#f3f5f7 0% 25%, #fff 0% 50%) 50% / 16px 16px;
+  margin-bottom: 8px;
+  padding: 4px;
+}
+
+#tp-media-field input[type="file"] {
+  padding: 6px 8px;
+  cursor: pointer;
+}
+
+/* ---- rich-text editor (strong/br/span only) ---- */
+
+.tp-rich-toolbar {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.tp-rich-toolbar button {
+  flex: 1;
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: 1px solid #ccd3da;
+  background: #fff;
+  color: #133551;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.tp-rich-toolbar button:hover {
+  background: #f3f5f7;
+}
+
+#tp-rich-editor {
+  min-height: 70px;
+  padding: 8px 10px;
+  border: 1px solid #ccd3da;
+  border-radius: 6px;
+  font-size: 13px;
+  color: #133551;
+  background: #fff;
+  line-height: 1.5;
+  overflow-y: auto;
+  max-height: 200px;
+}
+
+#tp-rich-editor:focus {
+  outline: 2px solid #133551;
+  outline-offset: -1px;
+}
+
+/* ---- overlays applied directly to page elements (not scoped to #tp-editor-root) ---- */
+
+html.tp-select-mode,
+html.tp-select-mode body {
+  cursor: crosshair !important;
+}
+
+.tp-hover-outline {
+  outline: 2px dashed #e14e50 !important;
+  outline-offset: 2px;
+}
+
+.tp-selected-outline {
+  outline: 2px solid #133551 !important;
+  outline-offset: 2px;
+}
