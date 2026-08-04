@@ -107,7 +107,7 @@ export function EditorPanel() {
 
   const card: React.CSSProperties = {
     position: "fixed",
-    bottom: "12px",
+    bottom: "64px",
     left: "12px",
     zIndex: 999998,
     background: "#ffffff",
