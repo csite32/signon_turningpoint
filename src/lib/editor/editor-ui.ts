@@ -1234,6 +1234,8 @@ function togglePanel() {
 }
 
 function buildPanel() {
+  const existing = document.getElementById("tp-editor-root");
+  if (existing) existing.remove();
   const root = document.createElement("div");
   root.id = "tp-editor-root";
   root.setAttribute("dir", "rtl");
@@ -1394,16 +1396,18 @@ function wireGlobalListeners() {
   document.addEventListener("keydown", onKeydown);
 }
 
-let initialized = false;
+let initGeneration = 0;
+let built = false;
 
 export function initEditorPanel() {
-  if (initialized) return;
-  initialized = true;
+  const myGeneration = ++initGeneration;
   Promise.all([fetchJson(MANIFEST_URL), fetchJson(BREAKPOINTS_URL)]).then(([manifestRes, breakpointsRes]) => {
+    if (myGeneration !== initGeneration) return; // superseded by a later init/destroy cycle (e.g. StrictMode's double-invoke)
     manifest = manifestRes || {};
     if (breakpointsRes && breakpointsRes.mobileMax) breakpoints = breakpointsRes;
     buildPanel();
     wireGlobalListeners();
+    built = true;
   });
 }
 
@@ -1411,8 +1415,9 @@ export function initEditorPanel() {
    never needed this (the page loads once), but our admin session can end without a full
    page reload (sign-out), so the panel must be able to fully remove itself. */
 export function destroyEditorPanel() {
-  if (!initialized) return;
-  initialized = false;
+  initGeneration++; // invalidates any in-flight init from this or an earlier call
+  if (!built) return;
+  built = false;
   selectModeActive = false;
   document.documentElement.classList.remove("tp-select-mode");
   detachSelectionListeners();

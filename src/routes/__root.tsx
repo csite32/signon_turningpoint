@@ -128,7 +128,14 @@ function RootComponent() {
   const showEditor = adminAccess.status === "authorized" && editModeOn;
 
   useEffect(() => {
-    initEditorRuntime();
+    const w = window as unknown as {
+      requestIdleCallback?: (cb: () => void) => number;
+      cancelIdleCallback?: (id: number) => void;
+    };
+    const schedule = w.requestIdleCallback ?? ((cb: () => void) => window.setTimeout(cb, 0));
+    const cancel = w.cancelIdleCallback ?? window.clearTimeout;
+    const id = schedule(() => initEditorRuntime());
+    return () => cancel(id);
   }, []);
 
   return (
