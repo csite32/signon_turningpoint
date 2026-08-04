@@ -41,3 +41,12 @@ export async function resetOverride(elementId: string) {
   const { error } = await supabase.from("editor_overrides").delete().eq("element_id", elementId);
   if (error) throw error;
 }
+
+export async function resetOverrideForPage(pageKey: string) {
+  const { error } = await supabase
+    .from("editor_overrides")
+    .delete()
+    .eq("scope", "page")
+    .eq("scope_key", pageKey);
+  if (error) throw error;
+}
