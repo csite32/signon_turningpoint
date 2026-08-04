@@ -28,6 +28,74 @@ export function EditorDiagnostic() {
       }
       const bundle =
         (document.querySelector('script[type="module"]') as HTMLScriptElement | null)?.src ?? "none";
+
+      const trigger = document.querySelector('[aria-label="פתיחת עורך"]') as HTMLElement | null;
+      const geo: Info = {
+        "trig.style": "n/a",
+        "trig.rect": "n/a",
+        "trig.inViewport": "n/a",
+        "trig.topmostAtCenter": "n/a",
+        "trig.clippingAncestors": "n/a",
+      };
+      if (trigger) {
+        const cs = getComputedStyle(trigger);
+        geo["trig.style"] = [
+          `display=${cs.display}`,
+          `visibility=${cs.visibility}`,
+          `opacity=${cs.opacity}`,
+          `position=${cs.position}`,
+          `top=${cs.top}`,
+          `right=${cs.right}`,
+          `bottom=${cs.bottom}`,
+          `left=${cs.left}`,
+          `w=${cs.width}`,
+          `h=${cs.height}`,
+          `z=${cs.zIndex}`,
+          `transform=${cs.transform}`,
+        ].join(" ");
+
+        const r = trigger.getBoundingClientRect();
+        geo["trig.rect"] = `top=${Math.round(r.top)} left=${Math.round(r.left)} w=${Math.round(
+          r.width,
+        )} h=${Math.round(r.height)}`;
+        geo["trig.inViewport"] = String(
+          r.top >= 0 &&
+            r.left >= 0 &&
+            r.bottom <= window.innerHeight &&
+            r.right <= window.innerWidth &&
+            r.width > 0 &&
+            r.height > 0,
+        );
+
+        const cx = r.left + r.width / 2;
+        const cy = r.top + r.height / 2;
+        const topmost = document.elementFromPoint(cx, cy) as HTMLElement | null;
+        geo["trig.topmostAtCenter"] = topmost
+          ? `${topmost.tagName.toLowerCase()}${topmost.id ? "#" + topmost.id : ""}${
+              topmost.className && typeof topmost.className === "string"
+                ? "." + topmost.className.trim().split(/\s+/).join(".")
+                : ""
+            }${topmost === trigger ? " (is trigger)" : ""}`
+          : "none";
+
+        const clippers: string[] = [];
+        let p = trigger.parentElement;
+        while (p) {
+          const pcs = getComputedStyle(p);
+          if (
+            pcs.overflow !== "visible" ||
+            pcs.overflowX !== "visible" ||
+            pcs.overflowY !== "visible"
+          ) {
+            clippers.push(
+              `${p.tagName.toLowerCase()}${p.id ? "#" + p.id : ""}[${pcs.overflow}/${pcs.overflowX}/${pcs.overflowY}]`,
+            );
+          }
+          p = p.parentElement;
+        }
+        geo["trig.clippingAncestors"] = clippers.length ? clippers.join(" < ") : "none";
+      }
+
       if (cancelled) return;
       setInfo({
         inIframe: String(window.self !== window.top),
@@ -38,6 +106,7 @@ export function EditorDiagnostic() {
         session,
         loginInDom: String(!!document.querySelector('input[type="email"]')),
         triggerInDom: String(!!document.querySelector('[aria-label="פתיחת עורך"]')),
+        ...geo,
         bundle,
       });
     }
