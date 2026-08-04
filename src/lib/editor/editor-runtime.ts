@@ -422,44 +422,56 @@ async function loadOverridesStore(pageKey: string | null): Promise<Record<string
   return store;
 }
 
-let booted = false;
+let breakpointsCache: typeof DEFAULT_BREAKPOINTS | null = null;
+let configLoaded: Promise<void> | null = null;
 
-export function initEditorRuntime() {
-  if (booted) return;
-  booted = true;
-  if (typeof window === "undefined") return;
-
-  function boot() {
-    stashOriginalText();
-    Promise.all([fetchJson(BREAKPOINTS_URL), fetchJson(MANIFEST_URL)]).then(([breakpointsRes, manifestRes]) => {
-      const bp = breakpointsRes && breakpointsRes.mobileMax ? breakpointsRes : DEFAULT_BREAKPOINTS;
+function ensureConfigLoaded(): Promise<void> {
+  if (!configLoaded) {
+    configLoaded = Promise.all([fetchJson(BREAKPOINTS_URL), fetchJson(MANIFEST_URL)]).then(([breakpointsRes, manifestRes]) => {
+      breakpointsCache = breakpointsRes && breakpointsRes.mobileMax ? breakpointsRes : DEFAULT_BREAKPOINTS;
       manifest = manifestRes || {};
-      const pageKey = currentPageKey();
-
-      function loadAndApply() {
-        const tier = tierFromWidth(window.innerWidth, bp);
-        loadOverridesStore(pageKey).then((store) => {
-          applyStore(store, tier);
-          window.dispatchEvent(new CustomEvent("tp-overrides-applied"));
-        });
-      }
-
-      loadAndApply();
-
-      let lastTier = tierFromWidth(window.innerWidth, bp);
-      window.addEventListener("resize", () => {
-        const tier = tierFromWidth(window.innerWidth, bp);
-        if (tier !== lastTier) {
-          lastTier = tier;
-          loadAndApply();
-        }
-      });
     });
   }
+  return configLoaded;
+}
 
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", boot);
-  } else {
-    boot();
-  }
+let lastTier: string | null = null;
+
+/* Re-scans the DOM for the CURRENT page (stashes any newly-appeared tagged elements —
+   stashOriginalText is already idempotent per-element — and (re-)applies overrides for
+   them). Safe to call repeatedly. Needed after every client-side TanStack Router
+   navigation: SPA route changes swap page content without a full reload, so a one-time
+   boot() would otherwise never see elements that only exist on a page navigated to
+   later (e.g. the footer doesn't exist on /admin, only on /). */
+export function rescanEditorRuntime(): void {
+  if (typeof window === "undefined") return;
+  ensureConfigLoaded().then(() => {
+    const bp = breakpointsCache || DEFAULT_BREAKPOINTS;
+    stashOriginalText();
+    const pageKey = currentPageKey();
+    const tier = tierFromWidth(window.innerWidth, bp);
+    lastTier = tier;
+    loadOverridesStore(pageKey).then((store) => {
+      applyStore(store, tier);
+      window.dispatchEvent(new CustomEvent("tp-overrides-applied"));
+    });
+  });
+}
+
+let resizeListenerAttached = false;
+
+/* Sets up the resize-driven re-apply (once). Actual stash+apply work now happens via
+   rescanEditorRuntime(), called once on mount and again on every route change from
+   __root.tsx — this function no longer does that work itself. */
+export function initEditorRuntime(): void {
+  if (resizeListenerAttached) return;
+  resizeListenerAttached = true;
+  if (typeof window === "undefined") return;
+  window.addEventListener("resize", () => {
+    const bp = breakpointsCache || DEFAULT_BREAKPOINTS;
+    const tier = tierFromWidth(window.innerWidth, bp);
+    if (tier !== lastTier) {
+      rescanEditorRuntime();
+    }
+  });
 }
