@@ -177,31 +177,18 @@ export function EditorPanel() {
     setOpen(false);
   }
 
-  if (!open) {
-    return (
-      <button
-        type="button"
-        aria-label="פתיחת עורך"
-        onClick={() => setOpen(true)}
-        style={trigger}
-        data-editor-panel=""
-      >
-        ✎
-      </button>
-    );
-  }
-
   return (
     <>
       <button
         type="button"
         aria-label="פתיחת עורך"
-        onClick={closePanel}
-        style={{ ...trigger, bottom: "12px", left: "12px", display: "none" }}
+        onClick={() => (open ? closePanel() : setOpen(true))}
+        style={trigger}
         data-editor-panel=""
       >
         ✎
       </button>
+      {open && (
       <div style={card} data-editor-panel="">
         <p style={heading}>עורך תוכן</p>
         {!elementId ? (
@@ -258,6 +245,7 @@ export function EditorPanel() {
         </button>
         {error && <span style={{ color: "#dc2626", fontSize: "12px" }}>{error}</span>}
       </div>
+      )}
     </>
   );
 }
