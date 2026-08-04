@@ -30,7 +30,7 @@ const MAX_UNDO = 20;
 /* Device-width preview: a single fixed-pixel-width iframe re-loads the current route at
    the target breakpoint's width, so the site's own @media queries evaluate for real. */
 const DEVICE_WIDTHS: Record<string, number> = { desktop: 1600, laptop: 1200, tablet: 900, mobile: 390 };
-let activeDoc: Document = document;
+let activeDoc: Document | undefined; /* set in initEditorPanel(); never touched at import time (SSR) */
 let previewMode: string = "normal";
 let previewOverlay: HTMLDivElement | null = null;
 let previewFrame: HTMLIFrameElement | null = null;
@@ -384,7 +384,7 @@ function fetchJson(url: string): Promise<any> {
 }
 
 function findById(elementId: string): HTMLElement | null {
-  return activeDoc.querySelector('[data-editor-id="' + cssEscape(elementId) + '"]');
+  return activeDoc!.querySelector('[data-editor-id="' + cssEscape(elementId) + '"]');
 }
 
 function scopePayload(elementId: string): { scope: "global"; region?: string } | { scope: "page"; page?: string } | null {
@@ -1515,6 +1515,7 @@ export function initEditorPanel() {
   if (window.self !== window.top) {
     if (new URLSearchParams(location.search).get("tpDevicePreview") === "1") return;
   }
+  activeDoc = document;
   const myGeneration = ++initGeneration;
   Promise.all([fetchJson(MANIFEST_URL), fetchJson(BREAKPOINTS_URL)]).then(([manifestRes, breakpointsRes]) => {
     if (myGeneration !== initGeneration) return; // superseded by a later init/destroy cycle (e.g. StrictMode's double-invoke)
