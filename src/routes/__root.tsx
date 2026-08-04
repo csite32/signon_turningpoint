@@ -13,7 +13,6 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { EditorLogin } from "../components/EditorLogin";
 import { EditorPanel } from "../components/EditorPanel";
-import { EditorDiagnostic } from "../components/EditorDiagnostic";
 import { isEditorEnvironment } from "../lib/editor/environment";
 import { initEditorRuntime } from "../lib/editor/editor-runtime";
 
@@ -133,28 +132,8 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <Outlet />
-      {isEditorEnvironment() && (
-        <div
-          style={{
-            position: "fixed",
-            top: "8px",
-            left: "8px",
-            zIndex: 999999,
-            background: "black",
-            color: "#0f0",
-            fontFamily: "monospace",
-            fontSize: "11px",
-            padding: "6px 10px",
-            borderRadius: "4px",
-            pointerEvents: "none",
-          }}
-        >
-          EDITOR ENV: ON
-        </div>
-      )}
       {isEditorEnvironment() && <EditorLogin />}
       {isEditorEnvironment() && <EditorPanel />}
-      <EditorDiagnostic />
     </QueryClientProvider>
   );
 }
