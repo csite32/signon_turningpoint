@@ -12,12 +12,18 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { EditorLogin } from "../components/EditorLogin";
+import { EditorPanel } from "../components/EditorPanel";
+import { getOverrides } from "../lib/editor/overrides-repo";
+
+const PUBLISHED_HOSTS = ["signon-turning-point.lovable.app"];
 
 function isEditorEnvironment(): boolean {
   if (typeof window === "undefined") return false;
   if (import.meta.env.MODE !== "development") return false;
-  var host = window.location.hostname;
-  return host.startsWith("id-preview--") || host === "localhost" || host === "127.0.0.1";
+  const host = window.location.hostname;
+  if (host === "localhost" || host === "127.0.0.1") return true;
+  if (PUBLISHED_HOSTS.includes(host)) return false;
+  return /^id-preview(-[a-z0-9]+)?--/.test(host) && host.endsWith(".lovable.app");
 }
 
 function NotFoundComponent() {
@@ -130,18 +136,16 @@ function RootComponent() {
 
   useEffect(() => {
     if (!isEditorEnvironment()) return;
-    fetch("/editor-data-smoketest.json", { cache: "no-store" })
-      .then(function (r) { return r.ok ? r.json() : null; })
-      .then(function (data) {
-        if (!data) return;
-        Object.keys(data).forEach(function (id) {
-          var el = document.querySelector('[data-editor-id="' + id + '"]');
-          if (el && typeof data[id].text === "string") {
-            el.textContent = data[id].text;
-          }
-        });
+    const targetId = "page-index__footer-copyright-smoketest";
+    getOverrides("page", "index")
+      .then((rows) => {
+        const row = rows.find((r) => r.element_id === targetId);
+        const text = (row?.data as { text?: unknown } | null)?.text;
+        if (typeof text !== "string") return;
+        const el = document.querySelector(`[data-editor-id="${targetId}"]`);
+        if (el) el.textContent = text;
       })
-      .catch(function () {});
+      .catch(() => {});
   }, []);
 
   return (
@@ -168,6 +172,7 @@ function RootComponent() {
         </div>
       )}
       {isEditorEnvironment() && <EditorLogin />}
+      {isEditorEnvironment() && <EditorPanel />}
     </QueryClientProvider>
   );
 }
