@@ -11,6 +11,7 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { EditorLogin } from "../components/EditorLogin";
 
 function isEditorEnvironment(): boolean {
   if (typeof window === "undefined") return false;
@@ -166,6 +167,7 @@ function RootComponent() {
           EDITOR ENV: ON
         </div>
       )}
+      {isEditorEnvironment() && <EditorLogin />}
     </QueryClientProvider>
   );
 }
