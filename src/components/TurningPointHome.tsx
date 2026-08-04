@@ -253,11 +253,13 @@ export default function TurningPointHome() {
 
 
 
-      <section className="logos-section">
+      <section className="logos-section" data-editor-id="global__logos-section-bg">
 
-        <p className="logos-heading">
+        <div data-editor-move-wrap="global__logos-heading" style={{ display: "block" }}>
+        <p className="logos-heading" data-editor-id="global__logos-heading">
           עסקים ומוסדות שבחרו בנקודת מפנה <strong>כדי להוביל</strong>
         </p>
+        </div>
 
         <div className="logos-marquee">
           <div className="logos-track">
@@ -301,11 +303,11 @@ export default function TurningPointHome() {
 
             <div className="rec-title-block">
               <div className="rec-title-row1">
-                <span className="rec-title-text">מה קורה</span>
+                <div data-editor-move-wrap="global__rec-title-text" style={{ display: "block" }}><span className="rec-title-text" data-editor-id="global__rec-title-text">מה קורה</span></div>
                 <img src="/Group 161.svg" className="rec-icon" alt="" aria-hidden="true" />
               </div>
-              <strong className="rec-title-bold">כשסוגרים</strong>
-              <span className="rec-title-line3">את הפער</span>
+              <div data-editor-move-wrap="global__rec-title-bold" style={{ display: "block" }}><strong className="rec-title-bold" data-editor-id="global__rec-title-bold">כשסוגרים</strong></div>
+              <div data-editor-move-wrap="global__rec-title-line3" style={{ display: "block" }}><span className="rec-title-line3" data-editor-id="global__rec-title-line3">את הפער</span></div>
             </div>
 
             <div className="rec-nav">
@@ -334,7 +336,7 @@ export default function TurningPointHome() {
               </div>
 
               <div className="rec-caption-wrap">
-                <p className="rec-caption">ר׳ שמחה וידנבוים אירוע ״אזמרגדים״</p>
+                <div data-editor-move-wrap="global__rec-caption" style={{ width: "100%" }}><p className="rec-caption" data-editor-id="global__rec-caption">ר׳ שמחה וידנבוים אירוע ״אזמרגדים״</p></div>
               </div>
 
             </div>
@@ -365,18 +367,20 @@ export default function TurningPointHome() {
             <div className="footer-title-block">
               <div className="footer-heading-group">
                 <div className="footer-heading-row">
-                  <span className="footer-heading-text">השלב הבא שלך</span>
+                  <div data-editor-move-wrap="global__footer-heading-text" style={{ display: "block" }}><span className="footer-heading-text" data-editor-id="global__footer-heading-text">השלב הבא שלך</span></div>
                   <img src="/Group 82.svg" className="footer-heading-icon" alt="" aria-hidden="true" />
                 </div>
                 <div className="footer-red-block">
-                  <span className="footer-red-text">מתחיל כאן.</span>
+                  <div data-editor-move-wrap="global__footer-red-text" style={{ display: "block" }}><span className="footer-red-text" data-editor-id="global__footer-red-text">מתחיל כאן.</span></div>
                 </div>
               </div>
 
-              <p className="footer-desc">
+              <div data-editor-move-wrap="global__footer-desc" style={{ display: "block" }}>
+              <p className="footer-desc" data-editor-id="global__footer-desc">
                 אם העסק שלך בפרשת דרכים והגעת למסקנה<br />
                 שהגיע הזמן לנקודת מפנה אמיתית – בוא נדבר.
               </p>
+              </div>
             </div>
 
           </div>
@@ -399,7 +403,8 @@ export default function TurningPointHome() {
               </div>
 
 
-              <button type="submit" className="about-cta footer-submit-btn">
+              <div data-editor-move-wrap="global__footer-submit-btn" style={{ alignSelf: "flex-end", width: "fit-content" }}>
+              <button type="submit" className="about-cta footer-submit-btn" data-editor-id="global__footer-submit-btn">
                 <span className="acirc">
                   <svg viewBox="0 0 32 31" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M20.9549 2H2.00001V20.9756" stroke="white" strokeWidth="4"></path>
@@ -408,6 +413,7 @@ export default function TurningPointHome() {
                 </span>
                 <span className="cta-text">שליחה</span>
               </button>
+              </div>
 
             </form>
           </div>
@@ -417,8 +423,8 @@ export default function TurningPointHome() {
 
       <div className="bottom-bar">
         <div className="bottom-bar-inner">
-          <p className="bottom-bar-text" data-editor-id="page-index__footer-copyright-smoketest">© כל הזכויות שמורות 2026</p>
-          <p className="bottom-bar-text">עיצוב: רות בנדיקט | פיתוח: חיה פוגל Csite</p>
+          <div data-editor-move-wrap="global__bottom-bar-copyright" style={{ display: "block" }}><p className="bottom-bar-text" data-editor-id="global__bottom-bar-copyright">© כל הזכויות שמורות 2026</p></div>
+          <div data-editor-move-wrap="global__bottom-bar-credits" style={{ display: "block" }}><p className="bottom-bar-text" data-editor-id="global__bottom-bar-credits">עיצוב: רות בנדיקט | פיתוח: חיה פוגל Csite</p></div>
         </div>
       </div>
     </>
