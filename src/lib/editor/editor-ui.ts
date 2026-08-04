@@ -384,7 +384,7 @@ function fetchJson(url: string): Promise<any> {
 }
 
 function findById(elementId: string): HTMLElement | null {
-  return document.querySelector('[data-editor-id="' + cssEscape(elementId) + '"]');
+  return activeDoc.querySelector('[data-editor-id="' + cssEscape(elementId) + '"]');
 }
 
 function scopePayload(elementId: string): { scope: "global"; region?: string } | { scope: "page"; page?: string } | null {
