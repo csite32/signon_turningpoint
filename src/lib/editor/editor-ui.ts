@@ -21,6 +21,7 @@
 import { sanitizeRichHtml, isSafeLinkUrl } from "./editor-runtime";
 import { getOverrides, upsertOverride, resetOverride, resetOverrideForPage } from "./overrides-repo";
 import { uploadEditorMedia } from "./media-provider";
+import { disableEditMode } from "./edit-mode";
 
 const MANIFEST_URL = "/editor-data/config/elements.json";
 const BREAKPOINTS_URL = "/editor-data/config/breakpoints.json";
@@ -329,6 +330,7 @@ type PanelEls = {
   undoBtn: HTMLButtonElement;
   resetElBtn: HTMLButtonElement;
   resetPageBtn: HTMLButtonElement;
+  exitBtn: HTMLButtonElement;
 };
 
 let els: PanelEls;
