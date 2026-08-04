@@ -328,7 +328,7 @@ export default function TurningPointAbout() {
             <div className="rec-title-block">
               <div className="rec-title-row1">
                 <div data-editor-move-wrap="global__rec-title-text" style={{ display: "block" }}><span className="rec-title-text" data-editor-id="global__rec-title-text">מה קורה</span></div>
-                <img src="/Group 161.svg" className="rec-icon" alt="" aria-hidden="true" />
+                <img src="/Group 161.svg" className="rec-icon" data-editor-id="global__rec-icon" alt="" aria-hidden="true" />
               </div>
               <div data-editor-move-wrap="global__rec-title-bold" style={{ display: "block" }}><strong className="rec-title-bold" data-editor-id="global__rec-title-bold">כשסוגרים</strong></div>
               <div data-editor-move-wrap="global__rec-title-line3" style={{ display: "block" }}><span className="rec-title-line3" data-editor-id="global__rec-title-line3">את הפער</span></div>
@@ -336,10 +336,10 @@ export default function TurningPointAbout() {
 
             <div className="rec-nav">
               <button className="rec-nav-btn" aria-label="המלצה קודמת">
-                <img src="/Group 57.svg" className="rec-nav-arrow" alt="" />
+                <img src="/Group 57.svg" className="rec-nav-arrow" data-editor-id="global__rec-nav-prev" alt="" />
               </button>
               <button className="rec-nav-btn" aria-label="המלצה הבאה">
-                <img src="/Group 58.svg" className="rec-nav-arrow" alt="" />
+                <img src="/Group 58.svg" className="rec-nav-arrow" data-editor-id="global__rec-nav-next" alt="" />
               </button>
             </div>
 
@@ -387,7 +387,7 @@ export default function TurningPointAbout() {
               <div className="footer-heading-group">
                 <div className="footer-heading-row">
                   <div data-editor-move-wrap="global__footer-heading-text" style={{ display: "block" }}><span className="footer-heading-text" data-editor-id="global__footer-heading-text">השלב הבא שלך</span></div>
-                  <img src="/Group 82.svg" className="footer-heading-icon" alt="" aria-hidden="true" />
+                  <img src="/Group 82.svg" className="footer-heading-icon" data-editor-id="global__footer-heading-icon" alt="" aria-hidden="true" />
                 </div>
                 <div className="footer-red-block">
                   <div data-editor-move-wrap="global__footer-red-text" style={{ display: "block" }}><span className="footer-red-text" data-editor-id="global__footer-red-text">מתחיל כאן.</span></div>
