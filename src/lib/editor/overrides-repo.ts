@@ -37,3 +37,7 @@ export async function upsertOverride(
   if (error) throw error;
   return row;
 }
+export async function resetOverride(elementId: string) {
+  const { error } = await supabase.from("editor_overrides").delete().eq("element_id", elementId);
+  if (error) throw error;
+}
