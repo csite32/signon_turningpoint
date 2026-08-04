@@ -1,7 +1,8 @@
-import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, type CSSProperties } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAdminAccess } from "@/hooks/use-admin-access";
+import { enableEditMode, disableEditMode } from "@/lib/editor/edit-mode";
 
 export const Route = createFileRoute("/admin/")({
   head: () => ({
@@ -69,8 +70,14 @@ function AdminDashboardPage() {
   }, [state.status, navigate]);
 
   async function handleSignOut() {
+    disableEditMode();
     await supabase.auth.signOut();
     navigate({ to: "/admin/login", replace: true });
+  }
+
+  function handleEditSite() {
+    enableEditMode();
+    navigate({ to: "/" });
   }
 
   if (state.status === "loading" || state.status === "unauthenticated") {
@@ -103,9 +110,9 @@ function AdminDashboardPage() {
         <h1 style={{ margin: "0 0 8px", fontSize: "20px", fontWeight: 600 }}>לוח בקרה</h1>
         <p style={{ margin: "0 0 20px", color: "#555" }}>מחוברת כ-{state.email}</p>
         <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
-          <Link to="/" style={primaryButtonStyle}>
+          <button type="button" onClick={handleEditSite} style={primaryButtonStyle}>
             עריכת האתר
-          </Link>
+          </button>
           <button type="button" style={buttonStyle} onClick={handleSignOut}>
             התנתקות
           </button>
