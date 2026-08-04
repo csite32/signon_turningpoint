@@ -11,10 +11,10 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
-import { EditorLogin } from "../components/EditorLogin";
 import { EditorPanel } from "../components/EditorPanel";
-import { isEditorEnvironment } from "../lib/editor/environment";
 import { initEditorRuntime } from "../lib/editor/editor-runtime";
+import { useAdminAccess } from "../hooks/use-admin-access";
+import { useEditModeFlag } from "../hooks/use-edit-mode-flag";
 
 function NotFoundComponent() {
   return (
@@ -123,6 +123,9 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const adminAccess = useAdminAccess();
+  const editModeOn = useEditModeFlag();
+  const showEditor = adminAccess.status === "authorized" && editModeOn;
 
   useEffect(() => {
     initEditorRuntime();
@@ -132,8 +135,7 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <Outlet />
-      {isEditorEnvironment() && <EditorLogin />}
-      {isEditorEnvironment() && <EditorPanel />}
+      {showEditor && <EditorPanel />}
     </QueryClientProvider>
   );
 }
