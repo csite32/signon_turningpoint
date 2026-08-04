@@ -1,0 +1,9 @@
+{
+  "page-index__footer-copyright-smoketest": {
+    "scope": "page",
+    "page": "index",
+    "label": "פוטר — טקסט זכויות יוצרים (Smoke Test)",
+    "enabledControls": ["text"],
+    "textMode": "plain"
+  }
+}
