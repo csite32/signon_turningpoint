@@ -602,9 +602,11 @@ function onUndo() {
   if (selected && selected.id === entry.elementId) {
     if (entry.property !== "text" && entry.tier) {
       els.tier.value = entry.tier;
+      setDevicePreview(entry.tier);
     }
     syncFieldsFromDom();
   } else if (activateSelection(entry.elementId, el, entry.tier || undefined)) {
+    if (entry.tier) setDevicePreview(entry.tier);
     ensureSavedLoaded(entry.elementId);
     syncFieldsFromDom();
   }
