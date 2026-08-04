@@ -134,8 +134,22 @@ function RootComponent() {
     };
     const schedule = w.requestIdleCallback ?? ((cb: () => void) => window.setTimeout(cb, 0));
     const cancel = w.cancelIdleCallback ?? window.clearTimeout;
-    const id = schedule(() => initEditorRuntime());
-    return () => cancel(id);
+
+    let idleId: number | undefined;
+    function runWhenIdle() {
+      idleId = schedule(() => initEditorRuntime());
+    }
+
+    if (document.readyState === "complete") {
+      runWhenIdle();
+    } else {
+      window.addEventListener("load", runWhenIdle, { once: true });
+    }
+
+    return () => {
+      window.removeEventListener("load", runWhenIdle);
+      if (idleId !== undefined) cancel(idleId);
+    };
   }, []);
 
   return (
