@@ -65,66 +65,82 @@ export default function TurningPointHome() {
         <div className="hero-field" id="heroField"></div>
 
         <div className="overlay hero-overlay">
-          <p>משרד מיתוג ופרסום המלווה בעלי עסקים בשלב הצמיחה הבא <br className="hero-br" /> מהאסטרטגיה והמיצוב דרך מיתוג ועיצוב, עד לקמפיין שיוצא לאוויר.</p>
+          <div data-editor-move-wrap="page-index__hero-overlay-text" style={{ display: "block" }}>
+          <p data-editor-id="page-index__hero-overlay-text">משרד מיתוג ופרסום המלווה בעלי עסקים בשלב הצמיחה הבא <br className="hero-br" /> מהאסטרטגיה והמיצוב דרך מיתוג ועיצוב, עד לקמפיין שיוצא לאוויר.</p>
+          </div>
 
-          <a href="#projects" className="about-cta anim-cta">
+          <div data-editor-move-wrap="page-index__hero-cta" style={{ display: "block" }}>
+          <a href="#projects" className="about-cta anim-cta" data-editor-id="page-index__hero-cta">
             <span className="acirc"><svg viewBox="0 0 32 31" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20.9549 2H2.00001V20.9756" stroke="white" strokeWidth="4"></path><path d="M1.75078 1.77246L30.3279 29.3771" stroke="white" strokeWidth="4"></path></svg></span>
             <span className="cta-text">להצצה<br />בפרויקטים</span>
           </a>
+          </div>
         </div>
       </main>
 
 
       <section className="about">
 
-        <div className="about-line1">כשהעסק שלך מגיע</div>
+        <div data-editor-move-wrap="page-index__about-line1" style={{ display: "block" }}><div className="about-line1" data-editor-id="page-index__about-line1">כשהעסק שלך מגיע</div></div>
 
-        <div className="parshat-pill">
-          <span className="parshat-text">לפרשת דרכים</span>
+        <div data-editor-move-wrap="page-index__parshat-pill" style={{ display: "block" }}>
+        <div className="parshat-pill" data-editor-id="page-index__parshat-pill">
+          <div data-editor-move-wrap="page-index__parshat-text" style={{ display: "block" }}><span className="parshat-text" data-editor-id="page-index__parshat-text">לפרשת דרכים</span></div>
           <span className="parshat-dot"></span>
         </div>
+        </div>
 
-        <div className="arrow-row">
+        <div data-editor-move-wrap="page-index__arrow-row" style={{ display: "block" }}>
+        <div className="arrow-row" data-editor-id="page-index__arrow-row">
           <svg className="longarrow" width="239" height="237" viewBox="0 0 239 237" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M25.5717 96.1699L2.52564 118.273L24.6527 141.344" stroke="white" strokeWidth="3.57254"></path>
       <path d="M1.95697 118.285L238.733 118.285" stroke="white" strokeWidth="3.57254"></path>
       </svg>
-          <span className="arrow-text" style={{marginLeft: '16px'}}>הוא זקוק</span>
+          <div data-editor-move-wrap="page-index__arrow-text" style={{ display: "flex" }}><span className="arrow-text" style={{marginLeft: '16px'}} data-editor-id="page-index__arrow-text">הוא זקוק</span></div>
+        </div>
         </div>
 
         <div className="pills-block">
-          <div className="outline-pill anim-pill">לנקודת מפנה</div>
+          <div data-editor-move-wrap="page-index__outline-pill" style={{ display: "block", alignSelf: "center" }}><div className="outline-pill anim-pill" data-editor-id="page-index__outline-pill">לנקודת מפנה</div></div>
           <div className="red-row">
             <div className="arrow-circle anim-circle"><svg width="64" height="40" viewBox="0 0 64 40" fill="none" xmlns="http://www.w3.org/2000/svg">
       <line x1="0.301758" y1="19.6859" x2="63.416" y2="19.6859" stroke="white" strokeWidth="2.97709"></line>
       <path d="M19.9465 0.334229C18.7557 6.58611 13.0992 19.6853 4.61226e-05 19.6853" stroke="white" strokeWidth="3.5725"></path>
       <path d="M19.9465 39.3342C18.7557 33.0823 13.0992 19.9832 4.78143e-05 19.9832" stroke="white" strokeWidth="3.5725"></path>
       </svg></div>
-            <div className="red-block anim-block">אסטרטגית</div>
+            <div data-editor-move-wrap="page-index__red-block" style={{ flex: "1 1 auto", minWidth: 0 }}><div className="red-block anim-block" data-editor-id="page-index__red-block">אסטרטגית</div></div>
           </div>
         </div>
 
-        <div className="about-desc">
+        <div data-editor-move-wrap="page-index__about-desc" style={{ display: "block" }}>
+        <div className="about-desc" data-editor-id="page-index__about-desc">
           משרד מיתוג ופרסום המלווה בעלי עסקים בשלב הצמיחה הבא<br />
           מהאסטרטגיה והמיצוב דרך מיתוג ועיצוב, עד לקמפיין שייצא לאוויר.<br />
           <span className="bold">הכל תחת ראייה אחת, מתואמת ומדויקת.</span>
         </div>
+        </div>
 
-        <a href="#" className="about-cta anim-cta">
+        <div data-editor-move-wrap="page-index__about-cta" style={{ display: "block" }}>
+        <a href="#" className="about-cta anim-cta" data-editor-id="page-index__about-cta">
           <span className="acirc"><svg viewBox="0 0 32 31" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20.9549 2H2.00001V20.9756" stroke="white" strokeWidth="4"></path><path d="M1.75078 1.77246L30.3279 29.3771" stroke="white" strokeWidth="4"></path></svg></span>
           <span className="cta-text">לשיחת אבחון<br />אסטרטגית</span>
         </a>
+        </div>
 
       </section>
 
       <section className="next-section">
-        <div className="next-box">
-          <p className="next-text">
+        <div data-editor-move-wrap="page-index__next-box">
+        <div className="next-box" data-editor-id="page-index__next-box">
+          <div data-editor-move-wrap="page-index__next-text" style={{ display: "block" }}>
+          <p className="next-text" data-editor-id="page-index__next-text">
             העסק שלך מצליח ומקצועי,<br />
             אבל יש פער בין מי שאתה באמת לבין הדרך שבה השוק תופס אותך.<br />
             זה קורה כשאתה מוצא את עצמך בפרשת דרכים:<br />
             <strong>הצמיחה דורשת לעלות ליגה, אבל המיתוג הישן משאיר אותך מאחור.</strong>
           </p>
+          </div>
+        </div>
         </div>
         <div className="next-circle">
           <svg viewBox="0 0 43 68" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -140,7 +156,7 @@ export default function TurningPointHome() {
       <section className="hero2-section">
         <div className="hero2-header">
           <div className="hero2-row hero2-row1">
-            <div className="hero2-pill-outline">אם זה מרגיש מוכר</div>
+            <div data-editor-move-wrap="page-index__hero2-pill-outline" style={{ display: "block" }}><div className="hero2-pill-outline" data-editor-id="page-index__hero2-pill-outline">אם זה מרגיש מוכר</div></div>
             <div className="hero2-star-circle">
               <svg viewBox="0 0 54 60" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M27.8359 27.0312L51.5342 13.3496L53.3018 16.4111L30.1846 29.7559L53.2959 43.0996L51.5283 46.1611L27.8359 32.4814V59.5H24.3008V33.1543L1.77344 46.1611L0.00585938 43.0996L23.1152 29.7559L0 16.4111L1.76758 13.3496L24.3008 26.3584V0H27.8359V27.0312Z" fill="#DD4041" />
@@ -148,15 +164,17 @@ export default function TurningPointHome() {
             </div>
           </div>
           <div className="hero2-row hero2-row2">
-            <div className="hero2-pill-solid anim-hero2-word">הגעת</div>
-            <div className="hero2-rect">לנקודת מפנה.</div>
+            <div data-editor-move-wrap="page-index__hero2-pill-solid" style={{ display: "block" }}><div className="hero2-pill-solid anim-hero2-word" data-editor-id="page-index__hero2-pill-solid">הגעת</div></div>
+            <div data-editor-move-wrap="page-index__hero2-rect" style={{ display: "block" }}><div className="hero2-rect" data-editor-id="page-index__hero2-rect">לנקודת מפנה.</div></div>
           </div>
         </div>
-        <p className="hero2-text">
+        <div data-editor-move-wrap="page-index__hero2-text" style={{ display: "block" }}>
+        <p className="hero2-text" data-editor-id="page-index__hero2-text">
           בנקודת מפנה, אנחנו מחברים את כל הקצוות בראייה אסטרטגית אחת.<br />
           אנחנו מוודאים שהסיפור העסקי שלך עובר בצורה חדה, עוצמתית ואחידה<br />
           <strong>כך שהמקצוענות שלך תהיה הדבר הראשון שהלקוח פוגש.</strong>
         </p>
+        </div>
       </section>
 
 
@@ -180,12 +198,14 @@ export default function TurningPointHome() {
         <div className="proj-scroll-zone">
           <div className="proj-sticky">
 
-            <p className="projects-heading">
+            <div data-editor-move-wrap="page-index__projects-heading" style={{ display: "block" }}>
+            <p className="projects-heading" data-editor-id="page-index__projects-heading">
               פרויקטים שעברו את<br />
               <strong>נקודת המפנה</strong> שלהם
             </p>
+            </div>
             <div className="projects-row">
-              <div className="projects-pill">projects</div>
+              <div data-editor-move-wrap="page-index__projects-pill" style={{ display: "block" }}><div className="projects-pill" data-editor-id="page-index__projects-pill">projects</div></div>
               <div className="projects-star-circle">
                 <svg viewBox="0 0 54 60" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M27.8359 27.0312L51.5342 13.3496L53.3018 16.4111L30.1846 29.7559L53.2959 43.0996L51.5283 46.1611L27.8359 32.4814V59.5H24.3008V33.1543L1.77344 46.1611L0.00585938 43.0996L23.1152 29.7559L0 16.4111L1.76758 13.3496L24.3008 26.3584V0H27.8359V27.0312Z" fill="rgba(225,78,80,1)" />
@@ -196,7 +216,8 @@ export default function TurningPointHome() {
             <div className="proj-grid">
 
               <div className="proj-row proj-row--1">
-                <div className="proj-card" data-proj-id="1" data-proj-href="#">
+                <div data-editor-move-wrap="page-index__proj-card-1" style={{ flex: 1, minWidth: 0, maxWidth: 680 }}>
+                <div className="proj-card" data-proj-id="1" data-proj-href="#" data-editor-id="page-index__proj-card-1">
                   <img src="/projects/8d5d99ec020d90eeb06e65c581ad99554635396e.webp" alt="פרויקט 1" loading="lazy" />
                   <div className="proj-card-border"></div>
                   <div className="proj-notch-cover"></div>
@@ -204,35 +225,44 @@ export default function TurningPointHome() {
                     <img src="/Group 68.svg" alt="" aria-hidden="true" />
                   </div>
                 </div>
+                </div>
               </div>
 
               <div className="proj-row proj-row--2">
-                <div className="proj-card" data-proj-id="2" data-proj-href="#">
+                <div data-editor-move-wrap="page-index__proj-card-2" style={{ flex: 1, minWidth: 0 }}>
+                <div className="proj-card" data-proj-id="2" data-proj-href="#" data-editor-id="page-index__proj-card-2">
                   <img src="/projects/ba9a22ef141cd47c248c5abc2fd4b037b15e5d75.webp" alt="פרויקט 2" loading="lazy" />
                   <div className="proj-card-border"></div>
                   <div className="proj-notch-cover"></div>
                   <div className="proj-corner"><img src="/Group 68.svg" alt="" aria-hidden="true" /></div>
                 </div>
-                <div className="proj-card" data-proj-id="3" data-proj-href="#">
+                </div>
+                <div data-editor-move-wrap="page-index__proj-card-3" style={{ flex: 1, minWidth: 0 }}>
+                <div className="proj-card" data-proj-id="3" data-proj-href="#" data-editor-id="page-index__proj-card-3">
                   <img src="/projects/ba9a22ef141cd47c248c5abc2fd4b037b15e5d75-1.webp" alt="פרויקט 3" loading="lazy" />
                   <div className="proj-card-border"></div>
                   <div className="proj-notch-cover"></div>
                   <div className="proj-corner"><img src="/Group 68.svg" alt="" aria-hidden="true" /></div>
                 </div>
+                </div>
               </div>
 
               <div className="proj-row proj-row--3">
-                <div className="proj-card" data-proj-id="4" data-proj-href="#">
+                <div data-editor-move-wrap="page-index__proj-card-4" style={{ flex: 1, minWidth: 0 }}>
+                <div className="proj-card" data-proj-id="4" data-proj-href="#" data-editor-id="page-index__proj-card-4">
                   <img src="/projects/ba9a22ef141cd47c248c5abc2fd4b037b15e5d75-2.webp" alt="פרויקט 4" loading="lazy" />
                   <div className="proj-card-border"></div>
                   <div className="proj-notch-cover"></div>
                   <div className="proj-corner"><img src="/Group 68.svg" alt="" aria-hidden="true" /></div>
                 </div>
-                <div className="proj-card" data-proj-id="5" data-proj-href="#">
+                </div>
+                <div data-editor-move-wrap="page-index__proj-card-5" style={{ flex: 1, minWidth: 0 }}>
+                <div className="proj-card" data-proj-id="5" data-proj-href="#" data-editor-id="page-index__proj-card-5">
                   <img src="/projects/ba9a22ef141cd47c248c5abc2fd4b037b15e5d75-3.webp" alt="פרויקט 5" loading="lazy" />
                   <div className="proj-card-border"></div>
                   <div className="proj-notch-cover"></div>
                   <div className="proj-corner"><img src="/Group 68.svg" alt="" aria-hidden="true" /></div>
+                </div>
                 </div>
               </div>
 
@@ -241,10 +271,12 @@ export default function TurningPointHome() {
         </div>
 
         <div className="proj-cta-wrap">
-          <button className="proj-cta-btn">
+          <div data-editor-move-wrap="page-index__proj-cta-btn" style={{ display: "block" }}>
+          <button className="proj-cta-btn" data-editor-id="page-index__proj-cta-btn">
             לכל הפרויקטים שפרצו דרך
             <img src="/Group 96.svg" alt="" aria-hidden="true" className="proj-cta-icon" />
           </button>
+          </div>
         </div>
 
       </section>

@@ -1315,3 +1315,8 @@
     .bottom-bar-inner{ padding:0 16px; }
     .bottom-bar-text{ font-size:16px; }
   }
+[data-editor-move-wrap] > .next-box{ width:100%; }
+[data-editor-move-wrap="page-index__next-box"]{ width:88%; max-width:1300px; }
+@media (max-width:760px){
+  [data-editor-move-wrap="page-index__next-box"]{ width:90%; }
+}
