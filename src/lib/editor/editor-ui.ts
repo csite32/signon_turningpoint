@@ -1141,26 +1141,30 @@ function onSave() {
   if (!scope) return;
 
   const draft = draftByElement[selected.id] || {};
-  const changes: OverrideEntry = {};
+  /* upsertOverride replaces the whole data jsonb — start from what's already saved so
+     tiers untouched this session aren't silently wiped. */
+  const baseline: OverrideEntry = savedCache[selected.id] || {};
+  const changes: OverrideEntry = { ...baseline };
   const textMode = textModeFor(selected.id);
   if (textMode === "rich") {
     changes.richText = sanitizeRichHtml(richTextTargetEl(selected.id, selected.el).innerHTML);
   } else if (textMode === "plain") {
     changes.text = selected.el.textContent || "";
   }
-  const tiers: Record<string, Record<string, string>> = {};
   if (draft.tiers) {
-    Object.keys(draft.tiers).forEach((tier) => {
-      const tierProps: Record<string, string> = {};
+    (["desktop", "laptop", "tablet", "mobile"] as const).forEach((tier) => {
       const tierDraft = draft.tiers![tier];
+      if (!tierDraft) return; /* untouched this session — leave baseline's tier block as-is */
+      const mergedTier: Record<string, string> = { ...((baseline as any)[tier] || {}) };
       Object.keys(tierDraft).forEach((propKey) => {
         const val = tierDraft[propKey];
-        if (val) tierProps[propKey] = val;
+        if (val) mergedTier[propKey] = val;
+        else delete mergedTier[propKey]; /* null = explicitly cleared this session */
       });
-      if (Object.keys(tierProps).length) tiers[tier] = tierProps;
+      if (Object.keys(mergedTier).length) (changes as any)[tier] = mergedTier;
+      else delete (changes as any)[tier];
     });
   }
-  if (Object.keys(tiers).length) Object.assign(changes, tiers);
 
   if (linkModeFor(selected.id)) {
     const linkUrl = els.linkUrl.value;
