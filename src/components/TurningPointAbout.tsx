@@ -72,15 +72,15 @@ export default function TurningPointAbout() {
             </div>
             <div data-editor-move-wrap="page-about__hero-pill" style={{ display: "block" }}><div className="about-hero-pill" data-editor-id="page-about__hero-pill">להכיר</div></div>
           </div>
-          <div data-editor-move-wrap="page-about__hero-intro" style={{ display: "block" }}>
-          <div className="about-hero-intro" data-editor-id="page-about__hero-intro">
-            <p>חני וורובל.<br />
-            במשך עשור ליוויתי מאות בעלי עסקים ומוסדות<br />
-            ברגעי פריצה. פעלתי מאחורי הקלעים בזיקוק<br />
-            נרטיבים ובניית תשתיות אסטרטגיות, צברתי<br />
-            ניסיון נדיר בתרגום ערך מופשט למסר עוצמתי<br />
-            שמניע אנשים לפעולה.</p>
-          </div>
+          <div className="about-hero-intro">
+            <div data-editor-move-wrap="page-about__hero-intro" style={{ display: "block" }}>
+              <p data-editor-id="page-about__hero-intro">חני וורובל.<br />
+              במשך עשור ליוויתי מאות בעלי עסקים ומוסדות<br />
+              ברגעי פריצה. פעלתי מאחורי הקלעים בזיקוק<br />
+              נרטיבים ובניית תשתיות אסטרטגיות, צברתי<br />
+              ניסיון נדיר בתרגום ערך מופשט למסר עוצמתי<br />
+              שמניע אנשים לפעולה.</p>
+            </div>
           </div>
         </div>
       </section>
