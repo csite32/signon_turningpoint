@@ -1403,7 +1403,7 @@ function onKeydown(e: KeyboardEvent) {
 }
 
 function wireGlobalListeners() {
-  attachSelectionListeners();
+  attachSelectionListeners(document);
   document.addEventListener("keydown", onKeydown);
 }
 
@@ -1411,6 +1411,11 @@ let initGeneration = 0;
 let built = false;
 
 export function initEditorPanel() {
+  /* The preview iframe loads the same route; without this it would build a second
+     floating panel inside itself. editor-runtime keeps running there, unmodified. */
+  if (window.self !== window.top) {
+    if (new URLSearchParams(location.search).get("tpDevicePreview") === "1") return;
+  }
   const myGeneration = ++initGeneration;
   Promise.all([fetchJson(MANIFEST_URL), fetchJson(BREAKPOINTS_URL)]).then(([manifestRes, breakpointsRes]) => {
     if (myGeneration !== initGeneration) return; // superseded by a later init/destroy cycle (e.g. StrictMode's double-invoke)
