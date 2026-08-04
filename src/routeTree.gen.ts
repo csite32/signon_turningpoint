@@ -11,7 +11,6 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as ApiEditorWriteTestRouteImport } from './routes/api/editor-write-test'
 
 const AboutRoute = AboutRouteImport.update({
   id: '/about',
@@ -23,40 +22,31 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiEditorWriteTestRoute = ApiEditorWriteTestRouteImport.update({
-  id: '/api/editor-write-test',
-  path: '/api/editor-write-test',
-  getParentRoute: () => rootRouteImport,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/api/editor-write-test': typeof ApiEditorWriteTestRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/api/editor-write-test': typeof ApiEditorWriteTestRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/api/editor-write-test': typeof ApiEditorWriteTestRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about' | '/api/editor-write-test'
+  fullPaths: '/' | '/about'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/api/editor-write-test'
-  id: '__root__' | '/' | '/about' | '/api/editor-write-test'
+  to: '/' | '/about'
+  id: '__root__' | '/' | '/about'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
-  ApiEditorWriteTestRoute: typeof ApiEditorWriteTestRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -75,31 +65,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/editor-write-test': {
-      id: '/api/editor-write-test'
-      path: '/api/editor-write-test'
-      fullPath: '/api/editor-write-test'
-      preLoaderRoute: typeof ApiEditorWriteTestRouteImport
-      parentRoute: typeof rootRouteImport
-    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
-  ApiEditorWriteTestRoute: ApiEditorWriteTestRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
