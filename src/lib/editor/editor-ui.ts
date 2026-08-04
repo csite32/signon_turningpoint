@@ -27,6 +27,14 @@ const MANIFEST_URL = "/editor-data/config/elements.json";
 const BREAKPOINTS_URL = "/editor-data/config/breakpoints.json";
 const MAX_UNDO = 20;
 
+/* Device-width preview: a single fixed-pixel-width iframe re-loads the current route at
+   the target breakpoint's width, so the site's own @media queries evaluate for real. */
+const DEVICE_WIDTHS: Record<string, number> = { desktop: 1600, laptop: 1200, tablet: 900, mobile: 390 };
+let activeDoc: Document = document;
+let previewMode: string = "normal";
+let previewOverlay: HTMLDivElement | null = null;
+let previewFrame: HTMLIFrameElement | null = null;
+
 /* Route → page key — duplicated from editor-runtime.ts's PAGE_KEY_BY_PATH, same
    deliberate small-duplication pattern as the local project (editor-ui.js/editor-runtime.js
    each had their own copy of this and of the sanitizer/link-allowlist). */
@@ -376,7 +384,7 @@ function fetchJson(url: string): Promise<any> {
 }
 
 function findById(elementId: string): HTMLElement | null {
-  return document.querySelector('[data-editor-id="' + cssEscape(elementId) + '"]');
+  return activeDoc.querySelector('[data-editor-id="' + cssEscape(elementId) + '"]');
 }
 
 function scopePayload(elementId: string): { scope: "global"; region?: string } | { scope: "page"; page?: string } | null {
@@ -594,9 +602,11 @@ function onUndo() {
   if (selected && selected.id === entry.elementId) {
     if (entry.property !== "text" && entry.tier) {
       els.tier.value = entry.tier;
+      setDevicePreview(entry.tier);
     }
     syncFieldsFromDom();
   } else if (activateSelection(entry.elementId, el, entry.tier || undefined)) {
+    if (entry.tier) setDevicePreview(entry.tier);
     ensureSavedLoaded(entry.elementId);
     syncFieldsFromDom();
   }
@@ -633,10 +643,10 @@ function onDocumentClick(e: MouseEvent) {
   selectElement(target.getAttribute("data-editor-id")!, target);
 }
 
-function attachSelectionListeners() {
-  document.addEventListener("mouseover", onMouseOver);
-  document.addEventListener("mouseout", onMouseOut);
-  document.addEventListener("click", onDocumentClick, true);
+function attachSelectionListeners(doc: Document) {
+  doc.addEventListener("mouseover", onMouseOver);
+  doc.addEventListener("mouseout", onMouseOut);
+  doc.addEventListener("click", onDocumentClick, true);
 }
 
 function detachSelectionListeners() {
@@ -648,6 +658,8 @@ function detachSelectionListeners() {
 function toggleSelectMode() {
   selectModeActive = !selectModeActive;
   document.documentElement.classList.toggle("tp-select-mode", selectModeActive);
+  const frameDoc = previewFrame && previewFrame.contentDocument;
+  if (frameDoc) frameDoc.documentElement.classList.toggle("tp-select-mode", selectModeActive);
   els.selectBtn.classList.toggle("tp-active", selectModeActive);
   els.selectBtn.textContent = selectModeActive ? "בחירה פעילה (Esc ליציאה)" : "בחירת אלמנט";
 }
@@ -1025,7 +1037,100 @@ function onPropInput(propKey: string) {
 function onTierChange() {
   endEditSession();
   const tier = els.tier.value;
+  setDevicePreview(tier);
   applyTierToDom(tier); /* savedCache is already warm from selectElement() */
+}
+
+/* ---------- device-width preview iframe ---------- */
+
+function setDevicePreview(mode: string) {
+  if (mode === previewMode) return;
+  previewMode = mode;
+  if (mode === "normal") {
+    if (previewOverlay) previewOverlay.classList.remove("tp-active");
+    activeDoc = document;
+    return;
+  }
+  if (!previewOverlay) buildPreviewOverlay();
+  previewOverlay!.classList.add("tp-active");
+  previewFrame!.style.width = DEVICE_WIDTHS[mode] + "px";
+
+  const url = new URL(location.href);
+  url.searchParams.set("tpDevicePreview", "1");
+  if (previewFrame!.dataset.loadedHref !== url.href) {
+    previewFrame!.dataset.loadedHref = url.href;
+    previewFrame!.src = url.href;
+  } else if (previewFrame!.contentDocument) {
+    activeDoc = previewFrame!.contentDocument;
+    /* Changing only the iframe's CSS width does not reliably fire a native resize event
+       inside it, and editor-runtime's own resize listener (which re-applies the correct
+       tier's overrides) depends on that event. */
+    if (previewFrame!.contentWindow) {
+      previewFrame!.contentWindow.dispatchEvent(new Event("resize"));
+    }
+  }
+}
+
+function buildPreviewOverlay() {
+  previewOverlay = document.createElement("div");
+  previewOverlay.id = "tp-preview-overlay";
+  previewFrame = document.createElement("iframe");
+  previewFrame.id = "tp-preview-frame";
+  previewFrame.addEventListener("load", onPreviewFrameLoad);
+  previewOverlay.appendChild(previewFrame);
+  document.body.appendChild(previewOverlay);
+}
+
+function onPreviewFrameLoad() {
+  if (previewMode === "normal") return;
+  const doc = previewFrame!.contentDocument;
+  if (!doc) return;
+  activeDoc = doc;
+  attachSelectionListeners(doc);
+  if (selectModeActive) doc.documentElement.classList.add("tp-select-mode");
+  if (!selected) return;
+
+  /* The iframe's `load` event fires once HTML parsing finishes, which can be BEFORE its
+     own editor-runtime finishes fetching+applying saved overrides (a separate async
+     chain) — wait for that page's own signal, with a bounded fallback. */
+  const elementId = selected.id;
+  const win = previewFrame!.contentWindow;
+  let rebound = false;
+  const doRebind = () => {
+    if (rebound) return;
+    rebound = true;
+    if (!selected || selected.id !== elementId) return;
+    const el = doc.querySelector<HTMLElement>('[data-editor-id="' + cssEscape(elementId) + '"]');
+    if (el) rebindSelectionToElement(el);
+  };
+  if (win) win.addEventListener("tp-overrides-applied", doRebind, { once: true });
+  setTimeout(doRebind, 800);
+}
+
+/* Re-points the current selection at the iframe's copy of the same element. Deliberately
+   not the same path as a fresh click: that would reset the tier dropdown and rebuild
+   every field, yanking focus if the user was mid-edit during the iframe's load. */
+function rebindSelectionToElement(el: HTMLElement) {
+  if (!selected) return;
+  selected.el = el;
+  el.classList.add("tp-selected-outline");
+  clearHoverOutline(el);
+  const tier = els.tier.value;
+  const activeInput = document.activeElement;
+  const isEditingAField = els.form.contains(activeInput) && activeInput !== els.tier;
+  if (!isEditingAField) {
+    const draft = draftByElement[selected.id];
+    const mode = textModeFor(selected.id);
+    if (mode === "rich") {
+      els.richEditor.innerHTML = draft && draft.richText !== undefined ? draft.richText : sanitizeRichHtml(richTextTargetEl(selected.id, el).innerHTML);
+    } else if (mode === "plain") {
+      els.text.value = draft && draft.text !== undefined ? draft.text : el.textContent || "";
+    }
+    if (linkModeFor(selected.id)) populateLinkFields(selected.id, el);
+    if (mediaTypeFor(selected.id)) populateMediaFields(selected.id, el);
+    renderDynamicControls();
+  }
+  applyTierToDom(tier);
 }
 
 /* ---------- save / reset ---------- */
@@ -1036,26 +1141,30 @@ function onSave() {
   if (!scope) return;
 
   const draft = draftByElement[selected.id] || {};
-  const changes: OverrideEntry = {};
+  /* upsertOverride replaces the whole data jsonb — start from what's already saved so
+     tiers untouched this session aren't silently wiped. */
+  const baseline: OverrideEntry = savedCache[selected.id] || {};
+  const changes: OverrideEntry = { ...baseline };
   const textMode = textModeFor(selected.id);
   if (textMode === "rich") {
     changes.richText = sanitizeRichHtml(richTextTargetEl(selected.id, selected.el).innerHTML);
   } else if (textMode === "plain") {
     changes.text = selected.el.textContent || "";
   }
-  const tiers: Record<string, Record<string, string>> = {};
   if (draft.tiers) {
-    Object.keys(draft.tiers).forEach((tier) => {
-      const tierProps: Record<string, string> = {};
+    (["desktop", "laptop", "tablet", "mobile"] as const).forEach((tier) => {
       const tierDraft = draft.tiers![tier];
+      if (!tierDraft) return; /* untouched this session — leave baseline's tier block as-is */
+      const mergedTier: Record<string, string> = { ...((baseline as any)[tier] || {}) };
       Object.keys(tierDraft).forEach((propKey) => {
         const val = tierDraft[propKey];
-        if (val) tierProps[propKey] = val;
+        if (val) mergedTier[propKey] = val;
+        else delete mergedTier[propKey]; /* null = explicitly cleared this session */
       });
-      if (Object.keys(tierProps).length) tiers[tier] = tierProps;
+      if (Object.keys(mergedTier).length) (changes as any)[tier] = mergedTier;
+      else delete (changes as any)[tier];
     });
   }
-  if (Object.keys(tiers).length) Object.assign(changes, tiers);
 
   if (linkModeFor(selected.id)) {
     const linkUrl = els.linkUrl.value;
@@ -1393,7 +1502,7 @@ function onKeydown(e: KeyboardEvent) {
 }
 
 function wireGlobalListeners() {
-  attachSelectionListeners();
+  attachSelectionListeners(document);
   document.addEventListener("keydown", onKeydown);
 }
 
@@ -1401,6 +1510,11 @@ let initGeneration = 0;
 let built = false;
 
 export function initEditorPanel() {
+  /* The preview iframe loads the same route; without this it would build a second
+     floating panel inside itself. editor-runtime keeps running there, unmodified. */
+  if (window.self !== window.top) {
+    if (new URLSearchParams(location.search).get("tpDevicePreview") === "1") return;
+  }
   const myGeneration = ++initGeneration;
   Promise.all([fetchJson(MANIFEST_URL), fetchJson(BREAKPOINTS_URL)]).then(([manifestRes, breakpointsRes]) => {
     if (myGeneration !== initGeneration) return; // superseded by a later init/destroy cycle (e.g. StrictMode's double-invoke)

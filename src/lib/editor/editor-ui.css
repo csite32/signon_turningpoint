@@ -273,3 +273,31 @@ html.tp-select-mode body {
   outline: 2px solid #133551 !important;
   outline-offset: 2px;
 }
+
+/* ---- device-width preview overlay (outside #tp-editor-root so it can cover the full viewport) ---- */
+
+#tp-preview-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 2147482000; /* below #tp-editor-root, so the panel stays usable while previewing */
+  background: rgba(19, 53, 81, 0.92);
+  align-items: flex-start;
+  justify-content: center;
+  overflow: auto;
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+#tp-preview-overlay.tp-active {
+  display: flex;
+}
+
+#tp-preview-frame {
+  height: calc(100vh - 48px);
+  flex: none;
+  border: 3px solid #fff;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+}
