@@ -63,16 +63,17 @@ export default function TurningPointAbout() {
         <div className="about-hero-inner">
           <div className="about-hero-title-block">
             <div className="about-hero-row1">
-              <div className="about-hero-frame">נעים</div>
+              <div data-editor-move-wrap="page-about__hero-frame" style={{ display: "block" }}><div className="about-hero-frame" data-editor-id="page-about__hero-frame">נעים</div></div>
               <span className="about-hero-circle">
                 <svg viewBox="0 0 54 60" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                   <path d="M27.8359 27.0312L51.5342 13.3496L53.3018 16.4111L30.1846 29.7559L53.2959 43.0996L51.5283 46.1611L27.8359 32.4814V59.5H24.3008V33.1543L1.77344 46.1611L0.00585938 43.0996L23.1152 29.7559L0 16.4111L1.76758 13.3496L24.3008 26.3584V0H27.8359V27.0312Z" fill="#DD4041"></path>
                 </svg>
               </span>
             </div>
-            <div className="about-hero-pill">להכיר</div>
+            <div data-editor-move-wrap="page-about__hero-pill" style={{ display: "block" }}><div className="about-hero-pill" data-editor-id="page-about__hero-pill">להכיר</div></div>
           </div>
-          <div className="about-hero-intro">
+          <div data-editor-move-wrap="page-about__hero-intro" style={{ display: "block" }}>
+          <div className="about-hero-intro" data-editor-id="page-about__hero-intro">
             <p>חני וורובל.<br />
             במשך עשור ליוויתי מאות בעלי עסקים ומוסדות<br />
             ברגעי פריצה. פעלתי מאחורי הקלעים בזיקוק<br />
@@ -80,12 +81,13 @@ export default function TurningPointAbout() {
             ניסיון נדיר בתרגום ערך מופשט למסר עוצמתי<br />
             שמניע אנשים לפעולה.</p>
           </div>
+          </div>
         </div>
       </section>
 
       <section className="about-years">
         <div className="about-years-badge anim-years-group">
-          <div className="about-years-text anim-years-text"><span>לאורך</span>&nbsp;<strong>השנים</strong></div>
+          <div data-editor-move-wrap="page-about__years-text" style={{ display: "block" }}><div className="about-years-text anim-years-text" data-editor-id="page-about__years-text"><span>לאורך</span>&nbsp;<strong>השנים</strong></div></div>
           <div className="about-years-icon anim-years-icon">
             <svg className="about-years-arrow" viewBox="0 0 196 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
               <path d="M38.3397 62.1205C29.9297 43.5005 19.1298 39.6105 -0.000215021 31.9705C19.3698 23.6905 30.3598 21.0905 38.7298 1.06046L40.8297 0.0304561C41.4197 -0.259544 41.6198 1.60046 41.4298 2.24046C37.2798 15.5405 27.3498 23.2905 14.6198 30.1605L193.22 30.2605C194.07 30.2605 195.26 30.2805 195.26 30.6605L195.26 33.6505L14.8098 33.7605C27.0298 40.6705 36.6098 48.0805 41.2498 61.0905C41.4698 61.7105 41.4498 62.9005 41.1098 63.3905C40.6898 64.0005 38.6997 62.9705 38.3297 62.1505L38.3397 62.1205Z" fill="white"></path>
@@ -98,17 +100,19 @@ export default function TurningPointAbout() {
           </div>
         </div>
         <div className="about-years-copy">
-          <p className="about-years-strong">זיהיתי דפוס שחוזר על עצמו אצל בעלי עסקים מעולים:</p>
-          <p>הם מגיעים לפרשת דרכים שבה הצמיחה דורשת לעלות ליגה, אבל מוצאים את עצמם מתרוצצים בין יועץ עסקי, מעצבת וקופירייטר.</p>
-          <p>בסוף, הם נשארים עם &quot;חתיכות&quot; של שירות שלא מדברות באותה שפה, ועם מיתוג שפשוט קטן על המקצוענות שלהם.</p>
+          <div data-editor-move-wrap="page-about__years-copy-1" style={{ display: "block" }}><p className="about-years-strong" data-editor-id="page-about__years-copy-1">זיהיתי דפוס שחוזר על עצמו אצל בעלי עסקים מעולים:</p></div>
+          <div data-editor-move-wrap="page-about__years-copy-2" style={{ display: "block" }}><p data-editor-id="page-about__years-copy-2">הם מגיעים לפרשת דרכים שבה הצמיחה דורשת לעלות ליגה, אבל מוצאים את עצמם מתרוצצים בין יועץ עסקי, מעצבת וקופירייטר.</p></div>
+          <div data-editor-move-wrap="page-about__years-copy-3" style={{ display: "block" }}><p data-editor-id="page-about__years-copy-3">בסוף, הם נשארים עם &quot;חתיכות&quot; של שירות שלא מדברות באותה שפה, ועם מיתוג שפשוט קטן על המקצוענות שלהם.</p></div>
         </div>
       </section>
 
       <section className="about-story">
         <div className="about-story-inner">
-          <div className="about-story-box">
+          <div data-editor-move-wrap="page-about__story-box" style={{ flex: "1 1 500px", maxWidth: 820 }}>
+          <div className="about-story-box" data-editor-id="page-about__story-box">
             <p>כשראיתי שבעלי עסקים בצמיחה זקוקים להרבה יותר מאשר ספק שיווקי בודד, <strong>הבנתי שהגיע הזמן להתרחב.</strong></p>
             <p>מתוך המומחיות שלי במשרד הפרסום &apos;סגנון 7&apos;, הקמתי את &quot;נקודת מפנה&quot; – משרד מיתוג ואסטרטגיה המהווה את השלב הבא והרחב יותר של הניסיון שצברתי.</p>
+          </div>
           </div>
           <div className="about-arrows-deco anim-arrows-group">
             <div className="about-arrows-col">
@@ -147,19 +151,23 @@ export default function TurningPointAbout() {
             <path d="M41.6653 46.0461C35.0429 47.3076 21.1673 53.2993 21.1673 67.1749" stroke="rgba(19,53,81,1)" strokeWidth="3.78425"></path>
           </svg>
         </div>
-        <div className="about-highlight-box next-box">
-          <p className="next-text">
+        <div data-editor-move-wrap="page-about__highlight-box">
+        <div className="about-highlight-box next-box" data-editor-id="page-about__highlight-box">
+          <div data-editor-move-wrap="page-about__highlight-text" style={{ display: "block" }}>
+          <p className="next-text" data-editor-id="page-about__highlight-text">
             אני כאן כדי להעניק מעטפת אסטרטגית מלאה ומסונכרנת.<br />
             מערכת אחת שסוגרת את הפער בין מי שאתם באמת<br />
             לבין איך שהשוק תופס אתכם,
           </p>
-          <div className="about-highlight-tag">והופכת את המקצוענות שלכם לאוטוריטה מובילה בתחומה</div>
+          </div>
+          <div data-editor-move-wrap="page-about__highlight-tag" style={{ display: "block" }}><div className="about-highlight-tag" data-editor-id="page-about__highlight-tag">והופכת את המקצוענות שלכם לאוטוריטה מובילה בתחומה</div></div>
+        </div>
         </div>
       </section>
 
       <section className="about-method">
         <div className="about-method-row1">
-          <div className="about-method-pill">נקודת המפנה</div>
+          <div data-editor-move-wrap="page-about__method-pill" style={{ display: "block" }}><div className="about-method-pill" data-editor-id="page-about__method-pill">נקודת המפנה</div></div>
           <span className="about-method-circle">
             <svg viewBox="0 0 54 60" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
               <path d="M27.8359 27.0312L51.5342 13.3496L53.3018 16.4111L30.1846 29.7559L53.2959 43.0996L51.5283 46.1611L27.8359 32.4814V59.5H24.3008V33.1543L1.77344 46.1611L0.00585938 43.0996L23.1152 29.7559L0 16.4111L1.76758 13.3496L24.3008 26.3584V0H27.8359V27.0312Z" fill="#DD4041"></path>
@@ -167,11 +175,11 @@ export default function TurningPointAbout() {
           </span>
         </div>
         <div className="about-method-row2">
-          <div className="about-method-shel anim-shel">של</div>
-          <div className="about-method-frame">העסק שלך</div>
+          <div data-editor-move-wrap="page-about__method-shel" style={{ display: "block" }}><div className="about-method-shel anim-shel" data-editor-id="page-about__method-shel">של</div></div>
+          <div data-editor-move-wrap="page-about__method-frame" style={{ display: "block" }}><div className="about-method-frame" data-editor-id="page-about__method-frame">העסק שלך</div></div>
         </div>
-        <p className="about-method-heading2">המעטפת המלאה לבניית מותג מוביל.</p>
-        <p className="about-method-desc">כדי להפוך לשם גדול, העסק שלך זקוק למנגנון שעובד בסנכרון מלא. ב&quot;נקודת מפנה&quot; אנחנו מחזיקים את כל שרשרת הערך בכתובת אחת:</p>
+        <div data-editor-move-wrap="page-about__method-heading2" style={{ display: "block" }}><p className="about-method-heading2" data-editor-id="page-about__method-heading2">המעטפת המלאה לבניית מותג מוביל.</p></div>
+        <div data-editor-move-wrap="page-about__method-desc" style={{ display: "block" }}><p className="about-method-desc" data-editor-id="page-about__method-desc">כדי להפוך לשם גדול, העסק שלך זקוק למנגנון שעובד בסנכרון מלא. ב&quot;נקודת מפנה&quot; אנחנו מחזיקים את כל שרשרת הערך בכתובת אחת:</p></div>
       </section>
 
       <section className="about-services-sticky-section" data-about-services="">
@@ -184,28 +192,28 @@ export default function TurningPointAbout() {
                   <svg className="about-services-dot-icon about-services-dot-icon--closed" viewBox="0 0 54 60" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M27.8359 27.0312L51.5342 13.3496L53.3018 16.4111L30.1846 29.7559L53.2959 43.0996L51.5283 46.1611L27.8359 32.4814V59.5H24.3008V33.1543L1.77344 46.1611L0.00585938 43.0996L23.1152 29.7559L0 16.4111L1.76758 13.3496L24.3008 26.3584V0H27.8359V27.0312Z"></path></svg>
                   <svg className="about-services-dot-icon about-services-dot-icon--open" viewBox="0 0 61 52" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M4.44162 27.5012C3.29162 27.4912 1.54168 26.8812 1.50168 26.2112C1.44168 25.1212 2.82168 24.0012 3.87168 23.9912L26.8617 23.7812L14.8517 3.7012C15.0617 2.9712 16.8617 1.4512 17.5117 1.5012L30.3416 21.9012L42.4516 2.32121C42.8316 1.70121 44.5016 1.47121 44.8216 1.91121C45.2316 2.46121 45.4917 4.2612 45.1317 4.8612L33.5816 23.7412L56.3917 24.0312C57.1117 24.0312 58.5217 24.6112 58.9017 25.1612C59.2817 25.7112 57.8917 27.4112 56.8617 27.4312L33.7916 27.7212L45.7916 47.7012C46.0516 48.4712 43.7116 50.1612 43.0516 49.7212L30.3517 29.4412L18.0516 48.9212C17.7016 49.3212 17.1417 50.0612 16.8617 49.8312L14.6217 47.9912L26.7817 27.7012L4.44162 27.4912L4.44162 27.5012Z"></path></svg>
                 </span>
-                <span className="about-services-dot-title">אסטרטגיה ומיצוב</span>
+                <span className="about-services-dot-title" data-editor-id="page-about__services-tab-1">אסטרטגיה ומיצוב</span>
               </button>
               <button type="button" className="about-services-dot" data-service-index="1" aria-label="זהות חזותית ומיתוג" aria-current="false">
                 <span className="about-services-dot-icon-wrap">
                   <svg className="about-services-dot-icon about-services-dot-icon--closed" viewBox="0 0 54 60" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M27.8359 27.0312L51.5342 13.3496L53.3018 16.4111L30.1846 29.7559L53.2959 43.0996L51.5283 46.1611L27.8359 32.4814V59.5H24.3008V33.1543L1.77344 46.1611L0.00585938 43.0996L23.1152 29.7559L0 16.4111L1.76758 13.3496L24.3008 26.3584V0H27.8359V27.0312Z"></path></svg>
                   <svg className="about-services-dot-icon about-services-dot-icon--open" viewBox="0 0 61 52" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M4.44162 27.5012C3.29162 27.4912 1.54168 26.8812 1.50168 26.2112C1.44168 25.1212 2.82168 24.0012 3.87168 23.9912L26.8617 23.7812L14.8517 3.7012C15.0617 2.9712 16.8617 1.4512 17.5117 1.5012L30.3416 21.9012L42.4516 2.32121C42.8316 1.70121 44.5016 1.47121 44.8216 1.91121C45.2316 2.46121 45.4917 4.2612 45.1317 4.8612L33.5816 23.7412L56.3917 24.0312C57.1117 24.0312 58.5217 24.6112 58.9017 25.1612C59.2817 25.7112 57.8917 27.4112 56.8617 27.4312L33.7916 27.7212L45.7916 47.7012C46.0516 48.4712 43.7116 50.1612 43.0516 49.7212L30.3517 29.4412L18.0516 48.9212C17.7016 49.3212 17.1417 50.0612 16.8617 49.8312L14.6217 47.9912L26.7817 27.7012L4.44162 27.4912L4.44162 27.5012Z"></path></svg>
                 </span>
-                <span className="about-services-dot-title">זהות חזותית ומיתוג</span>
+                <span className="about-services-dot-title" data-editor-id="page-about__services-tab-2">זהות חזותית ומיתוג</span>
               </button>
               <button type="button" className="about-services-dot" data-service-index="2" aria-label="קריאייטיב וקופי" aria-current="false">
                 <span className="about-services-dot-icon-wrap">
                   <svg className="about-services-dot-icon about-services-dot-icon--closed" viewBox="0 0 54 60" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M27.8359 27.0312L51.5342 13.3496L53.3018 16.4111L30.1846 29.7559L53.2959 43.0996L51.5283 46.1611L27.8359 32.4814V59.5H24.3008V33.1543L1.77344 46.1611L0.00585938 43.0996L23.1152 29.7559L0 16.4111L1.76758 13.3496L24.3008 26.3584V0H27.8359V27.0312Z"></path></svg>
                   <svg className="about-services-dot-icon about-services-dot-icon--open" viewBox="0 0 61 52" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M4.44162 27.5012C3.29162 27.4912 1.54168 26.8812 1.50168 26.2112C1.44168 25.1212 2.82168 24.0012 3.87168 23.9912L26.8617 23.7812L14.8517 3.7012C15.0617 2.9712 16.8617 1.4512 17.5117 1.5012L30.3416 21.9012L42.4516 2.32121C42.8316 1.70121 44.5016 1.47121 44.8216 1.91121C45.2316 2.46121 45.4917 4.2612 45.1317 4.8612L33.5816 23.7412L56.3917 24.0312C57.1117 24.0312 58.5217 24.6112 58.9017 25.1612C59.2817 25.7112 57.8917 27.4112 56.8617 27.4312L33.7916 27.7212L45.7916 47.7012C46.0516 48.4712 43.7116 50.1612 43.0516 49.7212L30.3517 29.4412L18.0516 48.9212C17.7016 49.3212 17.1417 50.0612 16.8617 49.8312L14.6217 47.9912L26.7817 27.7012L4.44162 27.4912L4.44162 27.5012Z"></path></svg>
                 </span>
-                <span className="about-services-dot-title">קריאייטיב וקופי</span>
+                <span className="about-services-dot-title" data-editor-id="page-about__services-tab-3">קריאייטיב וקופי</span>
               </button>
               <button type="button" className="about-services-dot" data-service-index="3" aria-label="ניהול והוצאה לאוויר" aria-current="false">
                 <span className="about-services-dot-icon-wrap">
                   <svg className="about-services-dot-icon about-services-dot-icon--closed" viewBox="0 0 54 60" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M27.8359 27.0312L51.5342 13.3496L53.3018 16.4111L30.1846 29.7559L53.2959 43.0996L51.5283 46.1611L27.8359 32.4814V59.5H24.3008V33.1543L1.77344 46.1611L0.00585938 43.0996L23.1152 29.7559L0 16.4111L1.76758 13.3496L24.3008 26.3584V0H27.8359V27.0312Z"></path></svg>
                   <svg className="about-services-dot-icon about-services-dot-icon--open" viewBox="0 0 61 52" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M4.44162 27.5012C3.29162 27.4912 1.54168 26.8812 1.50168 26.2112C1.44168 25.1212 2.82168 24.0012 3.87168 23.9912L26.8617 23.7812L14.8517 3.7012C15.0617 2.9712 16.8617 1.4512 17.5117 1.5012L30.3416 21.9012L42.4516 2.32121C42.8316 1.70121 44.5016 1.47121 44.8216 1.91121C45.2316 2.46121 45.4917 4.2612 45.1317 4.8612L33.5816 23.7412L56.3917 24.0312C57.1117 24.0312 58.5217 24.6112 58.9017 25.1612C59.2817 25.7112 57.8917 27.4112 56.8617 27.4312L33.7916 27.7212L45.7916 47.7012C46.0516 48.4712 43.7116 50.1612 43.0516 49.7212L30.3517 29.4412L18.0516 48.9212C17.7016 49.3212 17.1417 50.0612 16.8617 49.8312L14.6217 47.9912L26.7817 27.7012L4.44162 27.4912L4.44162 27.5012Z"></path></svg>
                 </span>
-                <span className="about-services-dot-title">ניהול והוצאה לאוויר</span>
+                <span className="about-services-dot-title" data-editor-id="page-about__services-tab-4">ניהול והוצאה לאוויר</span>
               </button>
             </nav>
 
@@ -219,11 +227,11 @@ export default function TurningPointAbout() {
                 <div className="about-services-card-body">
                   <div className="about-services-image-col">
                     <div className="about-services-image-frame">
-                      <img className="about-services-image" src="/about/Rectangle 106.png" alt="אסטרטגיה ומיצוב" />
+                      <img className="about-services-image" src="/about/Rectangle 106.png" alt="אסטרטגיה ומיצוב" data-editor-id="page-about__services-image-1" />
                     </div>
                   </div>
                   <div className="about-services-text-col">
-                    <p className="about-services-desc">בניית התשתית להובלה הכל מתחיל באבחון עסקי מדויק, מחקר שוק וזיקוק הבטחת המותג. זה השלב שבו אנחנו מחליטים איך השוק יראה אתכם כדי שתפסיקו להסביר ותתחילו להוביל.</p>
+                    <div data-editor-move-wrap="page-about__services-desc-1" style={{ display: "block" }}><p className="about-services-desc" data-editor-id="page-about__services-desc-1">בניית התשתית להובלה הכל מתחיל באבחון עסקי מדויק, מחקר שוק וזיקוק הבטחת המותג. זה השלב שבו אנחנו מחליטים איך השוק יראה אתכם כדי שתפסיקו להסביר ותתחילו להוביל.</p></div>
                   </div>
                 </div>
               </article>
@@ -236,11 +244,11 @@ export default function TurningPointAbout() {
                 <div className="about-services-card-body">
                   <div className="about-services-image-col">
                     <div className="about-services-image-frame">
-                      <img className="about-services-image" src="/about/Rectangle 106.png" alt="זהות חזותית ומיתוג" />
+                      <img className="about-services-image" src="/about/Rectangle 106.png" alt="זהות חזותית ומיתוג" data-editor-id="page-about__services-image-2" />
                     </div>
                   </div>
                   <div className="about-services-text-col">
-                    <p className="about-services-desc">יצירת נראות של מותג מוביל אנחנו מתרגמים את הכוח האסטרטגי לשפה ויזואלית עוצמתית – מעיצוב לוגו ועד לשפה גרפית מלאה שגורמת לעסק להיראות בדיוק כמה שהוא שווה באמת.</p>
+                    <div data-editor-move-wrap="page-about__services-desc-2" style={{ display: "block" }}><p className="about-services-desc" data-editor-id="page-about__services-desc-2">יצירת נראות של מותג מוביל אנחנו מתרגמים את הכוח האסטרטגי לשפה ויזואלית עוצמתית – מעיצוב לוגו ועד לשפה גרפית מלאה שגורמת לעסק להיראות בדיוק כמה שהוא שווה באמת.</p></div>
                   </div>
                 </div>
               </article>
@@ -253,11 +261,11 @@ export default function TurningPointAbout() {
                 <div className="about-services-card-body">
                   <div className="about-services-image-col">
                     <div className="about-services-image-frame">
-                      <img className="about-services-image" src="/about/Rectangle 106.png" alt="קריאייטיב וקופי" />
+                      <img className="about-services-image" src="/about/Rectangle 106.png" alt="קריאייטיב וקופי" data-editor-id="page-about__services-image-3" />
                     </div>
                   </div>
                   <div className="about-services-text-col">
-                    <p className="about-services-desc">הפיכת המקצוענות למסרים שמוכרים זיקוק הסיפור העסקי שלך למילים חדות שסוגרות עסקאות. אנחנו כותבים את האתר, הסלוגנים והקמפיינים בקול אחד, שחוסך ממך את הצורך בשיעורי הסבר מתישים מול הלקוח.</p>
+                    <div data-editor-move-wrap="page-about__services-desc-3" style={{ display: "block" }}><p className="about-services-desc" data-editor-id="page-about__services-desc-3">הפיכת המקצוענות למסרים שמוכרים זיקוק הסיפור העסקי שלך למילים חדות שסוגרות עסקאות. אנחנו כותבים את האתר, הסלוגנים והקמפיינים בקול אחד, שחוסך ממך את הצורך בשיעורי הסבר מתישים מול הלקוח.</p></div>
                   </div>
                 </div>
               </article>
@@ -270,11 +278,11 @@ export default function TurningPointAbout() {
                 <div className="about-services-card-body">
                   <div className="about-services-image-col">
                     <div className="about-services-image-frame">
-                      <img className="about-services-image" src="/about/Rectangle 106.png" alt="ניהול והוצאה לאוויר" />
+                      <img className="about-services-image" src="/about/Rectangle 106.png" alt="ניהול והוצאה לאוויר" data-editor-id="page-about__services-image-4" />
                     </div>
                   </div>
                   <div className="about-services-text-col">
-                    <p className="about-services-desc">מובילים את המהלך עד לתוצאה בשטח אנחנו לא רק מתכננים – אנחנו מבצעים. ניהול פרויקט מלא ותיאום מול כל הספקים כדי לוודא שהחזון האסטרטגי הופך למציאות מול העיניים של השוק.</p>
+                    <div data-editor-move-wrap="page-about__services-desc-4" style={{ display: "block" }}><p className="about-services-desc" data-editor-id="page-about__services-desc-4">מובילים את המהלך עד לתוצאה בשטח אנחנו לא רק מתכננים – אנחנו מבצעים. ניהול פרויקט מלא ותיאום מול כל הספקים כדי לוודא שהחזון האסטרטגי הופך למציאות מול העיניים של השוק.</p></div>
                   </div>
                 </div>
               </article>
