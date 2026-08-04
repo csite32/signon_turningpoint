@@ -1035,7 +1035,100 @@ function onPropInput(propKey: string) {
 function onTierChange() {
   endEditSession();
   const tier = els.tier.value;
+  setDevicePreview(tier);
   applyTierToDom(tier); /* savedCache is already warm from selectElement() */
+}
+
+/* ---------- device-width preview iframe ---------- */
+
+function setDevicePreview(mode: string) {
+  if (mode === previewMode) return;
+  previewMode = mode;
+  if (mode === "normal") {
+    if (previewOverlay) previewOverlay.classList.remove("tp-active");
+    activeDoc = document;
+    return;
+  }
+  if (!previewOverlay) buildPreviewOverlay();
+  previewOverlay!.classList.add("tp-active");
+  previewFrame!.style.width = DEVICE_WIDTHS[mode] + "px";
+
+  const url = new URL(location.href);
+  url.searchParams.set("tpDevicePreview", "1");
+  if (previewFrame!.dataset.loadedHref !== url.href) {
+    previewFrame!.dataset.loadedHref = url.href;
+    previewFrame!.src = url.href;
+  } else if (previewFrame!.contentDocument) {
+    activeDoc = previewFrame!.contentDocument;
+    /* Changing only the iframe's CSS width does not reliably fire a native resize event
+       inside it, and editor-runtime's own resize listener (which re-applies the correct
+       tier's overrides) depends on that event. */
+    if (previewFrame!.contentWindow) {
+      previewFrame!.contentWindow.dispatchEvent(new Event("resize"));
+    }
+  }
+}
+
+function buildPreviewOverlay() {
+  previewOverlay = document.createElement("div");
+  previewOverlay.id = "tp-preview-overlay";
+  previewFrame = document.createElement("iframe");
+  previewFrame.id = "tp-preview-frame";
+  previewFrame.addEventListener("load", onPreviewFrameLoad);
+  previewOverlay.appendChild(previewFrame);
+  document.body.appendChild(previewOverlay);
+}
+
+function onPreviewFrameLoad() {
+  if (previewMode === "normal") return;
+  const doc = previewFrame!.contentDocument;
+  if (!doc) return;
+  activeDoc = doc;
+  attachSelectionListeners(doc);
+  if (selectModeActive) doc.documentElement.classList.add("tp-select-mode");
+  if (!selected) return;
+
+  /* The iframe's `load` event fires once HTML parsing finishes, which can be BEFORE its
+     own editor-runtime finishes fetching+applying saved overrides (a separate async
+     chain) — wait for that page's own signal, with a bounded fallback. */
+  const elementId = selected.id;
+  const win = previewFrame!.contentWindow;
+  let rebound = false;
+  const doRebind = () => {
+    if (rebound) return;
+    rebound = true;
+    if (!selected || selected.id !== elementId) return;
+    const el = doc.querySelector<HTMLElement>('[data-editor-id="' + cssEscape(elementId) + '"]');
+    if (el) rebindSelectionToElement(el);
+  };
+  if (win) win.addEventListener("tp-overrides-applied", doRebind, { once: true });
+  setTimeout(doRebind, 800);
+}
+
+/* Re-points the current selection at the iframe's copy of the same element. Deliberately
+   not the same path as a fresh click: that would reset the tier dropdown and rebuild
+   every field, yanking focus if the user was mid-edit during the iframe's load. */
+function rebindSelectionToElement(el: HTMLElement) {
+  if (!selected) return;
+  selected.el = el;
+  el.classList.add("tp-selected-outline");
+  clearHoverOutline(el);
+  const tier = els.tier.value;
+  const activeInput = document.activeElement;
+  const isEditingAField = els.form.contains(activeInput) && activeInput !== els.tier;
+  if (!isEditingAField) {
+    const draft = draftByElement[selected.id];
+    const mode = textModeFor(selected.id);
+    if (mode === "rich") {
+      els.richEditor.innerHTML = draft && draft.richText !== undefined ? draft.richText : sanitizeRichHtml(richTextTargetEl(selected.id, el).innerHTML);
+    } else if (mode === "plain") {
+      els.text.value = draft && draft.text !== undefined ? draft.text : el.textContent || "";
+    }
+    if (linkModeFor(selected.id)) populateLinkFields(selected.id, el);
+    if (mediaTypeFor(selected.id)) populateMediaFields(selected.id, el);
+    renderDynamicControls();
+  }
+  applyTierToDom(tier);
 }
 
 /* ---------- save / reset ---------- */
