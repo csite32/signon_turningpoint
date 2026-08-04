@@ -15,7 +15,7 @@ import { EditorLogin } from "../components/EditorLogin";
 import { EditorPanel } from "../components/EditorPanel";
 import { EditorDiagnostic } from "../components/EditorDiagnostic";
 import { isEditorEnvironment } from "../lib/editor/environment";
-import { getOverrides } from "../lib/editor/overrides-repo";
+import { initEditorRuntime } from "../lib/editor/editor-runtime";
 
 function NotFoundComponent() {
   return (
@@ -126,17 +126,7 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
 
   useEffect(() => {
-    if (!isEditorEnvironment()) return;
-    const targetId = "page-index__footer-copyright-smoketest";
-    getOverrides("page", "index")
-      .then((rows) => {
-        const row = rows.find((r) => r.element_id === targetId);
-        const text = (row?.data as { text?: unknown } | null)?.text;
-        if (typeof text !== "string") return;
-        const el = document.querySelector(`[data-editor-id="${targetId}"]`);
-        if (el) el.textContent = text;
-      })
-      .catch(() => {});
+    initEditorRuntime();
   }, []);
 
   return (
