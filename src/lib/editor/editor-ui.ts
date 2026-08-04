@@ -1217,6 +1217,11 @@ function setStatus(text: string) {
   els.status.textContent = text;
 }
 
+function onExitEditMode() {
+  disableEditMode();
+  window.location.href = "/admin";
+}
+
 /* ---------- panel shell ---------- */
 
 function setPanelOpen(open: boolean) {
@@ -1240,6 +1245,7 @@ function buildPanel() {
     '    <button type="button" id="tp-close-btn" title="סגירה">×</button>' +
     "  </div>" +
     '  <div class="tp-body">' +
+    '    <button type="button" id="tp-exit-edit-mode" class="tp-btn tp-danger-outline" style="width:100%;margin-bottom:10px;">יציאה ממצב עריכה</button>' +
     '    <button type="button" id="tp-select-btn" class="tp-select-toggle">בחירת אלמנט</button>' +
     '    <div id="tp-empty" class="tp-empty">לחצי על “בחירת אלמנט” ואז לחצי על אלמנט מסומן בעמוד. רק אלמנטים ששולבו בשלב הנוכחי ניתנים לעריכה.</div>' +
     '    <div id="tp-form" class="tp-hidden">' +
@@ -1334,7 +1340,8 @@ function buildPanel() {
     saveBtn: root.querySelector("#tp-save")!,
     undoBtn: root.querySelector("#tp-undo")!,
     resetElBtn: root.querySelector("#tp-reset-el")!,
-    resetPageBtn: root.querySelector("#tp-reset-page")!
+    resetPageBtn: root.querySelector("#tp-reset-page")!,
+    exitBtn: root.querySelector("#tp-exit-edit-mode")!
   };
 
   els.toggle.addEventListener("click", togglePanel);
@@ -1375,6 +1382,7 @@ function buildPanel() {
   els.undoBtn.addEventListener("click", onUndo);
   els.resetElBtn.addEventListener("click", onResetElement);
   els.resetPageBtn.addEventListener("click", onResetPage);
+  els.exitBtn.addEventListener("click", onExitEditMode);
 }
 
 function onKeydown(e: KeyboardEvent) {
