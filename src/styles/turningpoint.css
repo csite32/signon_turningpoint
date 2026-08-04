@@ -1320,3 +1320,14 @@
 @media (max-width:760px){
   [data-editor-move-wrap="page-index__next-box"]{ width:90%; }
 }
+
+[data-editor-move-wrap] > .about-highlight-box{ width:100%; }
+[data-editor-move-wrap="page-about__highlight-box"]{ width:88%; max-width:1300px; }
+@media (max-width:760px){
+  [data-editor-move-wrap="page-about__highlight-box"]{ width:90%; }
+}
+
+[data-editor-move-wrap] > .about-story-box{ height:100%; }
+
+.about-years-copy p[data-editor-id='page-about__years-copy-1'],
+.about-years-copy p[data-editor-id='page-about__years-copy-2']{ margin-bottom:20px !important; }
