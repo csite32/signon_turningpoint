@@ -18,7 +18,7 @@
  * it's fully intact below, only the visual "show me what that width actually looks like"
  * simulation is missing for now.
  */
-import { sanitizeRichHtml, isSafeLinkUrl } from "./editor-runtime";
+import { sanitizeRichHtml, isSafeLinkUrl, getOriginalStash } from "./editor-runtime";
 import { getOverrides, upsertOverride, resetOverride, resetOverrideForPage } from "./overrides-repo";
 import { uploadEditorMedia } from "./media-provider";
 import { disableEditMode } from "./edit-mode";
@@ -1097,8 +1097,9 @@ function onSave() {
 }
 
 function restoreElementInPlace(elementId: string, el: HTMLElement) {
-  if (el.dataset.editorOriginalHtml !== undefined) {
-    el.innerHTML = el.dataset.editorOriginalHtml;
+  const stash = getOriginalStash(elementId);
+  if (stash) {
+    el.innerHTML = stash.html;
   }
   enabledPropsFor(elementId).forEach((propKey) => {
     if (propKey === "text") return;
@@ -1115,13 +1116,13 @@ function restoreElementInPlace(elementId: string, el: HTMLElement) {
 
   const linkMode = linkModeFor(elementId);
   if (linkMode === "anchor") {
-    if (el.dataset.editorOriginalHasHref === "1") {
-      el.setAttribute("href", el.dataset.editorOriginalHref || "");
+    if (stash && stash.hasHref) {
+      el.setAttribute("href", stash.href);
     } else {
       el.removeAttribute("href");
     }
-    if (el.dataset.editorOriginalHasTarget === "1") {
-      el.setAttribute("target", el.dataset.editorOriginalTarget || "");
+    if (stash && stash.hasTarget) {
+      el.setAttribute("target", stash.target);
       el.setAttribute("rel", "noopener noreferrer");
     } else {
       el.removeAttribute("target");
@@ -1133,13 +1134,13 @@ function restoreElementInPlace(elementId: string, el: HTMLElement) {
 
   const mediaType = mediaTypeFor(elementId);
   if (mediaType === "img" || mediaType === "icon") {
-    if (el.dataset.editorOriginalHasSrc === "1") {
-      el.setAttribute("src", el.dataset.editorOriginalSrc || "");
+    if (stash && stash.hasSrc) {
+      el.setAttribute("src", stash.src);
     } else {
       el.removeAttribute("src");
     }
-    if (el.dataset.editorOriginalHasAlt === "1") {
-      el.setAttribute("alt", el.dataset.editorOriginalAlt || "");
+    if (stash && stash.hasAlt) {
+      el.setAttribute("alt", stash.alt);
     } else {
       el.removeAttribute("alt");
     }

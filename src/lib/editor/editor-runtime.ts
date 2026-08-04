@@ -364,41 +364,46 @@ function applyStore(store: Record<string, OverrideEntry>, tier: string) {
   });
 }
 
-/* Runs once, before any override is applied, for every tagged element present on the
-   page — regardless of whether it currently has a saved override. This is what lets the
-   editor panel's Reset button restore an element's true source markup in-place (no page
-   reload needed).
+export type OriginalStashEntry = {
+  html: string;
+  hasHref: boolean;
+  href: string;
+  hasTarget: boolean;
+  target: string;
+  hasSrc: boolean;
+  src: string;
+  hasAlt: boolean;
+  alt: string;
+};
 
-   Stashes innerHTML, not textContent: textContent flattens any nested tags (<br>,
-   <strong>, an icon <span>...) irreversibly, so an element with such markup could never
-   be restored correctly if we only kept its plain text. Storing the real source markup
-   here and restoring it via innerHTML is safe — it is always exactly what the page's own
-   trusted markup already rendered, never anything derived from user input. */
+/* In-memory, not DOM attributes: writing data-editor-original-* attributes directly onto
+   server-rendered elements caused a React hydration-mismatch warning on this project's
+   Suspense-streamed sections. Keeping this entirely in JS memory, keyed by the stable
+   data-editor-id (itself real server-rendered JSX output, never a source of mismatch),
+   sidesteps the problem instead of racing to time it — the DOM is never touched here. */
+const originalStash: Record<string, OriginalStashEntry> = {};
+
+export function getOriginalStash(elementId: string): OriginalStashEntry | undefined {
+  return originalStash[elementId];
+}
+
 function stashOriginalText() {
   const els = document.querySelectorAll<HTMLElement>("[data-editor-id]");
   for (let i = 0; i < els.length; i++) {
     const el = els[i];
-    if (el.dataset.editorOriginalHtml === undefined) {
-      el.dataset.editorOriginalHtml = el.innerHTML;
-    }
-    /* href/target aren't part of innerHTML — stashed separately so a linked <a> can be
-       Reset back to its true original destination. Stashed for every element (not just
-       linkMode:"anchor" ones), harmless no-op for elements that never had these
-       attributes. */
-    if (el.dataset.editorOriginalHasHref === undefined) {
-      el.dataset.editorOriginalHasHref = el.hasAttribute("href") ? "1" : "0";
-      el.dataset.editorOriginalHref = el.getAttribute("href") || "";
-      el.dataset.editorOriginalHasTarget = el.hasAttribute("target") ? "1" : "0";
-      el.dataset.editorOriginalTarget = el.getAttribute("target") || "";
-    }
-    /* src/alt aren't part of innerHTML either — stashed the same way as href/target
-       above, for every element (harmless no-op for anything that isn't an <img>). */
-    if (el.dataset.editorOriginalHasSrc === undefined) {
-      el.dataset.editorOriginalHasSrc = el.hasAttribute("src") ? "1" : "0";
-      el.dataset.editorOriginalSrc = el.getAttribute("src") || "";
-      el.dataset.editorOriginalHasAlt = el.hasAttribute("alt") ? "1" : "0";
-      el.dataset.editorOriginalAlt = el.getAttribute("alt") || "";
-    }
+    const id = el.getAttribute("data-editor-id");
+    if (!id || originalStash[id] !== undefined) continue;
+    originalStash[id] = {
+      html: el.innerHTML,
+      hasHref: el.hasAttribute("href"),
+      href: el.getAttribute("href") || "",
+      hasTarget: el.hasAttribute("target"),
+      target: el.getAttribute("target") || "",
+      hasSrc: el.hasAttribute("src"),
+      src: el.getAttribute("src") || "",
+      hasAlt: el.hasAttribute("alt"),
+      alt: el.getAttribute("alt") || "",
+    };
   }
 }
 
