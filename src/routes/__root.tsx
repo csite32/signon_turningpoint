@@ -4,6 +4,7 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
+  useRouterState,
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
@@ -12,7 +13,7 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { EditorPanel } from "../components/EditorPanel";
-import { initEditorRuntime } from "../lib/editor/editor-runtime";
+import { initEditorRuntime, rescanEditorRuntime } from "../lib/editor/editor-runtime";
 import { useAdminAccess } from "../hooks/use-admin-access";
 import { useEditModeFlag } from "../hooks/use-edit-mode-flag";
 
@@ -126,10 +127,15 @@ function RootComponent() {
   const adminAccess = useAdminAccess();
   const editModeOn = useEditModeFlag();
   const showEditor = adminAccess.status === "authorized" && editModeOn;
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
 
   useEffect(() => {
     initEditorRuntime();
   }, []);
+
+  useEffect(() => {
+    rescanEditorRuntime();
+  }, [pathname]);
 
   return (
     <QueryClientProvider client={queryClient}>
