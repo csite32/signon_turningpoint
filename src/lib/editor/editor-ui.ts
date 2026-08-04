@@ -27,6 +27,14 @@ const MANIFEST_URL = "/editor-data/config/elements.json";
 const BREAKPOINTS_URL = "/editor-data/config/breakpoints.json";
 const MAX_UNDO = 20;
 
+/* Device-width preview: a single fixed-pixel-width iframe re-loads the current route at
+   the target breakpoint's width, so the site's own @media queries evaluate for real. */
+const DEVICE_WIDTHS: Record<string, number> = { desktop: 1600, laptop: 1200, tablet: 900, mobile: 390 };
+let activeDoc: Document = document;
+let previewMode: string = "normal";
+let previewOverlay: HTMLDivElement | null = null;
+let previewFrame: HTMLIFrameElement | null = null;
+
 /* Route → page key — duplicated from editor-runtime.ts's PAGE_KEY_BY_PATH, same
    deliberate small-duplication pattern as the local project (editor-ui.js/editor-runtime.js
    each had their own copy of this and of the sanitizer/link-allowlist). */
