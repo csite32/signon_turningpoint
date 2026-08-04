@@ -641,10 +641,10 @@ function onDocumentClick(e: MouseEvent) {
   selectElement(target.getAttribute("data-editor-id")!, target);
 }
 
-function attachSelectionListeners() {
-  document.addEventListener("mouseover", onMouseOver);
-  document.addEventListener("mouseout", onMouseOut);
-  document.addEventListener("click", onDocumentClick, true);
+function attachSelectionListeners(doc: Document) {
+  doc.addEventListener("mouseover", onMouseOver);
+  doc.addEventListener("mouseout", onMouseOut);
+  doc.addEventListener("click", onDocumentClick, true);
 }
 
 function detachSelectionListeners() {
@@ -656,6 +656,8 @@ function detachSelectionListeners() {
 function toggleSelectMode() {
   selectModeActive = !selectModeActive;
   document.documentElement.classList.toggle("tp-select-mode", selectModeActive);
+  const frameDoc = previewFrame && previewFrame.contentDocument;
+  if (frameDoc) frameDoc.documentElement.classList.toggle("tp-select-mode", selectModeActive);
   els.selectBtn.classList.toggle("tp-active", selectModeActive);
   els.selectBtn.textContent = selectModeActive ? "בחירה פעילה (Esc ליציאה)" : "בחירת אלמנט";
 }
