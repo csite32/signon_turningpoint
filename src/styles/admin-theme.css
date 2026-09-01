@@ -1,0 +1,55 @@
+/* admin-theme.css: brand-color theme scoped to the dashboard only.
+   The base shadcn theme in src/styles.css uses generic oklch neutrals and
+   must stay untouched, since it is shared by the whole app including the
+   public site pages. Redefining the same primary/sidebar/etc custom
+   properties inside the tp-admin class instead of :root scopes the override
+   to whatever renders under that class, the same scoping trick already used
+   for body.pm-body in project-detail.css, so every shadcn component such as
+   Button, Card and Badge picks up the real brand colors (blue #133551, red
+   #E14E50) automatically wherever it is used inside the dashboard, with
+   zero risk to the home page, the about page, or the existing admin pages.
+   Plain hex values here on purpose, not oklch: this is a scoped brand
+   override, not part of the base theme system those oklch values belong to. */
+.tp-admin {
+  --background: #f4f7fb;
+  --foreground: #133551;
+  --card: #ffffff;
+  --card-foreground: #133551;
+  --popover: #ffffff;
+  --popover-foreground: #133551;
+  --primary: #133551;
+  --primary-foreground: #ffffff;
+  --secondary: #eaf0f8;
+  --secondary-foreground: #133551;
+  --muted: #eef1f6;
+  --muted-foreground: #5c6b7a;
+  --accent: #e4ecf8;
+  --accent-foreground: #133551;
+  --destructive: #e14e50;
+  --destructive-foreground: #ffffff;
+  --border: #dde5ef;
+  --input: #dde5ef;
+  --ring: #133551;
+  --radius: 0.75rem;
+
+  --sidebar: #133551;
+  --sidebar-foreground: #ffffff;
+  --sidebar-primary: #e14e50;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: rgba(255, 255, 255, 0.1);
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: rgba(255, 255, 255, 0.14);
+  --sidebar-ring: #e14e50;
+
+  /* Extra tokens beyond the base theme set, used only for the one-off
+     Publish button treatment, since the base theme has no separate brand
+     accent slot and reusing primary there would make Save and Publish look
+     identical. */
+  --brand-red: #e14e50;
+  --brand-red-hover: #c93f41;
+  --brand-blue: #133551;
+
+  background: var(--background);
+  color: var(--foreground);
+  min-height: 100vh;
+}

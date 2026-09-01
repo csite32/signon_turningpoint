@@ -1,0 +1,336 @@
+/* projects-archive.css — page-specific styles for the /projects archive
+   (ProjectArchivePage.tsx). The shared chrome (header / mobile-menu /
+   about-cta / footer-section / bottom-bar) is NOT redefined here: the
+   component also imports "../styles/turningpoint.css", which already owns
+   all of it — same convention TurningPointAbout.tsx / ProjectDetailPage.tsx
+   use for their own page-specific CSS.
+
+   Every selector is prefixed `.pa-` and lives inside `.pa-archive`, so this
+   file never touches the home / about / project-detail pages or the
+   dashboard. The archive sits on the site's existing blue + texture body
+   background (styles/turningpoint.css `body{...}`) with no override. */
+
+.pa-archive {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+  direction: rtl;
+}
+
+/* ===== Title bar — two IDENTICAL rounded pills: icons pill (left) + "project" (right).
+   Both pills are locked to the same width AND height by a max-content-sized
+   2-track grid: `1fr 1fr` sizes both columns to the wider one (the "project"
+   label), `align-items: stretch` gives them one shared height. Border and
+   radius come from the single `.pa-pill` rule, so they match by definition. */
+.pa-titlebar {
+  display: flex;
+  justify-content: center;
+  direction: ltr;
+  padding: 52px 28px 28px;
+}
+
+.pa-pillrow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: stretch;
+  gap: 6px;
+  width: max-content;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.pa-pill {
+  box-sizing: border-box;
+  min-width: 0;
+  /* Drives the "project" text AND every em-based measurement in the icons
+     pill, so one value per breakpoint scales both pills together. */
+  font-size: 100px;
+  border: 4px solid rgba(255, 255, 255, 1);
+  border-radius: 225px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Right pill — "project", tight balanced padding (em, so it tracks the font),
+   perfectly centred. */
+.pa-pill-label {
+  padding: 0.16em 0.5em;
+}
+.pa-pill-label span {
+  font-family: "Polin", sans-serif;
+  font-size: 1em;
+  font-weight: 400;
+  color: #fff;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+/* Left pill — star-circle flush to the left edge, then the red dot, then the
+   long arrow filling the rest. */
+.pa-pill-icons {
+  justify-content: flex-start;
+  gap: 0.24em;
+  padding: 0 0.42em 0 0;
+  overflow: visible;
+}
+
+/* Star circle: diameter == pill height, ring sitting exactly on the pill's
+   left border so it reads as the pill's own rounded end, not an icon inside.
+   `align-self: stretch` + `aspect-ratio` make the diameter track the shared
+   pill height; the -4px margins lap the ring border onto the pill border. */
+.pa-icon-ring {
+  align-self: stretch;
+  height: auto;
+  aspect-ratio: 1 / 1;
+  margin: -4px 0.12em -4px -4px;
+  box-sizing: border-box;
+  border: 4px solid rgba(255, 255, 255, 1);
+  border-radius: 50%;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.pa-icon-star {
+  width: 46%;
+  height: auto;
+  display: block;
+  transform-origin: center;
+  animation: pa-star-spin 18s linear infinite;
+}
+.pa-icon-dot {
+  width: 0.34em;
+  height: 0.34em;
+  flex: none;
+  display: block;
+  transform-origin: center;
+  animation: pa-dot-pulse 3s ease-in-out infinite;
+}
+.pa-icon-arrow {
+  flex: 1 1 auto;
+  min-width: 0;
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+@keyframes pa-star-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+/* Red dot — slow, gentle breathing. SCALE ONLY: fill and opacity are never
+   touched, so the dot stays the original solid red at every frame. */
+@keyframes pa-dot-pulse {
+  0%,
+  100% {
+    transform: scale(0.94);
+  }
+  50% {
+    transform: scale(1.04);
+  }
+}
+
+/* ===== Projects grid ===== */
+.pa-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 32px;
+  width: 100%;
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 24px 60px 110px;
+  box-sizing: border-box;
+}
+
+.pa-empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.85);
+  font-family: "Polin", sans-serif;
+  font-size: 20px;
+  padding: 60px 0;
+}
+
+/* ===== Project card ===== */
+.pa-card {
+  position: relative;
+  display: block;
+  aspect-ratio: 3 / 2;
+  border: 4px solid rgba(255, 255, 255, 1);
+  border-radius: 19px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.06);
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.pa-card:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 3px;
+}
+
+.pa-card-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.pa-card-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(19, 53, 81, 0.87);
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  pointer-events: none;
+}
+
+.pa-card-caption {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 22px 24px;
+  direction: ltr;
+  opacity: 0;
+  transform: translateY(8px);
+  transition:
+    opacity 0.35s ease,
+    transform 0.35s ease;
+  pointer-events: none;
+}
+.pa-card-arrow {
+  width: 44px;
+  height: 44px;
+  max-width: 100%;
+  display: block;
+  flex-shrink: 0;
+  transform-origin: center;
+}
+.pa-card-title {
+  font-family: "Polin", sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.15;
+  direction: rtl;
+}
+
+.pa-card:hover .pa-card-overlay,
+.pa-card:focus-visible .pa-card-overlay {
+  opacity: 1;
+}
+.pa-card:hover .pa-card-caption,
+.pa-card:focus-visible .pa-card-caption {
+  opacity: 1;
+  transform: none;
+}
+.pa-card:hover .pa-card-arrow,
+.pa-card:focus-visible .pa-card-arrow {
+  animation: pa-arrow-drift 1.8s ease-in-out infinite;
+}
+
+@keyframes pa-arrow-drift {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(-6px);
+  }
+}
+
+/* ===== Touch devices — no persistent hover ===== */
+@media (hover: none) {
+  .pa-card-overlay {
+    display: none;
+  }
+  .pa-card-caption {
+    left: 0;
+    right: 0;
+    opacity: 1;
+    transform: none;
+    padding-top: 56px;
+    background: linear-gradient(
+      to top,
+      rgba(19, 53, 81, 0.85) 0%,
+      rgba(19, 53, 81, 0.45) 55%,
+      rgba(19, 53, 81, 0) 100%
+    );
+  }
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 1100px) {
+  .pa-grid {
+    padding: 24px 40px 90px;
+    gap: 24px;
+  }
+}
+
+/* Tablet / small desktop — one value shrinks both pills proportionally
+   (it drives the label text and every em-based icon measure). */
+@media (max-width: 1024px) {
+  .pa-pill {
+    font-size: 64px;
+  }
+  .pa-titlebar {
+    padding: 44px 24px 24px;
+  }
+}
+
+@media (max-width: 760px) {
+  .pa-pill {
+    font-size: 44px;
+  }
+  .pa-titlebar {
+    padding: 32px 20px 20px;
+  }
+  .pa-grid {
+    grid-template-columns: 1fr;
+    padding: 16px 24px 72px;
+    gap: 20px;
+  }
+  .pa-card-title {
+    font-size: 20px;
+  }
+  .pa-card-arrow {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+@media (max-width: 460px) {
+  .pa-pill {
+    font-size: 34px;
+  }
+  .pa-titlebar {
+    padding: 26px 16px 18px;
+  }
+  .pa-grid {
+    padding: 14px 16px 60px;
+  }
+}
+
+/* ===== Reduced motion ===== */
+@media (prefers-reduced-motion: reduce) {
+  .pa-icon-star,
+  .pa-icon-dot,
+  .pa-card:hover .pa-card-arrow,
+  .pa-card:focus-visible .pa-card-arrow {
+    animation: none;
+  }
+  .pa-card-overlay,
+  .pa-card-caption {
+    transition: none;
+  }
+}

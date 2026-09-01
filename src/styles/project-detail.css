@@ -1,0 +1,509 @@
+/* project-detail.css — faithful port of the page-specific <style> block from
+   prototype/project-maalot.html (the Figma-coordinate ".pm-*" system for the
+   "מעלות" case-study template). The shared header/mobile-menu/about-cta/
+   footer-section/bottom-bar rules are NOT duplicated here — ProjectDetailPage
+   also imports "../styles/turningpoint.css", which already defines all of
+   those (same convention TurningPointAbout.tsx already uses for its own
+   page-specific about.css).
+
+   Scoping note: the original static page freely restyled `body`/`:root`
+   because it WAS the whole document. In this SPA, <body> is shared across
+   every route (__root.tsx), so every body/:root-level override below is
+   scoped to `body.pm-body` — a class ProjectDetailPage.tsx adds on mount and
+   removes on unmount (useLayoutEffect) — instead of the bare selectors.
+   `body.pm-body{...}` is where every --s/--ink/--optical/--pm-* custom
+   property is (re)defined too, so it still cascades down to every .pm-*
+   rule below exactly like the original :root did, but only while this page
+   is actually mounted. */
+
+body.pm-body {
+  position: relative;
+  --s: calc(min(100vw, 1920px) / 1920);
+  --ink: 0.244;
+  --optical: 0.9;
+  --pm-page-bg: #eff5fa;
+  --pm-cta-bg: #dbeaff;
+  --pm-bg: #eef3fb;
+  --pm-highlight: #f0f6ff;
+  --site-bg-image: url("/project-maalot/site-bg.jpg");
+  background: var(--pm-page-bg);
+  background-image: none;
+  display: block;
+}
+/* The navbar OVERLAYS the hero on this page: it must consume no flow height,
+   so .pm-main starts at document y=0. Header markup + internal CSS untouched. */
+body.pm-body > header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 60;
+}
+
+.pm-main {
+  background: var(--pm-page-bg);
+  position: relative;
+}
+
+/* ---------- Figma-coordinate primitives ----------
+   Every band is 1920 design units wide and an exact design-unit height, so the
+   document height is the sum of the Figma block spans by construction. */
+.pm-band {
+  position: relative;
+  width: calc(1920 * var(--s));
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+/* --ink = fraction of font-size between a line box top and the Hebrew cap top.
+   One knob calibrates the vertical placement of every text block. */
+.pm-t {
+  position: absolute;
+  font-family: "Polin", sans-serif;
+  font-weight: 400;
+  color: var(--blue);
+  text-align: right;
+  white-space: nowrap;
+  font-size: calc(var(--fs) * var(--fsc, var(--optical)) * var(--s));
+  line-height: var(--lh, 1);
+  top: calc((var(--iy) - var(--ink) * var(--fs) * var(--fsc, var(--optical))) * var(--s));
+  right: calc((1920 - var(--rx)) * var(--s));
+}
+.pm-t.is-bold {
+  font-weight: 700;
+}
+.pm-t.is-white {
+  color: var(--white);
+}
+.pm-t.is-left {
+  right: auto;
+  left: calc(var(--lx) * var(--s));
+  text-align: left;
+}
+.pm-t.is-center {
+  right: auto;
+  left: calc(var(--cx) * var(--s));
+  text-align: center;
+  transform: translateX(-50%);
+}
+
+.pm-box {
+  position: absolute;
+  left: calc(var(--x) * var(--s));
+  top: calc(var(--y) * var(--s));
+  width: calc(var(--w) * var(--s));
+  height: calc(var(--h) * var(--s));
+  border-radius: calc(var(--r, 0) * var(--s));
+}
+.pm-card {
+  overflow: hidden;
+}
+.pm-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.pm-outline {
+  border: calc(4 * var(--s)) solid var(--blue);
+  background: transparent;
+}
+.pm-outline-red {
+  border: calc(4 * var(--s)) solid var(--red);
+  background: transparent;
+}
+.pm-fill-blue {
+  background: var(--blue);
+}
+.pm-fill-red {
+  background: var(--red);
+}
+/* Gentle infinite pulse on the red circle next to "דרכים" — transform:scale only. */
+@keyframes pmPulseDot {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(0.86);
+  }
+}
+.pm-pulse-dot {
+  animation: pmPulseDot 2.4s ease-in-out infinite;
+  transform-origin: center;
+}
+@media (prefers-reduced-motion: reduce) {
+  .pm-pulse-dot {
+    animation: none;
+  }
+}
+/* Constant, even rotation for the "התוצאה בשטח" asterisk. */
+@keyframes pmSpin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+.pm-spin {
+  animation: pmSpin 22s linear infinite;
+  transform-origin: center;
+}
+@media (prefers-reduced-motion: reduce) {
+  .pm-spin {
+    animation: none;
+  }
+}
+.pm-glyph {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.pm-glyph svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* ---- Hero: full-bleed State A, shrinks to card State B on scroll ---- */
+.pm-hero-zone {
+  position: relative;
+  width: calc(1920 * var(--s));
+  max-width: 100%;
+  margin: 0 auto;
+  height: calc(2418 * var(--s));
+}
+.pm-hero-sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  width: 100%;
+}
+.pm-hero-box {
+  position: absolute;
+  left: calc(13px - (100vw - min(100vw, 1920px)) / 2);
+  top: calc(27 * var(--s));
+  width: calc(100vw - 33px);
+  height: calc(100vh - 54 * var(--s));
+  border-radius: calc(43 * var(--s));
+  overflow: hidden;
+  will-change: width, height, top, left, border-radius;
+}
+.pm-hero-box img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 100%;
+  display: block;
+}
+.pm-hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.59);
+  opacity: 0;
+  transition: opacity 0.1s linear;
+}
+.pm-hero-text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: calc(14 * var(--s));
+  opacity: 0;
+  transition: opacity 0.15s linear;
+  text-align: center;
+}
+.pm-hero-title {
+  font-family: "Polin", sans-serif;
+  font-weight: 400;
+  font-size: calc(182.351 * var(--s));
+  line-height: calc(183.257 * var(--s));
+  color: var(--white);
+}
+.pm-hero-desc {
+  font-family: "Polin", sans-serif;
+  font-weight: 400;
+  font-size: calc(30 * var(--s));
+  color: var(--white);
+}
+@media (prefers-reduced-motion: reduce) {
+  .pm-hero-overlay,
+  .pm-hero-text {
+    transition: none;
+  }
+}
+@media (max-width: 760px) {
+  .pm-hero-zone {
+    height: calc(90px + 70svh + 110vh);
+  }
+  .pm-hero-box {
+    left: 13px;
+    top: 90px;
+    width: calc(100vw - 26px);
+    height: clamp(480px, 70svh, 650px);
+  }
+  .pm-hero-title {
+    font-size: calc(72 * var(--s) + 40px);
+    line-height: 1.05;
+  }
+  .pm-hero-desc {
+    font-size: calc(20 * var(--s) + 12px);
+  }
+  .pm-hero-text {
+    gap: 10px;
+    padding: 0 24px;
+  }
+}
+
+/* ---- Gallery-2 last image: expands to fullscreen on scroll ---- */
+.pm-expand-track {
+  height: 0;
+}
+.pm-expand-clone {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 90;
+  overflow: hidden;
+  pointer-events: none;
+  display: none;
+  will-change: width, height, left, top, border-radius;
+}
+.pm-expand-clone img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+/* ---- Static rectangle, subtle inner-image parallax (no sticky/fixed anywhere) ---- */
+.pm-parallax-box {
+  position: relative;
+  overflow: hidden;
+  width: calc(1805 * var(--s));
+  height: calc(540 * var(--s));
+  margin: calc(68 * var(--s)) auto;
+  border-radius: 25px;
+  background-image: url("/project/c477989541d451d2ea73de1f2a727f5b9a4059d8.jpg");
+  background-size: cover;
+  background-position: center 77.4%;
+  background-attachment: fixed;
+}
+@media (max-width: 760px) {
+  /* iOS Safari never honored background-attachment:fixed inside a scrolling
+     container — degrade to a plain static cover image rather than fight it. */
+  .pm-parallax-box {
+    border-radius: 16px;
+    background-attachment: scroll;
+  }
+}
+
+/* ---- Testimonial ---- */
+.pm-quote-card {
+  position: relative;
+  overflow: visible;
+  width: calc(1001 * var(--s));
+  max-width: calc(100% - 40px);
+  margin: 0 auto calc(51 * var(--s));
+  min-height: calc(276 * var(--s));
+  background: var(--blue);
+  border-radius: calc(17 * var(--s));
+  padding: calc(44 * var(--s)) calc(60 * var(--s)) calc(110 * var(--s));
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.pm-quote-text {
+  position: relative;
+  z-index: 2;
+  margin: 0;
+  max-width: 100%;
+  font-family: "Polin", sans-serif;
+  font-weight: 700;
+  color: var(--white);
+  font-size: calc(50 * var(--s));
+  line-height: 1.25;
+  text-align: center;
+  white-space: pre-line;
+}
+.pm-quote-decor {
+  position: absolute;
+  left: 0;
+  bottom: calc(-51 * var(--s));
+  width: calc(1001 * var(--s));
+  height: calc(327 * var(--s));
+  pointer-events: none;
+  z-index: 1;
+}
+.pm-quote-decor-shape {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.pm-quote-circle {
+  position: absolute;
+  left: calc(797 * var(--s));
+  top: calc(190 * var(--s));
+  width: calc(108 * var(--s));
+  height: calc(108 * var(--s));
+  border-radius: 50%;
+  border: calc(4 * var(--s)) solid var(--white);
+  box-sizing: border-box;
+}
+.pm-quote-mark {
+  position: absolute;
+  right: calc(125 * var(--s));
+  top: calc(208 * var(--s));
+  font-family: "Polin", sans-serif;
+  font-weight: 700;
+  color: var(--white);
+  font-size: calc(119.048 * var(--s));
+  line-height: 1;
+}
+@media (max-width: 760px) {
+  .pm-quote-card {
+    border-radius: calc(17 * var(--s));
+  }
+}
+
+/* ---- "כותרת מתאימה" (subtitle + extra paragraph) ----
+   Deliberately NOT .pm-t/.pm-band: those position each text block
+   absolutely at a fixed design-y, sized for one specific placeholder
+   length — correct for static decorative wordmarks, but two independent
+   absolutely-positioned blocks of ADMIN-EDITABLE, unbounded-length text
+   next to each other will eventually overlap (the original static design
+   never actually defined a shared column boundary here either — it just
+   right-anchored each block independently and trusted the placeholder
+   text not to collide). This is a normal-flow flex row instead: height
+   comes from content, a fixed gap always separates the two, and the
+   heading can wrap to multiple lines instead of overflowing.
+
+   The two children are fixed, EQUAL flex:1 1 0 columns (not size-to-content
+   flex:0 1 auto / flex-grow-fills-the-rest) — a short heading must not let
+   the paragraph's column balloon to claim the leftover width, which reads
+   as "everything clustered to one side" once the two are wildly
+   disproportionate (most visible at a wide viewport, where the effect is
+   large in absolute pixels). Each column still right-aligns its own text
+   and can independently wrap/grow taller than the other — min-width:0 is
+   required for a flex item's own content (mainly the heading, whose text
+   can be one unbroken run) to be allowed to shrink/wrap below its
+   min-content width instead of forcing the row wider than its container.
+   Font sizes/colors/weights match the original exactly; only the
+   positioning mechanism changed. */
+.pm-subtitle-band {
+  position: relative;
+  width: calc(1920 * var(--s));
+  max-width: 100%;
+  margin: 0 auto;
+  padding: calc(70 * var(--s)) calc(57 * var(--s));
+  box-sizing: border-box;
+}
+.pm-subtitle-row {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: calc(50 * var(--s));
+}
+.pm-subtitle-heading {
+  flex: 1 1 0;
+  min-width: 0;
+  margin: 0;
+  font-family: "Polin", sans-serif;
+  font-weight: 700;
+  color: var(--blue);
+  font-size: calc(45 * var(--optical) * var(--s));
+  line-height: 1.15;
+  /* Desktop only (see the max-width:760px override below, which restores
+     right): the heading's own column sits on the right, but its text hugs
+     the LEFT edge of that column — the side facing the paragraph — instead
+     of the page's outer right edge. The column's width/position (flex:1 1 0)
+     is unchanged; only where the text sits inside it moves. */
+  text-align: left;
+}
+.pm-subtitle-text {
+  flex: 1 1 0;
+  min-width: 0;
+  margin: 0;
+  font-family: "Polin", sans-serif;
+  font-weight: 400;
+  color: var(--blue);
+  font-size: calc(30 * var(--optical) * var(--s));
+  line-height: 1.35;
+  text-align: right;
+  white-space: pre-line;
+}
+@media (max-width: 760px) {
+  .pm-subtitle-band {
+    padding: 40px 24px;
+  }
+  .pm-subtitle-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
+  .pm-subtitle-heading {
+    max-width: 100%;
+    font-size: clamp(26px, 7vw, 38px);
+    text-align: right;
+  }
+  .pm-subtitle-text {
+    font-size: clamp(16px, 4.2vw, 20px);
+  }
+}
+
+/* ---- Prev/next nav rings ---- */
+.pm-ring {
+  border: calc(3 * var(--s)) solid var(--blue);
+  background: transparent;
+}
+.pm-navlink {
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+.pm-navlink:hover {
+  opacity: 0.6;
+}
+
+/* ---- Not-found state ---- */
+.pm-notfound {
+  min-height: 60vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 24px;
+}
+.pm-notfound-inner {
+  text-align: center;
+  max-width: 480px;
+}
+.pm-notfound-title {
+  font-family: "Polin", sans-serif;
+  font-weight: 700;
+  font-size: 40px;
+  color: var(--blue);
+  margin: 0 0 16px;
+}
+.pm-notfound-text {
+  font-family: "Polin", sans-serif;
+  font-size: 18px;
+  color: var(--blue);
+  margin: 0 0 24px;
+}
+.pm-notfound-link {
+  font-family: "Polin", sans-serif;
+  font-size: 18px;
+  color: var(--red);
+  text-decoration: underline;
+}
