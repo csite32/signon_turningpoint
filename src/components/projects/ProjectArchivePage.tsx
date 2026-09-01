@@ -10,38 +10,61 @@
    applies here automatically). The only change vs. the copies in
    TurningPointHome/About + ProjectDetailPage is the "פרויקטים" nav item,
    which now links to this page. Do not redesign the chrome. */
-import { useEffect, useLayoutEffect, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import "../../styles/turningpoint.css";
 import "../../styles/projects-archive.css";
 import type { Project } from "@/types/project";
 import * as projectsService from "@/services/projectsService";
 
-type ArchiveState =
-  | { status: "loading" }
-  | { status: "error" }
-  | { status: "ready"; projects: Project[] };
+const PAGE_SIZE = 10;
+type Phase = "loading" | "idle" | "loadingMore" | "error";
 
 export default function ProjectArchivePage() {
-  const [state, setState] = useState<ArchiveState>({ status: "loading" });
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [phase, setPhase] = useState<Phase>("loading");
+  const [hasMore, setHasMore] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const loadingRef = useRef(false);
 
   useLayoutEffect(() => {
     document.documentElement.setAttribute("dir", "rtl");
     document.documentElement.setAttribute("lang", "he");
   }, []);
 
+  /** Fetch ONE page (10 rows) from `offset` and append it, de-duplicated by id. */
+  const loadPage = useCallback(async (offset: number) => {
+    if (loadingRef.current) return;
+    loadingRef.current = true;
+    setPhase(offset === 0 ? "loading" : "loadingMore");
+    const res = await projectsService.getPublishedProjectsPage({ offset, limit: PAGE_SIZE });
+    loadingRef.current = false;
+    if (!res.ok) {
+      setPhase("error");
+      return;
+    }
+    setProjects((prev) => {
+      if (offset === 0) return res.data.projects;
+      const seen = new Set(prev.map((p) => p.id));
+      return [...prev, ...res.data.projects.filter((p) => !seen.has(p.id))];
+    });
+    setHasMore(res.data.hasMore);
+    setPhase("idle");
+  }, []);
+
   useEffect(() => {
     let cancelled = false;
     (async () => {
-      const res = await projectsService.getPublishedProjects();
-      if (cancelled) return;
-      setState(res.ok ? { status: "ready", projects: res.data } : { status: "error" });
+      if (!cancelled) await loadPage(0);
     })();
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [loadPage]);
+
+  const initialLoading = phase === "loading";
+  const initialError = phase === "error" && projects.length === 0;
+  const loadMoreError = phase === "error" && projects.length > 0;
 
   return (
     <>
@@ -283,33 +306,62 @@ export default function ProjectArchivePage() {
         </div>
 
         <div className="pa-grid">
-          {state.status === "ready" &&
-            state.projects.map((project) => (
-              <Link
-                key={project.id}
-                to="/projects/$slug"
-                params={{ slug: project.slug }}
-                className="pa-card"
-                aria-label={project.title}
-              >
-                <img
-                  className="pa-card-img"
-                  src={project.hero_image_url ?? ""}
-                  alt={project.hero_image_alt ?? ""}
-                />
-                <div className="pa-card-overlay" aria-hidden="true"></div>
-                <div className="pa-card-caption">
-                  <img className="pa-card-arrow" src="/Group 75.svg" alt="" aria-hidden="true" />
-                  <span className="pa-card-title">{project.title}</span>
-                </div>
-              </Link>
-            ))}
+          {projects.map((project) => (
+            <Link
+              key={project.id}
+              to="/projects/$slug"
+              params={{ slug: project.slug }}
+              className="pa-card"
+              aria-label={project.title}
+            >
+              <img
+                className="pa-card-img"
+                src={project.hero_image_url ?? ""}
+                alt={project.hero_image_alt ?? ""}
+              />
+              <div className="pa-card-overlay" aria-hidden="true"></div>
+              <div className="pa-card-caption">
+                <img className="pa-card-arrow" src="/Group 75.svg" alt="" aria-hidden="true" />
+                <span className="pa-card-title">{project.title}</span>
+              </div>
+            </Link>
+          ))}
 
-          {state.status === "ready" && state.projects.length === 0 && (
+          {!initialLoading && !initialError && projects.length === 0 && (
             <p className="pa-empty">אין עדיין פרויקטים להצגה.</p>
           )}
-          {state.status === "error" && (
-            <p className="pa-empty">אירעה שגיאה בטעינת הפרויקטים. נסו לרענן את העמוד.</p>
+          {initialError && (
+            <p className="pa-empty">
+              אירעה שגיאה בטעינת הפרויקטים.{" "}
+              <button type="button" className="pa-loadmore-retry" onClick={() => loadPage(0)}>
+                נסו שוב
+              </button>
+            </p>
+          )}
+        </div>
+
+        <div className="pa-loadmore" aria-live="polite">
+          <p className="pa-loadmore-status">
+            {phase === "loadingMore"
+              ? "טוען פרויקטים נוספים..."
+              : projects.length > 0
+                ? `${projects.length} פרויקטים`
+                : ""}
+          </p>
+          {loadMoreError && <p className="pa-loadmore-err">אירעה שגיאה בטעינת פרויקטים נוספים.</p>}
+          {hasMore && (
+            <button
+              type="button"
+              className="pa-loadmore-btn"
+              disabled={phase === "loadingMore"}
+              onClick={() => loadPage(projects.length)}
+            >
+              {phase === "loadingMore"
+                ? "טוען..."
+                : loadMoreError
+                  ? "נסו שוב"
+                  : "טעינת פרויקטים נוספים"}
+            </button>
           )}
         </div>
       </main>

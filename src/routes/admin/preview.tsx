@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { z } from "zod";
 import type { Project } from "@/types/project";
 import type { ProjectImage } from "@/types/project-image";
-import { useAdminAccess } from "@/hooks/use-admin-access";
+import { useRoleAccess } from "@/hooks/use-role";
 import { receivePreviewData } from "@/services/mock/preview-bridge";
 import * as projectImagesService from "@/services/projectImagesService";
 import ProjectDetailPage from "@/components/project/ProjectDetailPage";
@@ -15,8 +15,8 @@ const searchSchema = z.object({ req: z.string().optional() });
  * route must never render DashboardShell (no sidebar, no admin nav, no
  * dev-role switch), only ProjectDetailPage itself, full width, exactly as
  * the public site renders it. It still requires a real authenticated admin
- * session (same useAdminAccess() gate as every other /admin/* page), it
- * just doesn't share the dashboard's layout/chrome. Data arrives via the
+ * session (admin OR editor — project preview is part of project management),
+ * it just doesn't share the dashboard's layout/chrome. Data arrives via the
  * BroadcastChannel handshake in services/mock/preview-bridge.ts — this tab
  * never fetches or persists anything on its own.
  */
@@ -46,7 +46,7 @@ function CenteredMessage({ children }: { children: React.ReactNode }) {
 }
 
 function AdminPreviewRoute() {
-  const state = useAdminAccess();
+  const state = useRoleAccess();
   const navigate = useNavigate();
   const { req } = Route.useSearch();
   const [load, setLoad] = useState<LoadState>({ status: "loading" });

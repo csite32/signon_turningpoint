@@ -4,4 +4,6 @@ export {
   deleteImage,
   deleteImageIfUnreferenced,
   validateImageFile,
+  listMediaLibrary,
 } from "./storage/storageService.supabase";
+export type { MediaItem } from "./storage/storageService.supabase";

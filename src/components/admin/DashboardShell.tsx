@@ -4,7 +4,7 @@ import { FolderKanban, Home, LayoutDashboard, LogOut, Menu, Users } from "lucide
 import { Toaster } from "@/components/ui/sonner";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { useDevRole } from "@/hooks/use-dev-role";
+import { useRole } from "@/hooks/use-role";
 import { supabase } from "@/integrations/supabase/client";
 
 // admin-theme.css is intentionally NOT imported here — see admin/dashboard.tsx,
@@ -41,7 +41,7 @@ function BackToSiteLink({ onNavigate }: { onNavigate?: () => void }) {
 
 function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
-  const { role } = useDevRole();
+  const role = useRole();
 
   const linkClass = (active: boolean) =>
     `flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
@@ -74,47 +74,6 @@ function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
   );
 }
 
-function DevRoleSwitch() {
-  const { role, setRole, available } = useDevRole();
-  if (!available) return null;
-  return (
-    <div className="rounded-lg border border-dashed border-white/20 p-3 text-xs text-white/70">
-      <p className="mb-2 font-medium text-white/90">מצב פיתוח — הדמיית הרשאה</p>
-      <div className="flex gap-2">
-        <Button
-          type="button"
-          size="sm"
-          variant={role === "admin" ? "default" : "outline"}
-          className={
-            role === "admin"
-              ? ""
-              : "border-white/25 bg-transparent text-white hover:bg-white/10 hover:text-white"
-          }
-          onClick={() => setRole("admin")}
-        >
-          admin
-        </Button>
-        <Button
-          type="button"
-          size="sm"
-          variant={role === "editor" ? "default" : "outline"}
-          className={
-            role === "editor"
-              ? ""
-              : "border-white/25 bg-transparent text-white hover:bg-white/10 hover:text-white"
-          }
-          onClick={() => setRole("editor")}
-        >
-          editor
-        </Button>
-      </div>
-      <p className="mt-2 leading-snug">
-        משפיע רק על מודול המשתמשים כאן — לא על ההתחברות האמיתית ל-Supabase.
-      </p>
-    </div>
-  );
-}
-
 /**
  * Shell for /admin/dashboard/* — brand-themed (see admin-theme.css, loaded
  * by the dashboard.tsx layout route), with a fixed sidebar on desktop and a
@@ -139,7 +98,6 @@ export function DashboardShell({ email, children }: { email: string; children: R
         <p className="truncate rounded-md bg-white/5 px-3 py-2 text-xs text-white/70">{email}</p>
         <NavLinks />
         <div className="mt-auto flex flex-col gap-3">
-          <DevRoleSwitch />
           <Button
             variant="outline"
             className="border-white/25 bg-transparent text-white hover:bg-white/10 hover:text-white"
@@ -166,7 +124,6 @@ export function DashboardShell({ email, children }: { email: string; children: R
           <p className="truncate rounded-md bg-white/5 px-3 py-2 text-xs text-white/70">{email}</p>
           <NavLinks onNavigate={() => setMobileNavOpen(false)} />
           <div className="mt-auto flex flex-col gap-3">
-            <DevRoleSwitch />
             <Button
               variant="outline"
               className="border-white/25 bg-transparent text-white hover:bg-white/10 hover:text-white"

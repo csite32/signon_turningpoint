@@ -1,14 +1,23 @@
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { ImagePlus, Repeat, Trash2 } from "lucide-react";
+import { Images, ImagePlus, Repeat, Trash2 } from "lucide-react";
 import type { GalleryType, ProjectImage } from "@/types/project-image";
 import * as projectImagesService from "@/services/projectImagesService";
 import * as storageService from "@/services/storageService";
+import type { MediaItem } from "@/services/storageService";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { ConfirmDeleteDialog } from "@/components/admin/ConfirmDeleteDialog";
+import { MediaLibraryDialog } from "@/components/admin/MediaLibraryDialog";
+
+/** Image-count ceiling per gallery — matches the "up to N images" copy in ProjectForm. */
+const GALLERY_MAX: Record<GalleryType, number> = {
+  main_gallery: 4,
+  brand_colors: 3,
+  secondary_gallery: 4,
+};
 
 /**
  * One reusable gallery editor, parameterized by galleryType — used for all
@@ -37,6 +46,10 @@ export function GalleryUploader({
   const [dragId, setDragId] = useState<string | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<ProjectImage | null>(null);
   const [deleting, setDeleting] = useState(false);
+  const [libraryOpen, setLibraryOpen] = useState(false);
+
+  const max = GALLERY_MAX[galleryType];
+  const atCapacity = (images?.length ?? 0) >= max;
 
   async function load() {
     const res = await projectImagesService.getProjectImages(projectId, galleryType);
@@ -75,8 +88,16 @@ export function GalleryUploader({
     }
   }
 
+  function rejectIfFull(): boolean {
+    if (atCapacity) {
+      toast.error(`ניתן להוסיף עד ${max} תמונות בגלריה זו`);
+      return true;
+    }
+    return false;
+  }
+
   async function handleUploadNew(file: File) {
-    if (rejectIfNotUploadable(file)) return;
+    if (rejectIfFull() || rejectIfNotUploadable(file)) return;
     setBusySlot("new");
     const up = await storageService.uploadImage(file, { folder: galleryType });
     if (!up.ok) {
@@ -95,6 +116,33 @@ export function GalleryUploader({
       return;
     }
     toast.success("התמונה הועלתה");
+    load();
+  }
+
+  /** Re-use an existing library image as a NEW gallery row — no upload, no file copy. */
+  async function handlePickFromLibrary(item: MediaItem, alt: string) {
+    if (!images || rejectIfFull()) return;
+    const pickedPath = item.storagePath ?? item.url;
+    const already = images.some(
+      (i) => (i.storage_path ?? i.image_url) === pickedPath || i.image_url === item.url,
+    );
+    if (already) {
+      toast.error("התמונה כבר קיימת בגלריה זו");
+      return;
+    }
+    setBusySlot("new");
+    const res = await projectImagesService.uploadProjectImage(projectId, {
+      imageUrl: item.url,
+      storagePath: pickedPath,
+      galleryType,
+      altText: alt || item.alt || "",
+    });
+    setBusySlot(null);
+    if (!res.ok) {
+      toast.error(res.error === "forbidden" ? "אין לך הרשאה להוסיף תמונות" : "הוספת התמונה נכשלה");
+      return;
+    }
+    toast.success("התמונה נוספה לגלריה");
     load();
   }
 
@@ -172,26 +220,54 @@ export function GalleryUploader({
         <div>
           {title && <h3 className="text-sm font-medium">{title}</h3>}
           {hint && <p className="text-xs text-muted-foreground">{hint}</p>}
-          <p className="text-xs text-muted-foreground">קובצי תמונה בלבד, עד 10MB.</p>
+          <p className="text-xs text-muted-foreground">
+            קובצי תמונה בלבד, עד 10MB · עד {max} תמונות בגלריה זו.
+          </p>
         </div>
-        <label className="cursor-pointer">
-          <input
-            type="file"
-            accept="image/*"
-            className="hidden"
-            disabled={busySlot !== null}
-            onChange={(e) => {
-              const f = e.target.files?.[0];
-              if (f) handleUploadNew(f);
-              e.target.value = "";
-            }}
-          />
-          <span className={cn(buttonVariants({ variant: "outline", size: "sm" }), "gap-2")}>
-            <ImagePlus className="h-4 w-4" />
-            {busySlot === "new" ? "מעלה..." : "העלאת תמונה"}
-          </span>
-        </label>
+        <div className="flex flex-wrap items-center gap-2">
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="gap-2"
+            disabled={busySlot !== null || atCapacity}
+            onClick={() => setLibraryOpen(true)}
+          >
+            <Images className="h-4 w-4" />
+            בחירה מספריית התמונות
+          </Button>
+          <label className="cursor-pointer">
+            <input
+              type="file"
+              accept="image/*"
+              className="hidden"
+              disabled={busySlot !== null || atCapacity}
+              onChange={(e) => {
+                const f = e.target.files?.[0];
+                if (f) handleUploadNew(f);
+                e.target.value = "";
+              }}
+            />
+            <span
+              className={cn(
+                buttonVariants({ variant: "outline", size: "sm" }),
+                "gap-2",
+                (busySlot !== null || atCapacity) && "pointer-events-none opacity-50",
+              )}
+            >
+              <ImagePlus className="h-4 w-4" />
+              {busySlot === "new" ? "מעלה..." : "העלאת תמונה"}
+            </span>
+          </label>
+        </div>
       </div>
+
+      <MediaLibraryDialog
+        open={libraryOpen}
+        onOpenChange={setLibraryOpen}
+        title="בחירת תמונה לגלריה מספריית התמונות"
+        onSelect={handlePickFromLibrary}
+      />
 
       {images === null ? (
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">

@@ -66,6 +66,22 @@ const buttonStyle: CSSProperties = {
   cursor: "pointer",
 };
 
+/**
+ * Where a signed-in user lands: `admin` → /admin (the hub with the visual
+ * editor); `editor` → straight to the dashboard's projects screen, since
+ * /admin itself is admin-only.
+ */
+async function destinationForSession(): Promise<"/admin" | "/admin/dashboard/projects"> {
+  const { data } = await supabase.auth.getSession();
+  if (!data.session) return "/admin";
+  const { data: roleRow } = await supabase
+    .from("user_roles")
+    .select("role")
+    .eq("user_id", data.session.user.id)
+    .maybeSingle();
+  return roleRow?.role === "editor" ? "/admin/dashboard/projects" : "/admin";
+}
+
 function AdminLoginPage() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
@@ -75,8 +91,9 @@ function AdminLoginPage() {
 
   useEffect(() => {
     let cancelled = false;
-    supabase.auth.getSession().then(({ data }) => {
-      if (!cancelled && data.session) navigate({ to: "/admin", replace: true });
+    supabase.auth.getSession().then(async ({ data }) => {
+      if (cancelled || !data.session) return;
+      navigate({ to: await destinationForSession(), replace: true });
     });
     return () => {
       cancelled = true;
@@ -88,12 +105,14 @@ function AdminLoginPage() {
     setBusy(true);
     setError("");
     const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
-    setBusy(false);
     if (signInError) {
+      setBusy(false);
       setError(signInError.message);
       return;
     }
-    navigate({ to: "/admin", replace: true });
+    const dest = await destinationForSession();
+    setBusy(false);
+    navigate({ to: dest, replace: true });
   }
 
   return (

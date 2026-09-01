@@ -29,7 +29,7 @@ export default function TurningPointAbout() {
         <nav className="navpill">
           <Link to="/" data-editor-id="global__nav-home">בית</Link>
           <Link to="/about" data-editor-id="global__nav-about">אודות והשיטה</Link>
-          <a href="#" data-editor-id="global__nav-projects">פרויקטים</a>
+          <Link to="/projects" data-editor-id="global__nav-projects">פרויקטים</Link>
           <a href="#" data-editor-id="global__nav-testimonials">לקוחות ממליצים</a>
           <a href="#" className="navpill-contact" data-editor-id="global__nav-contact">צור קשר</a>
         </nav>
@@ -54,7 +54,7 @@ export default function TurningPointAbout() {
         <button className="mobile-close" aria-label="סגור">✕</button>
         <Link to="/">בית</Link>
         <Link to="/about">אודות והשיטה</Link>
-        <a href="#">פרויקטים</a>
+        <Link to="/projects">פרויקטים</Link>
         <a href="#">לקוחות ממליצים</a>
         <a href="#" className="navpill-contact">צור קשר</a>
       </div>

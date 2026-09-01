@@ -9,6 +9,7 @@
 export {
   getProjects,
   getPublishedProjects,
+  getPublishedProjectsPage,
   getProjectById,
   getProjectBySlug,
   createProject,
