@@ -888,7 +888,7 @@ export default function ProjectDetailPage({
             >
               <span className="pm-glyph pm-spin" style={{ inset: "26%" }}>
                 <img
-                  src="/Vector (4).svg"
+                  src="/result-star.svg"
                   alt=""
                   style={{ width: "100%", height: "100%", display: "block" }}
                 />
