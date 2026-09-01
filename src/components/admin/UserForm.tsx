@@ -4,8 +4,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { UserPlus } from "lucide-react";
-import type { MockUser } from "@/types/user";
 import * as usersService from "@/services/usersService";
+import type { AdminUser } from "@/services/usersService";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -25,7 +25,7 @@ const schema = z.object({
 });
 type FormValues = z.infer<typeof schema>;
 
-export function UserForm({ onCreated }: { onCreated: (user: MockUser) => void }) {
+export function UserForm({ onCreated }: { onCreated: (user: AdminUser) => void }) {
   const [busy, setBusy] = useState(false);
   const {
     register,
@@ -43,7 +43,13 @@ export function UserForm({ onCreated }: { onCreated: (user: MockUser) => void })
     setBusy(false);
     if (!res.ok) {
       toast.error(
-        res.error === "duplicate_email" ? "כבר קיים משתמש עם אימייל זה" : "הוספת המשתמש נכשלה",
+        res.error === "duplicate_email"
+          ? "כבר קיים משתמש עם אימייל זה"
+          : res.error === "forbidden"
+            ? "אין לך הרשאה להוסיף משתמשים"
+            : res.error === "role_assign_failed"
+              ? "המשתמש נוצר אך שיוך ההרשאה נכשל — נסו שוב"
+              : "הוספת המשתמש נכשלה",
       );
       return;
     }

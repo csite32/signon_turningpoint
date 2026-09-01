@@ -146,3 +146,90 @@ export async function deleteImageIfUnreferenced(
 
   return deleteImage(path);
 }
+
+// ---------------------------------------------------------------------------
+// Media library — a read-only inventory of PROJECT media only (never
+// editor-media). Sources: every project's hero, every project_images row, and
+// the raw files sitting in the project-media bucket under the folders the hero
+// / three galleries use. Each file appears once, keyed by storage_path (or
+// image_url when there is no path). No delete-from-library affordance exists.
+
+export interface MediaItem {
+  /** Dedup + identity key: storage_path if present, else image_url. */
+  key: string;
+  url: string;
+  storagePath: string | null;
+  alt: string | null;
+  /** Basename, for search + display. */
+  name: string;
+  source: "project_hero" | "project_image" | "bucket";
+}
+
+function basename(urlOrPath: string): string {
+  const noQuery = urlOrPath.split("?")[0];
+  const last = noQuery.split("/").pop() || noQuery;
+  return last.replace(/^public:/, "");
+}
+
+export async function listMediaLibrary(): Promise<Result<MediaItem[]>> {
+  const items = new Map<string, MediaItem>();
+  const add = (it: MediaItem) => {
+    if (it.url && !items.has(it.key)) items.set(it.key, it);
+  };
+
+  const { data: projs, error: projErr } = await supabase
+    .from("projects")
+    .select("hero_image_url, hero_image_path, hero_image_alt");
+  if (projErr) return err("db_error");
+  for (const p of projs ?? []) {
+    if (!p.hero_image_url) continue;
+    const key = p.hero_image_path || p.hero_image_url;
+    add({
+      key,
+      url: p.hero_image_url,
+      storagePath: p.hero_image_path,
+      alt: p.hero_image_alt,
+      name: basename(p.hero_image_url),
+      source: "project_hero",
+    });
+  }
+
+  const { data: imgs, error: imgErr } = await supabase
+    .from("project_images")
+    .select("image_url, storage_path, alt_text");
+  if (imgErr) return err("db_error");
+  for (const im of imgs ?? []) {
+    if (!im.image_url) continue;
+    const key = im.storage_path || im.image_url;
+    add({
+      key,
+      url: im.image_url,
+      storagePath: im.storage_path,
+      alt: im.alt_text,
+      name: basename(im.image_url),
+      source: "project_image",
+    });
+  }
+
+  for (const folder of ["hero", "main_gallery", "brand_colors", "secondary_gallery"]) {
+    const { data: files, error: listErr } = await supabase.storage
+      .from(BUCKET)
+      .list(folder, { limit: 1000, sortBy: { column: "name", order: "asc" } });
+    if (listErr || !files) continue; // storage listing is best-effort
+    for (const f of files) {
+      if (!f.name || f.id === null) continue; // skip nested-folder placeholders
+      const objectPath = `${folder}/${f.name}`;
+      const { data: pub } = supabase.storage.from(BUCKET).getPublicUrl(objectPath);
+      add({
+        key: objectPath,
+        url: pub.publicUrl,
+        storagePath: objectPath,
+        alt: null,
+        name: f.name,
+        source: "bucket",
+      });
+    }
+  }
+
+  return ok([...items.values()]);
+}

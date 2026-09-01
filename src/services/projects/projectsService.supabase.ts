@@ -77,23 +77,58 @@ export async function getProjects(filter?: {
     if (term) query = query.or(`title.ilike.%${term}%,slug.ilike.%${term}%`);
   }
 
-  query = query.order("sort_order", { ascending: true }).order("created_at", { ascending: true });
+  query = query
+    .order("sort_order", { ascending: true })
+    .order("created_at", { ascending: true })
+    .order("id", { ascending: true });
 
   const { data, error } = await query;
   if (error) return err(mapError(error));
   return ok((data ?? []).map(rowToProject));
 }
 
-/** Public archive / homepage feed: published only, in drag order (sort_order, then created_at). */
+/**
+ * Public archive / homepage feed: every published project, in the fully
+ * deterministic order (sort_order, then created_at, then id) that the
+ * homepage strip, the archive and getAdjacentProjects all share.
+ */
 export async function getPublishedProjects(): Promise<Result<Project[]>> {
   const { data, error } = await supabase
     .from("projects")
     .select(COLS)
     .eq("status", "published")
     .order("sort_order", { ascending: true })
-    .order("created_at", { ascending: true });
+    .order("created_at", { ascending: true })
+    .order("id", { ascending: true });
   if (error) return err(mapError(error));
   return ok((data ?? []).map(rowToProject));
+}
+
+/**
+ * One page of published projects, for the archive's "load more" button. Fetches
+ * `limit + 1` rows so the caller learns whether another page exists without a
+ * separate count query. Same deterministic ordering as getPublishedProjects, so
+ * paging never re-shows or skips a row. RLS keeps this published-only for the
+ * public visitor.
+ */
+export async function getPublishedProjectsPage(opts: {
+  offset: number;
+  limit?: number;
+}): Promise<Result<{ projects: Project[]; hasMore: boolean }>> {
+  const limit = opts.limit ?? 10;
+  const from = Math.max(0, opts.offset);
+  const { data, error } = await supabase
+    .from("projects")
+    .select(COLS)
+    .eq("status", "published")
+    .order("sort_order", { ascending: true })
+    .order("created_at", { ascending: true })
+    .order("id", { ascending: true })
+    .range(from, from + limit); // inclusive → limit + 1 rows
+  if (error) return err(mapError(error));
+  const rows = data ?? [];
+  const hasMore = rows.length > limit;
+  return ok({ projects: rows.slice(0, limit).map(rowToProject), hasMore });
 }
 
 export async function getProjectById(id: string): Promise<Result<Project>> {
@@ -280,7 +315,8 @@ export async function getAdjacentProjects(
     .select(COLS)
     .eq("status", "published")
     .order("sort_order", { ascending: true })
-    .order("created_at", { ascending: true });
+    .order("created_at", { ascending: true })
+    .order("id", { ascending: true });
   if (error) return err(mapError(error));
 
   const published = (data ?? []).map(rowToProject);

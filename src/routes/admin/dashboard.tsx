@@ -1,15 +1,16 @@
 import { createFileRoute, Outlet, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
-import { useAdminAccess } from "@/hooks/use-admin-access";
+import { useRoleAccess } from "@/hooks/use-role";
 import { DashboardShell } from "@/components/admin/DashboardShell";
 import adminThemeCssUrl from "../../styles/admin-theme.css?url";
 
 /**
- * Layout route for /admin/dashboard/*. Reuses the EXACT SAME real Supabase
- * Auth gate already protecting /admin (useAdminAccess) — no second login, no
- * mock session guarding entry here. Everything under this layout (Projects,
- * Users) is Mock-Data-backed, but reaching it at all still requires a real
- * authenticated Supabase admin session, unchanged from today.
+ * Layout route for /admin/dashboard/*. Gated on the real Supabase session +
+ * `user_roles`: BOTH `admin` and `editor` may enter (an editor manages
+ * projects only — the Users screen and the visual editor stay admin-only,
+ * enforced in their own routes and, for user management, server-side too).
+ * `/admin` (the visual editor entry) keeps its stricter admin-only
+ * useAdminAccess() gate, unchanged.
  *
  * admin-theme.css is declared here via head()/links — the SAME mechanism
  * __root.tsx uses for the app's own base stylesheet (a `?url` import + a
@@ -30,7 +31,7 @@ export const Route = createFileRoute("/admin/dashboard")({
 });
 
 function DashboardLayout() {
-  const state = useAdminAccess();
+  const state = useRoleAccess();
   const navigate = useNavigate();
 
   useEffect(() => {

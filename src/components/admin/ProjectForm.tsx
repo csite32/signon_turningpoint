@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "sonner";
-import { ImagePlus, Eye, Save, Send } from "lucide-react";
+import { ImagePlus, Eye, Images, Save, Send } from "lucide-react";
 import type { Project } from "@/types/project";
 import * as projectsService from "@/services/projectsService";
 import * as projectImagesService from "@/services/projectImagesService";
@@ -18,6 +18,7 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { GalleryUploader } from "@/components/admin/GalleryUploader";
+import { MediaLibraryDialog } from "@/components/admin/MediaLibraryDialog";
 
 const schema = z.object({
   title: z.string().min(1, "כותרת הפרויקט נדרשת"),
@@ -94,6 +95,7 @@ export function ProjectForm({
     path: project.hero_image_path ?? "",
   });
   const [heroUploading, setHeroUploading] = useState(false);
+  const [heroLibraryOpen, setHeroLibraryOpen] = useState(false);
   const [saving, setSaving] = useState(false);
   const [publishing, setPublishing] = useState(false);
   const [currentProject, setCurrentProject] = useState(project);
@@ -285,26 +287,47 @@ export function ProjectForm({
             </div>
           )}
           <div className="flex-1 space-y-2">
-            <label className="cursor-pointer">
-              <input
-                type="file"
-                accept="image/*"
-                className="hidden"
-                disabled={heroUploading}
-                onChange={(e) => {
-                  const f = e.target.files?.[0];
-                  if (f) handleHeroUpload(f);
-                  e.target.value = "";
-                }}
-              />
-              <span className="inline-flex h-9 items-center gap-2 rounded-md border border-input bg-background px-4 text-sm shadow-sm hover:bg-accent">
-                <ImagePlus className="h-4 w-4" />
-                {heroUploading ? "מעלה..." : heroImage.url ? "החלפת תמונה" : "העלאת תמונה"}
-              </span>
-            </label>
+            <div className="flex flex-wrap gap-2">
+              <label className="cursor-pointer">
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  disabled={heroUploading}
+                  onChange={(e) => {
+                    const f = e.target.files?.[0];
+                    if (f) handleHeroUpload(f);
+                    e.target.value = "";
+                  }}
+                />
+                <span className="inline-flex h-9 items-center gap-2 rounded-md border border-input bg-background px-4 text-sm shadow-sm hover:bg-accent">
+                  <ImagePlus className="h-4 w-4" />
+                  {heroUploading ? "מעלה..." : heroImage.url ? "החלפת תמונה" : "העלאת תמונה"}
+                </span>
+              </label>
+              <button
+                type="button"
+                onClick={() => setHeroLibraryOpen(true)}
+                className="inline-flex h-9 items-center gap-2 rounded-md border border-input bg-background px-4 text-sm shadow-sm hover:bg-accent"
+              >
+                <Images className="h-4 w-4" />
+                בחירה מספריית התמונות
+              </button>
+            </div>
             <Input placeholder="טקסט חלופי לתמונה הראשית" {...register("hero_image_alt")} />
           </div>
         </div>
+        <MediaLibraryDialog
+          open={heroLibraryOpen}
+          onOpenChange={setHeroLibraryOpen}
+          title="בחירת תמונה ראשית מספריית התמונות"
+          onSelect={(item, alt) => {
+            setHeroImage({ url: item.url, path: item.storagePath ?? item.url });
+            if (alt && !getValues("hero_image_alt")) {
+              setValue("hero_image_alt", alt, { shouldDirty: true });
+            }
+          }}
+        />
       </FormSection>
 
       <FormSection title="האתגר והפתרון">

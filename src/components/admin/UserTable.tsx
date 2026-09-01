@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Trash2, Users as UsersIcon } from "lucide-react";
-import type { MockUser, MockRole } from "@/types/user";
 import * as usersService from "@/services/usersService";
+import type { AdminUser, AdminRole } from "@/services/usersService";
+import { useRoleAccess } from "@/hooks/use-role";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -27,13 +28,14 @@ import { ConfirmDeleteDialog } from "@/components/admin/ConfirmDeleteDialog";
 import { UserForm } from "@/components/admin/UserForm";
 
 export function UserTable() {
-  const [users, setUsers] = useState<MockUser[] | null>(null);
+  const [users, setUsers] = useState<AdminUser[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [pendingId, setPendingId] = useState<string | null>(null);
-  const [deleteTarget, setDeleteTarget] = useState<MockUser | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<AdminUser | null>(null);
   const [deleting, setDeleting] = useState(false);
-  const currentUserId = usersService.getCurrentMockUserId();
+  const access = useRoleAccess();
+  const currentUserId = access.status === "authorized" ? access.userId : null;
 
   async function load() {
     setError(null);
@@ -51,13 +53,26 @@ export function UserTable() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [search]);
 
-  async function handleRoleChange(user: MockUser, role: MockRole) {
-    if (pendingId) return;
+  function roleErrorMessage(code: string): string {
+    switch (code) {
+      case "cannot_demote_self":
+        return "לא ניתן להוריד את ההרשאה של עצמך מ-admin";
+      case "last_admin":
+        return "חייב להישאר לפחות מנהל אחד במערכת";
+      case "forbidden":
+        return "אין לך הרשאה לשנות תפקידים";
+      default:
+        return "עדכון ההרשאה נכשל";
+    }
+  }
+
+  async function handleRoleChange(user: AdminUser, role: AdminRole) {
+    if (pendingId || user.role === role) return;
     setPendingId(user.id);
     const res = await usersService.updateUserRole(user.id, role);
     setPendingId(null);
     if (!res.ok) {
-      toast.error("עדכון ההרשאה נכשל");
+      toast.error(roleErrorMessage(res.error));
       return;
     }
     toast.success("ההרשאה עודכנה");
@@ -67,11 +82,17 @@ export function UserTable() {
   async function handleDelete() {
     if (!deleteTarget) return;
     setDeleting(true);
-    const res = await usersService.deleteUser(deleteTarget.id, { actingUserId: currentUserId });
+    const res = await usersService.deleteUser(deleteTarget.id);
     setDeleting(false);
     if (!res.ok) {
       toast.error(
-        res.error === "cannot_delete_self" ? "לא ניתן למחוק את המשתמש שלך" : "מחיקת המשתמש נכשלה",
+        res.error === "cannot_delete_self"
+          ? "לא ניתן למחוק את המשתמש שלך"
+          : res.error === "last_admin"
+            ? "לא ניתן למחוק את המנהל האחרון"
+            : res.error === "forbidden"
+              ? "אין לך הרשאה למחוק משתמשים"
+              : "מחיקת המשתמש נכשלה",
       );
       return;
     }
@@ -145,12 +166,12 @@ export function UserTable() {
                         </TableCell>
                         <TableCell>
                           <Select
-                            value={u.role}
-                            onValueChange={(v) => handleRoleChange(u, v as MockRole)}
+                            value={u.role ?? undefined}
+                            onValueChange={(v) => handleRoleChange(u, v as AdminRole)}
                             disabled={pendingId === u.id}
                           >
                             <SelectTrigger className="w-32">
-                              <SelectValue />
+                              <SelectValue placeholder="ללא הרשאה" />
                             </SelectTrigger>
                             <SelectContent>
                               <SelectItem value="admin">admin</SelectItem>

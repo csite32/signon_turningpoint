@@ -1,11 +1,26 @@
 // @ts-nocheck
 /* Faithful port of the Claude-built homepage (prototype/index_59.html).
-   Markup, CSS and JS are preserved 1:1. Do not redesign or refactor. */
+   Markup, CSS and JS are preserved 1:1. Do not redesign or refactor.
+   The only dynamic part is the projects strip: it renders up to 5 published
+   projects passed from the route loader (SSR), keeping the exact 1-2-2 markup,
+   classes, data-editor ids and animations. */
 import { useEffect, useLayoutEffect, useRef } from "react";
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import "../styles/turningpoint.css";
 
-export default function TurningPointHome() {
+export default function TurningPointHome({ projects }) {
+  const navigate = useNavigate();
+  const list = (Array.isArray(projects) ? projects : []).slice(0, 5);
+  const withIndex = list.map((project, index) => ({ project, index }));
+  // 1-2-2 layout: row 1 gets the first card, rows 2 and 3 up to two each.
+  // Empty rows are dropped so fewer than 5 projects never leave blank slots.
+  const projRows = [
+    withIndex.slice(0, 1),
+    withIndex.slice(1, 3),
+    withIndex.slice(3, 5),
+  ].filter((r) => r.length > 0);
+  const goToProject = (slug) => navigate({ to: "/projects/$slug", params: { slug } });
+
   const inited = useRef(false);
   useLayoutEffect(() => {
     document.documentElement.classList.add("anim-ready");
@@ -28,7 +43,7 @@ export default function TurningPointHome() {
         <nav className="navpill">
           <a href="#" data-editor-id="global__nav-home">בית</a>
           <Link to="/about" data-editor-id="global__nav-about">אודות והשיטה</Link>
-          <a href="#" data-editor-id="global__nav-projects">פרויקטים</a>
+          <Link to="/projects" data-editor-id="global__nav-projects">פרויקטים</Link>
           <a href="#" data-editor-id="global__nav-testimonials">לקוחות ממליצים</a>
           <a href="#" className="navpill-contact" data-editor-id="global__nav-contact">צור קשר</a>
         </nav>
@@ -53,7 +68,7 @@ export default function TurningPointHome() {
         <button className="mobile-close" aria-label="סגור">✕</button>
         <a href="#">בית</a>
         <a href="#">אודות והשיטה</a>
-        <a href="#">פרויקטים</a>
+        <Link to="/projects">פרויקטים</Link>
         <a href="#">לקוחות ממליצים</a>
         <a href="#" className="navpill-contact">צור קשר</a>
       </div>
@@ -215,10 +230,38 @@ export default function TurningPointHome() {
 
             <div className="proj-grid">
 
-              <div className="proj-row proj-row--1">
-                <div data-editor-move-wrap="page-index__proj-card-1" style={{ flex: 1, minWidth: 0, maxWidth: 680 }}>
-                <div className="proj-card" data-proj-id="1" data-proj-href="#" data-editor-id="page-index__proj-card-1">
-                  <img src="/projects/8d5d99ec020d90eeb06e65c581ad99554635396e.webp" alt="פרויקט 1" loading="lazy" />
+              {projRows.map((row, rowIdx) => (
+              <div className={`proj-row proj-row--${rowIdx + 1}`} key={rowIdx}>
+                {row.map(({ project, index }) => (
+                <div
+                  key={project.id}
+                  data-editor-move-wrap={`page-index__proj-card-${index + 1}`}
+                  style={
+                    // row 1's card keeps its 680px cap; a row that ends up with a
+                    // single card (fewer than 5 projects) gets the same cap so it
+                    // doesn't stretch to full width.
+                    index === 0 || row.length === 1
+                      ? { flex: 1, minWidth: 0, maxWidth: 680 }
+                      : { flex: 1, minWidth: 0 }
+                  }
+                >
+                <div
+                  className="proj-card"
+                  data-proj-id={index + 1}
+                  data-proj-href={`/projects/${project.slug}`}
+                  data-editor-id={`page-index__proj-card-${index + 1}`}
+                  role="link"
+                  tabIndex={0}
+                  aria-label={project.title}
+                  onClick={() => goToProject(project.slug)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      goToProject(project.slug);
+                    }
+                  }}
+                >
+                  <img src={project.hero_image_url || ""} alt={project.hero_image_alt || ""} loading="lazy" />
                   <div className="proj-card-border"></div>
                   <div className="proj-notch-cover"></div>
                   <div className="proj-corner">
@@ -226,45 +269,9 @@ export default function TurningPointHome() {
                   </div>
                 </div>
                 </div>
+                ))}
               </div>
-
-              <div className="proj-row proj-row--2">
-                <div data-editor-move-wrap="page-index__proj-card-2" style={{ flex: 1, minWidth: 0 }}>
-                <div className="proj-card" data-proj-id="2" data-proj-href="#" data-editor-id="page-index__proj-card-2">
-                  <img src="/projects/ba9a22ef141cd47c248c5abc2fd4b037b15e5d75.webp" alt="פרויקט 2" loading="lazy" />
-                  <div className="proj-card-border"></div>
-                  <div className="proj-notch-cover"></div>
-                  <div className="proj-corner"><img src="/Group 68.svg" alt="" aria-hidden="true" /></div>
-                </div>
-                </div>
-                <div data-editor-move-wrap="page-index__proj-card-3" style={{ flex: 1, minWidth: 0 }}>
-                <div className="proj-card" data-proj-id="3" data-proj-href="#" data-editor-id="page-index__proj-card-3">
-                  <img src="/projects/ba9a22ef141cd47c248c5abc2fd4b037b15e5d75-1.webp" alt="פרויקט 3" loading="lazy" />
-                  <div className="proj-card-border"></div>
-                  <div className="proj-notch-cover"></div>
-                  <div className="proj-corner"><img src="/Group 68.svg" alt="" aria-hidden="true" /></div>
-                </div>
-                </div>
-              </div>
-
-              <div className="proj-row proj-row--3">
-                <div data-editor-move-wrap="page-index__proj-card-4" style={{ flex: 1, minWidth: 0 }}>
-                <div className="proj-card" data-proj-id="4" data-proj-href="#" data-editor-id="page-index__proj-card-4">
-                  <img src="/projects/ba9a22ef141cd47c248c5abc2fd4b037b15e5d75-2.webp" alt="פרויקט 4" loading="lazy" />
-                  <div className="proj-card-border"></div>
-                  <div className="proj-notch-cover"></div>
-                  <div className="proj-corner"><img src="/Group 68.svg" alt="" aria-hidden="true" /></div>
-                </div>
-                </div>
-                <div data-editor-move-wrap="page-index__proj-card-5" style={{ flex: 1, minWidth: 0 }}>
-                <div className="proj-card" data-proj-id="5" data-proj-href="#" data-editor-id="page-index__proj-card-5">
-                  <img src="/projects/ba9a22ef141cd47c248c5abc2fd4b037b15e5d75-3.webp" alt="פרויקט 5" loading="lazy" />
-                  <div className="proj-card-border"></div>
-                  <div className="proj-notch-cover"></div>
-                  <div className="proj-corner"><img src="/Group 68.svg" alt="" aria-hidden="true" /></div>
-                </div>
-                </div>
-              </div>
+              ))}
 
             </div>
           </div>
@@ -272,7 +279,7 @@ export default function TurningPointHome() {
 
         <div className="proj-cta-wrap">
           <div data-editor-move-wrap="page-index__proj-cta-btn" style={{ display: "block" }}>
-          <button className="proj-cta-btn" data-editor-id="page-index__proj-cta-btn">
+          <button className="proj-cta-btn" data-editor-id="page-index__proj-cta-btn" onClick={() => navigate({ to: "/projects" })}>
             לכל הפרויקטים שפרצו דרך
             <img src="/Group 96.svg" alt="" aria-hidden="true" className="proj-cta-icon" />
           </button>
