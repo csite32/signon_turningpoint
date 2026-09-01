@@ -271,7 +271,7 @@ export default function ProjectArchivePage() {
           <div className="pa-pillrow">
             <div className="pa-pill pa-pill-icons">
               <span className="pa-icon-ring">
-                <img className="pa-icon-star" src="/Vector (5).svg" alt="" aria-hidden="true" />
+                <img className="pa-icon-star" src="/archive-star.svg" alt="" aria-hidden="true" />
               </span>
               <img className="pa-icon-dot" src="/Ellipse 21.svg" alt="" aria-hidden="true" />
               <img className="pa-icon-arrow" src="/Vector546.svg" alt="" aria-hidden="true" />
