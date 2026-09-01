@@ -1,10 +1,10 @@
 /**
- * Public projectsService API. Every function is re-exported from the mock
- * implementation today; a future Supabase-backed projectsService.ts would
- * keep these exact names/signatures and swap only the body of each function
- * (see src/services/mock/projectsService.mock.ts for the current, in-memory
- * implementation) — no caller anywhere in components/routes ever imports the
- * mock module directly.
+ * Public projectsService API. The body now lives in the Supabase-backed
+ * implementation (src/services/projects/projectsService.supabase.ts) — same
+ * names, same signatures, same Result<T> contract as the mock it replaced, so
+ * no component or route imports change. The mock
+ * (src/services/mock/projectsService.mock.ts) is kept on disk but is no longer
+ * wired to anything.
  */
 export {
   getProjects,
@@ -17,4 +17,5 @@ export {
   publishProject,
   unpublishProject,
   getAdjacentProjects,
-} from "./mock/projectsService.mock";
+  reorderProjects,
+} from "./projects/projectsService.supabase";

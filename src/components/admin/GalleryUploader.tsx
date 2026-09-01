@@ -48,11 +48,39 @@ export function GalleryUploader({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projectId, galleryType]);
 
+  /** Friendly, before-upload guard — mirrors the central check in storageService. */
+  function rejectIfNotUploadable(file: File): boolean {
+    const check = storageService.validateImageFile(file);
+    if (check.ok) return false;
+    toast.error(
+      check.error === "not_an_image"
+        ? "אפשר להעלות קובצי תמונה בלבד"
+        : check.error === "file_too_large"
+          ? "הקובץ גדול מדי — עד 10MB"
+          : "הקובץ אינו תקין",
+    );
+    return true;
+  }
+
+  function uploadErrorMessage(code: string): string {
+    switch (code) {
+      case "not_an_image":
+        return "אפשר להעלות קובצי תמונה בלבד";
+      case "file_too_large":
+        return "הקובץ גדול מדי — עד 10MB";
+      case "forbidden":
+        return "אין לך הרשאה להעלות תמונות";
+      default:
+        return "העלאת התמונה נכשלה";
+    }
+  }
+
   async function handleUploadNew(file: File) {
+    if (rejectIfNotUploadable(file)) return;
     setBusySlot("new");
     const up = await storageService.uploadImage(file, { folder: galleryType });
     if (!up.ok) {
-      toast.error("העלאת התמונה נכשלה");
+      toast.error(uploadErrorMessage(up.error));
       setBusySlot(null);
       return;
     }
@@ -63,7 +91,7 @@ export function GalleryUploader({
     });
     setBusySlot(null);
     if (!res.ok) {
-      toast.error("שמירת התמונה נכשלה");
+      toast.error(res.error === "forbidden" ? "אין לך הרשאה לשמור תמונות" : "שמירת התמונה נכשלה");
       return;
     }
     toast.success("התמונה הועלתה");
@@ -71,10 +99,11 @@ export function GalleryUploader({
   }
 
   async function handleReplace(image: ProjectImage, file: File) {
+    if (rejectIfNotUploadable(file)) return;
     setBusySlot(image.id);
     const up = await storageService.uploadImage(file, { folder: galleryType });
     if (!up.ok) {
-      toast.error("העלאת התמונה נכשלה");
+      toast.error(uploadErrorMessage(up.error));
       setBusySlot(null);
       return;
     }
@@ -84,7 +113,7 @@ export function GalleryUploader({
     });
     setBusySlot(null);
     if (!res.ok) {
-      toast.error("החלפת התמונה נכשלה");
+      toast.error(res.error === "forbidden" ? "אין לך הרשאה להחליף תמונות" : "החלפת התמונה נכשלה");
       return;
     }
     toast.success("התמונה הוחלפה");
@@ -143,6 +172,7 @@ export function GalleryUploader({
         <div>
           {title && <h3 className="text-sm font-medium">{title}</h3>}
           {hint && <p className="text-xs text-muted-foreground">{hint}</p>}
+          <p className="text-xs text-muted-foreground">קובצי תמונה בלבד, עד 10MB.</p>
         </div>
         <label className="cursor-pointer">
           <input

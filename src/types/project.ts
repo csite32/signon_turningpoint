@@ -21,14 +21,24 @@ export interface Project {
   result_text: string | null;
   testimonial_text: string | null;
   status: ProjectStatus;
+  /**
+   * Display order for the public archive (/projects), the homepage feature
+   * strip and the dashboard table. Service-managed only — never a form field:
+   * createProject assigns max+1, reorderProjects rewrites it on drag / the
+   * keyboard move buttons. Optional here purely so the retained in-memory mock
+   * seed in src/data/mock/projects.ts still type-checks; every Project that
+   * flows through the live Supabase mapper carries it (DB column is
+   * `sort_order integer not null default 0`).
+   */
+  sort_order?: number;
   published_at: string | null;
   created_by: string | null;
   created_at: string;
   updated_at: string;
 }
 
-/** Fields the create/edit form actually collects; id/timestamps are server-assigned. */
+/** Fields the create/edit form actually collects; id/timestamps/order are server-assigned. */
 export type ProjectInput = Omit<
   Project,
-  "id" | "created_at" | "updated_at" | "published_at" | "created_by"
+  "id" | "created_at" | "updated_at" | "published_at" | "created_by" | "sort_order"
 >;
