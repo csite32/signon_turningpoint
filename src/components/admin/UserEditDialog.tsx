@@ -3,6 +3,7 @@ import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { Eye, EyeOff } from "lucide-react";
 import * as usersService from "@/services/usersService";
 import type { AdminUser, AdminRole, UpdateUserInput } from "@/services/usersService";
 import {
@@ -37,17 +38,23 @@ function editErrorMessage(code: string): string {
   switch (code) {
     case "duplicate_email":
       return "כבר קיים משתמש עם אימייל זה";
+    case "weak_password":
+      return "הסיסמה החדשה אינה עומדת בדרישות. בחרו סיסמה חזקה יותר.";
+    case "same_password":
+      return "הסיסמה החדשה זהה לסיסמה הקיימת.";
     case "cannot_demote_self":
       return "לא ניתן לשנות את התפקיד של עצמך";
     case "last_admin":
       return "חייב להישאר לפחות מנהל אחד במערכת";
     case "not_found":
-      return "המשתמש לא נמצא — ייתכן שנמחק";
+      return "המשתמש לא נמצא.";
     case "forbidden":
       return "אין לך הרשאה לערוך משתמשים";
     case "rollback_failed":
     case "inconsistent_state":
       return "העדכון נכשל ולא ניתן היה לשחזר את המצב — בדקו את המשתמש ידנית";
+    case "update_failed":
+      return "עדכון המשתמש נכשל. נסו שוב.";
     default:
       return "עדכון המשתמש נכשל";
   }
@@ -74,23 +81,29 @@ export function UserEditDialog({
   onUpdated: () => void;
 }) {
   const [busy, setBusy] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
   const { register, handleSubmit, reset, setValue, watch, formState } = useForm<FormValues>({
     resolver: zodResolver(schema),
     defaultValues: { displayName: "", email: "", role: "editor", newPassword: "" },
   });
 
   const isSelf = !!user && user.id === currentUserId;
+  // The role the form starts on — same fallback the Select shows for a user with
+  // no user_roles row. Diffing against THIS (not `null`) keeps a password-only
+  // edit from silently sending role: "editor" for a role-less user.
+  const baselineRole: FormValues["role"] = user?.role ?? "editor";
 
   useEffect(() => {
     if (open && user) {
       reset({
         displayName: user.displayName,
         email: user.email,
-        role: user.role ?? "editor",
+        role: baselineRole,
         newPassword: "",
       });
+      setShowNewPassword(false);
     }
-  }, [open, user, reset]);
+  }, [open, user, reset, baselineRole]);
 
   const onSubmit = handleSubmit(async (values) => {
     if (!user || busy) return;
@@ -98,7 +111,7 @@ export function UserEditDialog({
     const patch: UpdateUserInput = { userId: user.id };
     if (values.displayName !== user.displayName) patch.displayName = values.displayName;
     if (values.email !== user.email) patch.email = values.email;
-    if (!isSelf && values.role !== (user.role ?? null)) patch.role = values.role as AdminRole;
+    if (!isSelf && values.role !== baselineRole) patch.role = values.role as AdminRole;
     if (values.newPassword.trim()) patch.newPassword = values.newPassword;
 
     const changedKeys = Object.keys(patch).filter((k) => k !== "userId");
@@ -167,14 +180,24 @@ export function UserEditDialog({
 
           <div className="space-y-1.5">
             <Label htmlFor="edit-newPassword">סיסמה חדשה</Label>
-            <Input
-              id="edit-newPassword"
-              dir="ltr"
-              className="text-left"
-              type="password"
-              autoComplete="new-password"
-              {...register("newPassword")}
-            />
+            <div className="relative">
+              <Input
+                id="edit-newPassword"
+                dir="ltr"
+                className="text-left pr-10"
+                type={showNewPassword ? "text" : "password"}
+                autoComplete="new-password"
+                {...register("newPassword")}
+              />
+              <button
+                type="button"
+                onClick={() => setShowNewPassword((v) => !v)}
+                aria-label={showNewPassword ? "הסתרת סיסמה חדשה" : "הצגת סיסמה חדשה"}
+                className="absolute inset-y-0 right-0 flex items-center px-3 text-muted-foreground transition-colors hover:text-foreground"
+              >
+                {showNewPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              </button>
+            </div>
             <p className="text-xs text-muted-foreground">השאירו ריק כדי לשמור על הסיסמה הקיימת.</p>
             {formState.errors.newPassword && (
               <p className="text-xs text-destructive">{formState.errors.newPassword.message}</p>

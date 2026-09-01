@@ -15,49 +15,57 @@ type LoadState =
   | { status: "notfound" }
   | { status: "ready"; project: Project };
 
+/** A blank, in-memory project for create mode. id === "" marks "not persisted yet". */
+function blankProject(): Project {
+  return {
+    id: "",
+    slug: "",
+    title: "",
+    hero_image_path: null,
+    hero_image_url: null,
+    hero_image_alt: null,
+    tagline: null,
+    challenge_text: null,
+    solution_text: null,
+    subtitle: null,
+    extra_paragraph: null,
+    result_text: null,
+    testimonial_text: null,
+    status: "draft",
+    sort_order: 0,
+    published_at: null,
+    created_by: null,
+    created_at: "",
+    updated_at: "",
+  };
+}
+
 /**
- * id === "new": creates a blank draft project immediately (so GalleryUploader
- * always has a real project id to attach uploads to — no separate "unsaved
- * gallery" state to reconcile), then swaps the URL to the real id. Any other
- * id: loads the existing project.
+ * id === "new": render ProjectForm in create mode against a blank in-memory
+ * project — NOTHING is written to Supabase just by opening (or leaving) the
+ * form. The first "save draft" / "publish" performs a single createProject();
+ * only on success does the URL swap to the real id and the form become an
+ * ordinary editor. Any other id: load the existing project.
  */
 function ProjectEditorRoute() {
   const { id } = Route.useParams();
   const navigate = useNavigate();
-  const [state, setState] = useState<LoadState>({ status: "loading" });
+  const isNew = id === "new";
+  const [state, setState] = useState<LoadState>(
+    isNew ? { status: "ready", project: blankProject() } : { status: "loading" },
+  );
 
   useEffect(() => {
+    if (isNew) {
+      setState({ status: "ready", project: blankProject() });
+      return;
+    }
+    // Already holding this project (e.g. we just created it and navigated to its
+    // real id) — keep it, no redundant refetch.
+    if (state.status === "ready" && state.project.id === id) return;
+
     let cancelled = false;
     (async () => {
-      if (id === "new") {
-        const res = await projectsService.createProject({
-          title: "פרויקט חדש",
-          slug: "",
-          hero_image_path: null,
-          hero_image_url: null,
-          hero_image_alt: null,
-          tagline: null,
-          challenge_text: null,
-          solution_text: null,
-          subtitle: null,
-          extra_paragraph: null,
-          result_text: null,
-          testimonial_text: null,
-          status: "draft",
-        });
-        if (cancelled) return;
-        if (!res.ok) {
-          setState({ status: "notfound" });
-          return;
-        }
-        setState({ status: "ready", project: res.data });
-        navigate({
-          to: "/admin/dashboard/projects/$id",
-          params: { id: res.data.id },
-          replace: true,
-        });
-        return;
-      }
       const res = await projectsService.getProjectById(id);
       if (cancelled) return;
       setState(res.ok ? { status: "ready", project: res.data } : { status: "notfound" });
@@ -68,7 +76,17 @@ function ProjectEditorRoute() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
-  const isNewProject = id === "new";
+  /** First successful save of a new project: adopt its real id + swap the URL. */
+  function handleSaved(p: Project) {
+    setState({ status: "ready", project: p });
+    if (isNew && p.id) {
+      navigate({
+        to: "/admin/dashboard/projects/$id",
+        params: { id: p.id },
+        replace: true,
+      });
+    }
+  }
 
   return (
     <div dir="rtl" className="space-y-6">
@@ -82,7 +100,7 @@ function ProjectEditorRoute() {
         </Link>
         <FolderKanban className="h-6 w-6 text-primary" />
         <h1 className="text-2xl font-semibold tracking-tight">
-          {isNewProject ? "פרויקט חדש" : "עריכת פרויקט"}
+          {isNew ? "פרויקט חדש" : "עריכת פרויקט"}
         </h1>
       </div>
 
@@ -96,10 +114,7 @@ function ProjectEditorRoute() {
         <p className="text-sm text-muted-foreground">הפרויקט לא נמצא.</p>
       )}
       {state.status === "ready" && (
-        <ProjectForm
-          project={state.project}
-          onSaved={(p) => setState({ status: "ready", project: p })}
-        />
+        <ProjectForm project={state.project} isNew={isNew} onSaved={handleSaved} />
       )}
     </div>
   );

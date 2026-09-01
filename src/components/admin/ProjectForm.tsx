@@ -1,4 +1,4 @@
-import { type ReactNode, useEffect, useState } from "react";
+import { type ReactNode, useEffect, useRef, useState } from "react";
 import { useBlocker } from "@tanstack/react-router";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -76,17 +76,24 @@ function FormSection({
 /**
  * Full project editor: title/slug/hero image/tagline/challenge/solution/
  * subtitle/extra paragraph/result/testimonial (all wired through
- * projectsService — see the field-by-field table in the approved plan) plus
- * the three GalleryUploader instances, grouped into nine clearly separated
- * sections. `project` always has a real id by the time this renders (see
- * projects/$id.tsx for how a brand-new project gets one immediately) — every
- * save here is projectsService.updateProject, never createProject.
+ * projectsService), grouped into clearly separated sections, plus the three
+ * GalleryUploader instances (edit mode only).
+ *
+ * Create mode (`isNew`, project.id === ""): nothing is persisted until the user
+ * saves. The first "save draft" / "publish" is a SINGLE
+ * projectsService.createProject(); after that project.id is real and every
+ * later save is updateProject / publishProject. Galleries + preview stay hidden
+ * until that first save (they need a real project id). A synchronous in-flight
+ * ref guarantees a double-click / repeated Enter can never fire two
+ * createProject() calls.
  */
 export function ProjectForm({
   project,
+  isNew = false,
   onSaved,
 }: {
   project: Project;
+  isNew?: boolean;
   onSaved: (p: Project) => void;
 }) {
   const [slugTouched, setSlugTouched] = useState(project.slug !== slugify(project.title));
@@ -99,6 +106,12 @@ export function ProjectForm({
   const [saving, setSaving] = useState(false);
   const [publishing, setPublishing] = useState(false);
   const [currentProject, setCurrentProject] = useState(project);
+
+  // No real row yet — the first save is a createProject(), galleries + preview
+  // stay hidden. `inFlight` is a synchronous guard on top of the `busy` state
+  // so a double-click can't fire two createProject() calls before React re-renders.
+  const isCreateMode = isNew && currentProject.id === "";
+  const inFlight = useRef(false);
 
   const {
     register,
@@ -183,10 +196,14 @@ export function ProjectForm({
   }
 
   const onSaveDraft = handleSubmit(async (values) => {
-    if (busy) return;
+    if (busy || inFlight.current) return;
+    inFlight.current = true;
     setSaving(true);
-    const res = await projectsService.updateProject(currentProject.id, buildPatch(values));
+    const res = isCreateMode
+      ? await projectsService.createProject({ ...buildPatch(values), status: "draft" })
+      : await projectsService.updateProject(currentProject.id, buildPatch(values));
     setSaving(false);
+    inFlight.current = false;
     if (!res.ok) {
       toast.error(saveErrorMessage(res.error));
       return;
@@ -198,16 +215,40 @@ export function ProjectForm({
   });
 
   const onPublish = handleSubmit(async (values) => {
-    if (busy) return;
+    if (busy || inFlight.current) return;
+    inFlight.current = true;
     setPublishing(true);
+
+    if (isCreateMode) {
+      // Brand-new project: one createProject() straight to "published" (it sets
+      // published_at itself) — no separate publishProject() round-trip.
+      const res = await projectsService.createProject({
+        ...buildPatch(values),
+        status: "published",
+      });
+      setPublishing(false);
+      inFlight.current = false;
+      if (!res.ok) {
+        toast.error(saveErrorMessage(res.error));
+        return;
+      }
+      toast.success("הפרויקט פורסם");
+      setCurrentProject(res.data);
+      reset(toFormValues(res.data));
+      onSaved(res.data);
+      return;
+    }
+
     const patchRes = await projectsService.updateProject(currentProject.id, buildPatch(values));
     if (!patchRes.ok) {
       setPublishing(false);
+      inFlight.current = false;
       toast.error(saveErrorMessage(patchRes.error));
       return;
     }
     const pubRes = await projectsService.publishProject(currentProject.id);
     setPublishing(false);
+    inFlight.current = false;
     if (!pubRes.ok) {
       toast.error(pubRes.error === "forbidden" ? "אין לך הרשאה לפרסם" : "הפרסום נכשל");
       return;
@@ -343,16 +384,28 @@ export function ProjectForm({
         </div>
       </FormSection>
 
-      <FormSection title="גלריה ראשונה" description="עד ארבע תמונות. ניתן לגרור כדי לשנות סדר.">
-        <GalleryUploader projectId={currentProject.id} galleryType="main_gallery" title="" />
-      </FormSection>
+      {isCreateMode && (
+        <FormSection title="גלריות ותצוגה מקדימה">
+          <p className="text-sm text-muted-foreground">
+            שמרו תחילה את הפרויקט כטיוטה כדי להוסיף תמונות לגלריות ולהציג תצוגה מקדימה.
+          </p>
+        </FormSection>
+      )}
 
-      <FormSection
-        title="צבעי המותג"
-        description="שלוש התמונות המקוריות מוצגות בעמוד בדיוק כפי שהועלו — ללא עיבוד."
-      >
-        <GalleryUploader projectId={currentProject.id} galleryType="brand_colors" title="" />
-      </FormSection>
+      {!isCreateMode && (
+        <FormSection title="גלריה ראשונה" description="עד ארבע תמונות. ניתן לגרור כדי לשנות סדר.">
+          <GalleryUploader projectId={currentProject.id} galleryType="main_gallery" title="" />
+        </FormSection>
+      )}
+
+      {!isCreateMode && (
+        <FormSection
+          title="צבעי המותג"
+          description="שלוש התמונות המקוריות מוצגות בעמוד בדיוק כפי שהועלו — ללא עיבוד."
+        >
+          <GalleryUploader projectId={currentProject.id} galleryType="brand_colors" title="" />
+        </FormSection>
+      )}
 
       <FormSection title="תוכן נוסף">
         <div className="grid gap-5 lg:grid-cols-2">
@@ -367,12 +420,14 @@ export function ProjectForm({
         </div>
       </FormSection>
 
-      <FormSection
-        title="גלריה שנייה"
-        description="עד ארבע תמונות. התמונה האחרונה מקבלת אפקט הרחבה למסך מלא בעמוד."
-      >
-        <GalleryUploader projectId={currentProject.id} galleryType="secondary_gallery" title="" />
-      </FormSection>
+      {!isCreateMode && (
+        <FormSection
+          title="גלריה שנייה"
+          description="עד ארבע תמונות. התמונה האחרונה מקבלת אפקט הרחבה למסך מלא בעמוד."
+        >
+          <GalleryUploader projectId={currentProject.id} galleryType="secondary_gallery" title="" />
+        </FormSection>
+      )}
 
       <FormSection title="התוצאה והמלצת הלקוח">
         <div className="space-y-1.5">
@@ -423,10 +478,18 @@ export function ProjectForm({
             <Save className="h-4 w-4" />
             {saving ? "שומר..." : "שמור כטיוטה"}
           </Button>
-          <Button type="button" size="lg" variant="ghost" onClick={handlePreview} className="gap-2">
-            <Eye className="h-4 w-4" />
-            תצוגה מקדימה
-          </Button>
+          {!isCreateMode && (
+            <Button
+              type="button"
+              size="lg"
+              variant="ghost"
+              onClick={handlePreview}
+              className="gap-2"
+            >
+              <Eye className="h-4 w-4" />
+              תצוגה מקדימה
+            </Button>
+          )}
         </div>
       </div>
     </form>

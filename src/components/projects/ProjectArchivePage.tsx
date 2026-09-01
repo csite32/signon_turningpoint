@@ -342,11 +342,7 @@ export default function ProjectArchivePage() {
 
         <div className="pa-loadmore" aria-live="polite">
           <p className="pa-loadmore-status">
-            {phase === "loadingMore"
-              ? "טוען פרויקטים נוספים..."
-              : projects.length > 0
-                ? `${projects.length} פרויקטים`
-                : ""}
+            {phase === "loadingMore" ? "טוען פרויקטים נוספים..." : ""}
           </p>
           {loadMoreError && <p className="pa-loadmore-err">אירעה שגיאה בטעינת פרויקטים נוספים.</p>}
           {hasMore && (
