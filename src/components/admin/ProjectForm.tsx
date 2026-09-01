@@ -120,14 +120,47 @@ export function ProjectForm({
   useBlocker({ shouldBlockFn: () => dirty, enableBeforeUnload: true, disabled: !dirty });
 
   async function handleHeroUpload(file: File) {
+    const precheck = storageService.validateImageFile(file);
+    if (!precheck.ok) {
+      toast.error(
+        precheck.error === "not_an_image"
+          ? "אפשר להעלות קובץ תמונה בלבד"
+          : precheck.error === "file_too_large"
+            ? "הקובץ גדול מדי — עד 10MB"
+            : "הקובץ אינו תקין",
+      );
+      return;
+    }
     setHeroUploading(true);
     const up = await storageService.uploadImage(file, { folder: "hero" });
     setHeroUploading(false);
     if (!up.ok) {
-      toast.error("העלאת התמונה הראשית נכשלה");
+      toast.error(
+        up.error === "not_an_image"
+          ? "אפשר להעלות קובץ תמונה בלבד"
+          : up.error === "file_too_large"
+            ? "הקובץ גדול מדי — עד 10MB"
+            : up.error === "forbidden"
+              ? "אין לך הרשאה להעלות תמונות"
+              : "העלאת התמונה הראשית נכשלה",
+      );
       return;
     }
     setHeroImage({ url: up.data.url, path: up.data.path });
+  }
+
+  /** projectsService error code -> message for the save / publish actions. */
+  function saveErrorMessage(code: string): string {
+    switch (code) {
+      case "duplicate_slug":
+        return "כתובת ה-slug כבר תפוסה. בחרו כתובת אחרת.";
+      case "forbidden":
+        return "אין לך הרשאה לשמור את הפרויקט.";
+      case "not_found":
+        return "הפרויקט לא נמצא — ייתכן שנמחק בינתיים.";
+      default:
+        return "השמירה נכשלה. נסו שוב.";
+    }
   }
 
   function buildPatch(values: FormValues) {
@@ -153,7 +186,7 @@ export function ProjectForm({
     const res = await projectsService.updateProject(currentProject.id, buildPatch(values));
     setSaving(false);
     if (!res.ok) {
-      toast.error("השמירה נכשלה");
+      toast.error(saveErrorMessage(res.error));
       return;
     }
     toast.success("נשמר כטיוטה");
@@ -168,13 +201,13 @@ export function ProjectForm({
     const patchRes = await projectsService.updateProject(currentProject.id, buildPatch(values));
     if (!patchRes.ok) {
       setPublishing(false);
-      toast.error("השמירה נכשלה");
+      toast.error(saveErrorMessage(patchRes.error));
       return;
     }
     const pubRes = await projectsService.publishProject(currentProject.id);
     setPublishing(false);
     if (!pubRes.ok) {
-      toast.error("הפרסום נכשל");
+      toast.error(pubRes.error === "forbidden" ? "אין לך הרשאה לפרסם" : "הפרסום נכשל");
       return;
     }
     toast.success("הפרויקט פורסם");

@@ -7,4 +7,4 @@ export {
   updateProjectImage,
   deleteProjectImage,
   reorderProjectImages,
-} from "./mock/projectImagesService.mock";
+} from "./projects/projectImagesService.supabase";

@@ -1,7 +1,18 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
-import { Eye, FolderKanban, Pencil, Plus, Send, Trash2, Undo2 } from "lucide-react";
+import {
+  ArrowDown,
+  ArrowUp,
+  Eye,
+  FolderKanban,
+  GripVertical,
+  Pencil,
+  Plus,
+  Send,
+  Trash2,
+  Undo2,
+} from "lucide-react";
 import type { Project, ProjectStatus } from "@/types/project";
 import * as projectsService from "@/services/projectsService";
 import * as projectImagesService from "@/services/projectImagesService";
@@ -40,6 +51,8 @@ export function ProjectTable() {
   const [previewingId, setPreviewingId] = useState<string | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<Project | null>(null);
   const [deleting, setDeleting] = useState(false);
+  const [dragId, setDragId] = useState<string | null>(null);
+  const [savingOrder, setSavingOrder] = useState(false);
 
   async function load() {
     setError(null);
@@ -110,6 +123,51 @@ export function ProjectTable() {
     load();
   }
 
+  // Reorder only in the unfiltered view — there the on-screen list IS the full
+  // set, so writing sort_order = 0..n-1 keeps the archive, the homepage strip
+  // and this table in one agreed sequence. A search/status filter hides that
+  // control (see the hint below the header).
+  const canReorder = statusFilter === "all" && search.trim() === "";
+
+  async function persistOrder(orderedIds: string[]) {
+    if (!projects || savingOrder) return;
+    const byId = new Map(projects.map((p) => [p.id, p]));
+    const reordered = orderedIds.map((id) => byId.get(id)).filter((p): p is Project => !!p);
+    setProjects(reordered); // optimistic
+    setSavingOrder(true);
+    const res = await projectsService.reorderProjects(orderedIds);
+    setSavingOrder(false);
+    if (!res.ok) {
+      toast.error("שינוי סדר הפרויקטים נכשל");
+      load();
+      return;
+    }
+    setProjects(res.data);
+  }
+
+  function moveRow(index: number, dir: -1 | 1) {
+    if (!projects) return;
+    const target = index + dir;
+    if (target < 0 || target >= projects.length) return;
+    const ids = projects.map((p) => p.id);
+    [ids[index], ids[target]] = [ids[target], ids[index]];
+    persistOrder(ids);
+  }
+
+  function handleRowDrop(targetId: string) {
+    if (!dragId || dragId === targetId || !projects) {
+      setDragId(null);
+      return;
+    }
+    const ids = projects.map((p) => p.id);
+    const from = ids.indexOf(dragId);
+    const to = ids.indexOf(targetId);
+    setDragId(null);
+    if (from === -1 || to === -1) return;
+    ids.splice(to, 0, ids.splice(from, 1)[0]);
+    persistOrder(ids);
+  }
+
   return (
     <div dir="rtl" className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-4">
@@ -149,6 +207,14 @@ export function ProjectTable() {
         <CardContent className="pt-6">
           {error && <p className="text-sm text-destructive">שגיאה בטעינת הפרויקטים: {error}</p>}
 
+          {projects !== null && projects.length > 0 && (
+            <p className="mb-4 text-xs text-muted-foreground">
+              {canReorder
+                ? "גררו שורה, או השתמשו בחיצים, כדי לשנות את סדר הפרויקטים בארכיון ובעמוד הבית."
+                : "בטלו את הסינון והחיפוש כדי לשנות את סדר הפרויקטים."}
+            </p>
+          )}
+
           {projects === null ? (
             <div className="space-y-2">
               <Skeleton className="h-14 w-full" />
@@ -164,6 +230,7 @@ export function ProjectTable() {
               <Table>
                 <TableHeader>
                   <TableRow>
+                    {canReorder && <TableHead className="w-24">סדר</TableHead>}
                     <TableHead>תמונה</TableHead>
                     <TableHead>כותרת</TableHead>
                     <TableHead>סטטוס</TableHead>
@@ -172,8 +239,45 @@ export function ProjectTable() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {projects.map((p) => (
-                    <TableRow key={p.id}>
+                  {projects.map((p, index) => (
+                    <TableRow
+                      key={p.id}
+                      draggable={canReorder}
+                      onDragStart={canReorder ? () => setDragId(p.id) : undefined}
+                      onDragOver={canReorder ? (e) => e.preventDefault() : undefined}
+                      onDrop={canReorder ? () => handleRowDrop(p.id) : undefined}
+                      className={canReorder ? "cursor-grab active:cursor-grabbing" : undefined}
+                    >
+                      {canReorder && (
+                        <TableCell>
+                          <div className="flex items-center gap-1">
+                            <GripVertical
+                              className="h-4 w-4 shrink-0 text-muted-foreground"
+                              aria-hidden="true"
+                            />
+                            <div className="flex flex-col">
+                              <button
+                                type="button"
+                                aria-label={`הזז את "${p.title}" מעלה`}
+                                disabled={index === 0 || savingOrder}
+                                onClick={() => moveRow(index, -1)}
+                                className="rounded p-0.5 text-muted-foreground transition-colors hover:text-foreground disabled:opacity-30"
+                              >
+                                <ArrowUp className="h-3.5 w-3.5" />
+                              </button>
+                              <button
+                                type="button"
+                                aria-label={`הזז את "${p.title}" מטה`}
+                                disabled={index === projects.length - 1 || savingOrder}
+                                onClick={() => moveRow(index, 1)}
+                                className="rounded p-0.5 text-muted-foreground transition-colors hover:text-foreground disabled:opacity-30"
+                              >
+                                <ArrowDown className="h-3.5 w-3.5" />
+                              </button>
+                            </div>
+                          </div>
+                        </TableCell>
+                      )}
                       <TableCell>
                         {p.hero_image_url ? (
                           <img
