@@ -221,3 +221,116 @@ export const deleteUserServerFn = createServerFn({ method: "POST" })
     if (deleteErr) throw new Error("delete_failed");
     return { ok: true };
   });
+
+// ---------------------------------------------------------------------------
+
+const editInput = z.object({
+  userId: z.string().min(1),
+  displayName: z.string().trim().min(1).optional(),
+  email: z.string().trim().email().optional(),
+  role: z.enum(["admin", "editor"]).optional(),
+  newPassword: z.string().min(6).optional(),
+});
+
+export const updateUserServerFn = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => editInput.parse(d))
+  .handler(async ({ data, context }): Promise<AdminUser> => {
+    const ctx = context as AuthedContext;
+    await assertCallerIsAdmin(ctx);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    // The target must exist before anything is touched.
+    const { data: existing, error: getErr } = await supabaseAdmin.auth.admin.getUserById(
+      data.userId,
+    );
+    if (getErr || !existing?.user) throw new Error("not_found");
+
+    const { data: roleRowBefore } = await supabaseAdmin
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", data.userId)
+      .maybeSingle();
+    const hadRoleRow = !!roleRowBefore;
+    const previousRole: AdminRole | null = roleRowBefore ? (roleRowBefore.role as AdminRole) : null;
+
+    // --- step 1: role (reversible — we know the previous value / absence).
+    // Only runs when a role was explicitly supplied AND differs from the current one. ---
+    let roleWasWritten = false;
+    if (data.role !== undefined && data.role !== previousRole) {
+      const nextRole = data.role; // narrowed to AdminRole
+      if (nextRole !== "admin") {
+        if (data.userId === ctx.userId) throw new Error("cannot_demote_self");
+        const { data: admins, error } = await supabaseAdmin
+          .from("user_roles")
+          .select("user_id")
+          .eq("role", "admin");
+        if (error) throw new Error("check_failed");
+        const adminIds = new Set((admins ?? []).map((a) => a.user_id));
+        if (adminIds.has(data.userId) && adminIds.size <= 1) throw new Error("last_admin");
+      }
+      const { error: roleErr } = await supabaseAdmin
+        .from("user_roles")
+        .upsert({ user_id: data.userId, role: nextRole }, { onConflict: "user_id" });
+      if (roleErr) throw new Error("update_failed");
+      roleWasWritten = true;
+    }
+
+    // --- step 2: Auth (email / password / display_name) — one call, changed fields only ---
+    const authPatch: {
+      email?: string;
+      password?: string;
+      user_metadata?: Record<string, unknown>;
+    } = {};
+    if (data.email !== undefined) authPatch.email = data.email;
+    if (data.newPassword) authPatch.password = data.newPassword;
+    if (data.displayName !== undefined)
+      authPatch.user_metadata = { display_name: data.displayName };
+
+    if (Object.keys(authPatch).length > 0) {
+      const { error: authErr } = await supabaseAdmin.auth.admin.updateUserById(
+        data.userId,
+        authPatch,
+      );
+      if (authErr) {
+        // Auth (possibly a password change) is not reversible; the role change from
+        // step 1 IS. Undo step 1 before reporting, and never swallow a failed undo.
+        const originalCode = /already|exist|registered|duplicate/i.test(authErr.message ?? "")
+          ? "duplicate_email"
+          : "update_failed";
+        if (roleWasWritten) {
+          const undo = hadRoleRow
+            ? await supabaseAdmin
+                .from("user_roles")
+                .upsert(
+                  { user_id: data.userId, role: previousRole as AdminRole },
+                  { onConflict: "user_id" },
+                )
+            : await supabaseAdmin.from("user_roles").delete().eq("user_id", data.userId);
+          if (undo.error) throw new Error("rollback_failed");
+        }
+        throw new Error(originalCode);
+      }
+    }
+
+    // --- return the fresh state ---
+    const { data: after, error: afterErr } = await supabaseAdmin.auth.admin.getUserById(
+      data.userId,
+    );
+    if (afterErr || !after?.user) throw new Error("update_failed");
+    const { data: roleRowAfter } = await supabaseAdmin
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", data.userId)
+      .maybeSingle();
+    return {
+      id: after.user.id,
+      displayName:
+        (typeof after.user.user_metadata?.display_name === "string" &&
+          after.user.user_metadata.display_name) ||
+        (after.user.email ?? ""),
+      email: after.user.email ?? "",
+      role: (roleRowAfter?.role as AdminRole) ?? null,
+      createdAt: after.user.created_at ?? "",
+    };
+  });

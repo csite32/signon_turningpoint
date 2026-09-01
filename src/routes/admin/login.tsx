@@ -1,5 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState, type CSSProperties } from "react";
+import { Eye, EyeOff } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/admin/login")({
@@ -66,6 +67,22 @@ const buttonStyle: CSSProperties = {
   cursor: "pointer",
 };
 
+const eyeToggleStyle: CSSProperties = {
+  position: "absolute",
+  top: 0,
+  bottom: 0,
+  right: "6px",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  padding: "0 4px",
+  background: "none",
+  border: "none",
+  cursor: "pointer",
+  color: "#8a8a8a",
+  lineHeight: 0,
+};
+
 /**
  * Where a signed-in user lands: `admin` → /admin (the hub with the visual
  * editor); `editor` → straight to the dashboard's projects screen, since
@@ -86,6 +103,7 @@ function AdminLoginPage() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
 
@@ -132,14 +150,24 @@ function AdminLoginPage() {
         </label>
         <label style={{ display: "block" }}>
           סיסמה
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            style={inputStyle}
-            autoComplete="current-password"
-            required
-          />
+          <div style={{ position: "relative", marginTop: "6px" }}>
+            <input
+              type={showPassword ? "text" : "password"}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              style={{ ...inputStyle, marginTop: 0, paddingRight: "38px" }}
+              autoComplete="current-password"
+              required
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword((v) => !v)}
+              aria-label={showPassword ? "הסתרת סיסמה" : "הצגת סיסמה"}
+              style={eyeToggleStyle}
+            >
+              {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+            </button>
+          </div>
         </label>
         {error && <p style={{ margin: "12px 0 0", color: "#c02626", fontSize: "13px" }}>{error}</p>}
         <button type="submit" style={buttonStyle} disabled={busy}>

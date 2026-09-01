@@ -25,17 +25,23 @@ function BrandMark() {
   );
 }
 
-/** Plain navigation back to the public site — never touches the admin session. */
+/**
+ * Full-document navigation back to the public site — deliberately a plain <a>,
+ * not a TanStack <Link>. A real document boundary keeps the public site's global
+ * stylesheets (turningpoint.css et al.) out of the dashboard document, so
+ * Back/Forward restores each document with only its own CSS. Never touches the
+ * admin session (the Supabase session lives in storage, not this document).
+ */
 function BackToSiteLink({ onNavigate }: { onNavigate?: () => void }) {
   return (
-    <Link
-      to="/"
+    <a
+      href="/"
       onClick={onNavigate}
       className="flex items-center gap-3 rounded-lg border border-white/15 px-3 py-2.5 text-sm font-medium text-white/85 transition-colors hover:bg-white/10 hover:text-white"
     >
       <Home className="h-4 w-4 shrink-0" />
       חזרה לאתר
-    </Link>
+    </a>
   );
 }
 

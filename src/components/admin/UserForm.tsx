@@ -77,7 +77,7 @@ export function UserForm({ onCreated }: { onCreated: (user: AdminUser) => void }
         {errors.email && <p className="text-xs text-destructive">{errors.email.message}</p>}
       </div>
       <div className="space-y-1.5">
-        <Label htmlFor="temporaryPassword">סיסמה זמנית</Label>
+        <Label htmlFor="temporaryPassword">סיסמה</Label>
         <Input
           id="temporaryPassword"
           dir="ltr"

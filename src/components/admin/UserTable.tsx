@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { Trash2, Users as UsersIcon } from "lucide-react";
+import { Pencil, Trash2, Users as UsersIcon } from "lucide-react";
 import * as usersService from "@/services/usersService";
 import type { AdminUser, AdminRole } from "@/services/usersService";
 import { useRoleAccess } from "@/hooks/use-role";
@@ -26,6 +26,7 @@ import {
 } from "@/components/ui/table";
 import { ConfirmDeleteDialog } from "@/components/admin/ConfirmDeleteDialog";
 import { UserForm } from "@/components/admin/UserForm";
+import { UserEditDialog } from "@/components/admin/UserEditDialog";
 
 export function UserTable() {
   const [users, setUsers] = useState<AdminUser[] | null>(null);
@@ -34,6 +35,7 @@ export function UserTable() {
   const [pendingId, setPendingId] = useState<string | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<AdminUser | null>(null);
   const [deleting, setDeleting] = useState(false);
+  const [editTarget, setEditTarget] = useState<AdminUser | null>(null);
   const access = useRoleAccess();
   const currentUserId = access.status === "authorized" ? access.userId : null;
 
@@ -183,7 +185,16 @@ export function UserTable() {
                           {new Date(u.createdAt).toLocaleDateString("he-IL")}
                         </TableCell>
                         <TableCell>
-                          <div className="flex justify-end">
+                          <div className="flex flex-wrap justify-end gap-2">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="gap-1.5"
+                              onClick={() => setEditTarget(u)}
+                            >
+                              <Pencil className="h-3.5 w-3.5" />
+                              עריכה
+                            </Button>
                             <Button
                               size="sm"
                               variant="destructive"
@@ -205,6 +216,14 @@ export function UserTable() {
           )}
         </CardContent>
       </Card>
+
+      <UserEditDialog
+        open={!!editTarget}
+        onOpenChange={(open) => !open && setEditTarget(null)}
+        user={editTarget}
+        currentUserId={currentUserId}
+        onUpdated={load}
+      />
 
       <ConfirmDeleteDialog
         open={!!deleteTarget}
