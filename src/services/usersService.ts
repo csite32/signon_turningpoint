@@ -13,6 +13,7 @@ import {
   getUsersServerFn,
   createUserServerFn,
   updateUserRoleServerFn,
+  updateUserServerFn,
   deleteUserServerFn,
   type AdminUser,
   type AdminRole,
@@ -26,6 +27,15 @@ export interface CreateUserInput {
   email: string;
   temporaryPassword: string;
   role: AdminRole;
+}
+
+/** Every field optional — the caller sends only what actually changed. `userId` is required. */
+export interface UpdateUserInput {
+  userId: string;
+  displayName?: string;
+  email?: string;
+  role?: AdminRole;
+  newPassword?: string;
 }
 
 /** Server-thrown Error messages are stable short codes; fall back to a generic one. */
@@ -59,6 +69,15 @@ export async function updateUserRole(
 ): Promise<Result<{ userId: string; role: AdminRole }>> {
   try {
     const data = await updateUserRoleServerFn({ data: { userId, role } });
+    return ok(data);
+  } catch (e) {
+    return err(codeOf(e));
+  }
+}
+
+export async function updateUser(input: UpdateUserInput): Promise<Result<AdminUser>> {
+  try {
+    const data = await updateUserServerFn({ data: input });
     return ok(data);
   } catch (e) {
     return err(codeOf(e));
