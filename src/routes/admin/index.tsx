@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, type CSSProperties } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAdminAccess } from "@/hooks/use-admin-access";
@@ -117,17 +117,10 @@ function AdminDashboardPage() {
             התנתקות
           </button>
         </div>
-        <div
-          style={{
-            marginTop: "24px",
-            padding: "20px",
-            border: "1px dashed #cfcfcf",
-            borderRadius: "8px",
-            color: "#777",
-            textAlign: "center",
-          }}
-        >
-          ניהול פרויקטים ותכנים — יתווסף בהמשך
+        <div style={{ marginTop: "24px" }}>
+          <Link to="/admin/dashboard" style={primaryButtonStyle}>
+            לוח בקרה — ניהול פרויקטים ומשתמשים
+          </Link>
         </div>
       </div>
     </div>

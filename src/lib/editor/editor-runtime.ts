@@ -271,11 +271,21 @@ function applyMoveScale(wrapper: HTMLElement, tierValues: Record<string, string>
   }
 }
 
+/* Dynamic project detail pages (/projects/<slug>) aren't in the static table
+   above — one page key per slug, so each project's saved overrides stay
+   isolated from every other project's (getOverrides/upsertOverride key off
+   element_id alone, not element_id+scope_key — see overrides-repo.ts). This
+   is purely additive: it only matches /projects/<slug> and never changes
+   resolution for "/" or "/about". */
+const PROJECT_SLUG_ROUTE_RE = /^\/projects\/([a-z0-9-]+)$/;
+
 function currentPageKey(): string | null {
   const path = window.location.pathname.replace(/\/+$/, "") || "/";
   if (Object.prototype.hasOwnProperty.call(PAGE_KEY_BY_PATH, path)) {
     return PAGE_KEY_BY_PATH[path];
   }
+  const projectMatch = PROJECT_SLUG_ROUTE_RE.exec(path);
+  if (projectMatch) return `project-${projectMatch[1]}`;
   return null;
 }
 
