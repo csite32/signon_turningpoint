@@ -38,6 +38,113 @@ export type Database = {
         }
         Relationships: []
       }
+      project_images: {
+        Row: {
+          alt_text: string | null
+          created_at: string
+          gallery_type: string
+          id: string
+          image_url: string
+          project_id: string
+          sort_order: number
+          storage_path: string
+        }
+        Insert: {
+          alt_text?: string | null
+          created_at?: string
+          gallery_type: string
+          id?: string
+          image_url: string
+          project_id: string
+          sort_order?: number
+          storage_path: string
+        }
+        Update: {
+          alt_text?: string | null
+          created_at?: string
+          gallery_type?: string
+          id?: string
+          image_url?: string
+          project_id?: string
+          sort_order?: number
+          storage_path?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_images_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      projects: {
+        Row: {
+          challenge_text: string | null
+          created_at: string
+          created_by: string | null
+          extra_paragraph: string | null
+          hero_image_alt: string | null
+          hero_image_path: string | null
+          hero_image_url: string | null
+          id: string
+          published_at: string | null
+          result_text: string | null
+          slug: string
+          solution_text: string | null
+          sort_order: number
+          status: string
+          subtitle: string | null
+          tagline: string | null
+          testimonial_text: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          challenge_text?: string | null
+          created_at?: string
+          created_by?: string | null
+          extra_paragraph?: string | null
+          hero_image_alt?: string | null
+          hero_image_path?: string | null
+          hero_image_url?: string | null
+          id?: string
+          published_at?: string | null
+          result_text?: string | null
+          slug: string
+          solution_text?: string | null
+          sort_order?: number
+          status?: string
+          subtitle?: string | null
+          tagline?: string | null
+          testimonial_text?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          challenge_text?: string | null
+          created_at?: string
+          created_by?: string | null
+          extra_paragraph?: string | null
+          hero_image_alt?: string | null
+          hero_image_path?: string | null
+          hero_image_url?: string | null
+          id?: string
+          published_at?: string | null
+          result_text?: string | null
+          slug?: string
+          solution_text?: string | null
+          sort_order?: number
+          status?: string
+          subtitle?: string | null
+          tagline?: string | null
+          testimonial_text?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -71,9 +178,10 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_staff: { Args: never; Returns: boolean }
     }
     Enums: {
-      app_role: "admin"
+      app_role: "admin" | "editor"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -201,7 +309,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["admin"],
+      app_role: ["admin", "editor"],
     },
   },
 } as const
