@@ -26,9 +26,8 @@ const GALLERY_MAX: Record<GalleryType, number> = {
  * delete, preview, alt-text editing, drag & drop reorder with persisted
  * sort_order). Talks directly to projectImagesService/storageService — the
  * project this gallery belongs to always has a real id by the time this
- * renders (see projects/$id.tsx: a brand-new project is created as a draft
- * immediately, before its editor form is shown), so there is no "unsaved
- * gallery" state to reconcile on save.
+ * renders (ProjectForm only mounts the galleries once the project has been
+ * saved at least once), so there is no "unsaved gallery" state to reconcile.
  */
 export function GalleryUploader({
   projectId,

@@ -293,11 +293,40 @@ export const updateUserServerFn = createServerFn({ method: "POST" })
         authPatch,
       );
       if (authErr) {
-        // Auth (possibly a password change) is not reversible; the role change from
-        // step 1 IS. Undo step 1 before reporting, and never swallow a failed undo.
-        const originalCode = /already|exist|registered|duplicate/i.test(authErr.message ?? "")
-          ? "duplicate_email"
-          : "update_failed";
+        // GoTrue rejected the change. Classify by its OWN code/status (never by
+        // echoing the payload) so the client can phrase a precise reason. The
+        // role change from step 1 is reversible; undo it before reporting, and
+        // never swallow a failed undo.
+        const ae = authErr as { message?: string; status?: number; code?: string };
+        const aeCode = ae.code ?? "";
+        // `validation_failed` spans email / password / metadata — only treat it
+        // as a password problem when the password was the only field in play.
+        const passwordOnly =
+          Boolean(authPatch.password) && !authPatch.email && !authPatch.user_metadata;
+        const originalCode =
+          aeCode === "email_exists" || /already|registered|duplicate/i.test(ae.message ?? "")
+            ? "duplicate_email"
+            : aeCode === "same_password"
+              ? "same_password"
+              : aeCode === "weak_password"
+                ? "weak_password"
+                : aeCode === "user_not_found"
+                  ? "not_found"
+                  : aeCode === "validation_failed" && passwordOnly
+                    ? "weak_password"
+                    : "update_failed";
+        // Server-only, and deliberately minimal: never the payload, the
+        // password, the email/metadata values, the service-role, or the raw
+        // GoTrue message — just the shape of what failed.
+        console.error("[updateUser] auth error", {
+          status: ae.status,
+          code: aeCode,
+          fields: {
+            email: Boolean(authPatch.email),
+            password: Boolean(authPatch.password),
+            metadata: Boolean(authPatch.user_metadata),
+          },
+        });
         if (roleWasWritten) {
           const undo = hadRoleRow
             ? await supabaseAdmin
