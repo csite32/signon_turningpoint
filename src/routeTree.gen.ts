@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ContactRouteImport } from './routes/contact'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProjectsIndexRouteImport } from './routes/projects/index'
@@ -22,6 +23,11 @@ import { Route as AdminDashboardUsersIndexRouteImport } from './routes/admin/das
 import { Route as AdminDashboardProjectsIndexRouteImport } from './routes/admin/dashboard/projects/index'
 import { Route as AdminDashboardProjectsIdRouteImport } from './routes/admin/dashboard/projects/$id'
 
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AboutRoute = AboutRouteImport.update({
   id: '/about',
   path: '/about',
@@ -89,6 +95,7 @@ const AdminDashboardProjectsIdRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/contact': typeof ContactRoute
   '/admin/dashboard': typeof AdminDashboardRouteWithChildren
   '/admin/login': typeof AdminLoginRoute
   '/admin/preview': typeof AdminPreviewRoute
@@ -103,6 +110,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/contact': typeof ContactRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/preview': typeof AdminPreviewRoute
   '/projects/$slug': typeof ProjectsSlugRoute
@@ -117,6 +125,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/contact': typeof ContactRoute
   '/admin/dashboard': typeof AdminDashboardRouteWithChildren
   '/admin/login': typeof AdminLoginRoute
   '/admin/preview': typeof AdminPreviewRoute
@@ -133,6 +142,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/about'
+    | '/contact'
     | '/admin/dashboard'
     | '/admin/login'
     | '/admin/preview'
@@ -147,6 +157,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/about'
+    | '/contact'
     | '/admin/login'
     | '/admin/preview'
     | '/projects/$slug'
@@ -160,6 +171,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/about'
+    | '/contact'
     | '/admin/dashboard'
     | '/admin/login'
     | '/admin/preview'
@@ -175,6 +187,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
+  ContactRoute: typeof ContactRoute
   AdminDashboardRoute: typeof AdminDashboardRouteWithChildren
   AdminLoginRoute: typeof AdminLoginRoute
   AdminPreviewRoute: typeof AdminPreviewRoute
@@ -185,6 +198,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/about': {
       id: '/about'
       path: '/about'
@@ -293,6 +313,7 @@ const AdminDashboardRouteWithChildren = AdminDashboardRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
+  ContactRoute: ContactRoute,
   AdminDashboardRoute: AdminDashboardRouteWithChildren,
   AdminLoginRoute: AdminLoginRoute,
   AdminPreviewRoute: AdminPreviewRoute,
