@@ -1,8 +1,7 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, type CSSProperties } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { useAdminAccess } from "@/hooks/use-admin-access";
-import { enableEditMode, disableEditMode } from "@/lib/editor/edit-mode";
+import { useRoleAccess } from "@/hooks/use-role";
 
 export const Route = createFileRoute("/admin/")({
   head: () => ({
@@ -60,7 +59,7 @@ const primaryButtonStyle: CSSProperties = {
 };
 
 function AdminDashboardPage() {
-  const state = useAdminAccess();
+  const state = useRoleAccess();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -70,13 +69,11 @@ function AdminDashboardPage() {
   }, [state.status, navigate]);
 
   async function handleSignOut() {
-    disableEditMode();
     await supabase.auth.signOut();
     navigate({ to: "/admin/login", replace: true });
   }
 
   function handleEditSite() {
-    enableEditMode();
     navigate({ to: "/" });
   }
 
@@ -93,12 +90,29 @@ function AdminDashboardPage() {
       <div style={pageStyle}>
         <div style={cardStyle}>
           <h1 style={{ margin: "0 0 12px", fontSize: "18px", fontWeight: 600 }}>אין הרשאה</h1>
-          <p style={{ margin: "0 0 16px" }}>
-            המשתמש {state.email} אינו בעל הרשאת ניהול.
-          </p>
+          <p style={{ margin: "0 0 16px" }}>המשתמש {state.email} אינו בעל הרשאת ניהול.</p>
           <button type="button" style={buttonStyle} onClick={handleSignOut}>
             התנתקות
           </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (state.role === "editor") {
+    return (
+      <div style={pageStyle}>
+        <div style={cardStyle}>
+          <h1 style={{ margin: "0 0 8px", fontSize: "20px", fontWeight: 600 }}>לוח בקרה</h1>
+          <p style={{ margin: "0 0 20px", color: "#555" }}>מחוברת כ-{state.email}</p>
+          <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
+            <Link to="/admin/dashboard/projects" style={primaryButtonStyle}>
+              מעבר ללוח הבקרה
+            </Link>
+            <button type="button" style={buttonStyle} onClick={handleSignOut}>
+              התנתקות
+            </button>
+          </div>
         </div>
       </div>
     );
