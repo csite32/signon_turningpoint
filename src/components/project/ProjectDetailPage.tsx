@@ -369,9 +369,9 @@ export default function ProjectDetailPage({
           <a href="#" data-editor-id="global__nav-testimonials">
             לקוחות ממליצים
           </a>
-          <a href="#" className="navpill-contact" data-editor-id="global__nav-contact">
+          <Link to="/contact" className="navpill-contact" data-editor-id="global__nav-contact">
             צור קשר
-          </a>
+          </Link>
         </nav>
         <div className="topbtn-wrap">
           <div data-editor-move-wrap="global__top-cta" style={{ display: "block" }}>
@@ -446,9 +446,9 @@ export default function ProjectDetailPage({
         <a href="#" onClick={() => setMobileMenuOpen(false)}>
           לקוחות ממליצים
         </a>
-        <a href="#" className="navpill-contact" onClick={() => setMobileMenuOpen(false)}>
+        <Link to="/contact" className="navpill-contact" onClick={() => setMobileMenuOpen(false)}>
           צור קשר
-        </a>
+        </Link>
       </div>
 
       {state.status === "ready" ? (

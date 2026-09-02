@@ -45,7 +45,7 @@ export default function TurningPointHome({ projects }) {
           <Link to="/about" data-editor-id="global__nav-about">אודות והשיטה</Link>
           <Link to="/projects" data-editor-id="global__nav-projects">פרויקטים</Link>
           <a href="#" data-editor-id="global__nav-testimonials">לקוחות ממליצים</a>
-          <a href="#" className="navpill-contact" data-editor-id="global__nav-contact">צור קשר</a>
+          <Link to="/contact" className="navpill-contact" data-editor-id="global__nav-contact">צור קשר</Link>
         </nav>
         <div className="topbtn-wrap">
           <div data-editor-move-wrap="global__top-cta" style={{ display: "block" }}>
@@ -70,7 +70,7 @@ export default function TurningPointHome({ projects }) {
         <a href="#">אודות והשיטה</a>
         <Link to="/projects">פרויקטים</Link>
         <a href="#">לקוחות ממליצים</a>
-        <a href="#" className="navpill-contact">צור קשר</a>
+        <Link to="/contact" className="navpill-contact">צור קשר</Link>
       </div>
 
 
