@@ -15,7 +15,6 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { EditorPanel } from "../components/EditorPanel";
 import { initEditorRuntime, rescanEditorRuntime } from "../lib/editor/editor-runtime";
 import { useAdminAccess } from "../hooks/use-admin-access";
-import { useEditModeFlag } from "../hooks/use-edit-mode-flag";
 
 function NotFoundComponent() {
   return (
@@ -86,14 +85,28 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "description", content: "משרד מיתוג ופרסום המלווה בעלי עסקים בשלב הצמיחה הבא." },
       { name: "author", content: "Lovable" },
       { property: "og:title", content: "נקודת מפנה" },
-      { property: "og:description", content: "משרד מיתוג ופרסום המלווה בעלי עסקים בשלב הצמיחה הבא." },
+      {
+        property: "og:description",
+        content: "משרד מיתוג ופרסום המלווה בעלי עסקים בשלב הצמיחה הבא.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@Lovable" },
       { name: "twitter:title", content: "נקודת מפנה" },
-      { name: "twitter:description", content: "משרד מיתוג ופרסום המלווה בעלי עסקים בשלב הצמיחה הבא." },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/686d8124-5feb-4af4-b80c-c4e1eb358db1/id-preview-32e5123a--478296c5-0b71-4aef-95a5-365b5a092680.lovable.app-1783942533748.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/686d8124-5feb-4af4-b80c-c4e1eb358db1/id-preview-32e5123a--478296c5-0b71-4aef-95a5-365b5a092680.lovable.app-1783942533748.png" },
+      {
+        name: "twitter:description",
+        content: "משרד מיתוג ופרסום המלווה בעלי עסקים בשלב הצמיחה הבא.",
+      },
+      {
+        property: "og:image",
+        content:
+          "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/686d8124-5feb-4af4-b80c-c4e1eb358db1/id-preview-32e5123a--478296c5-0b71-4aef-95a5-365b5a092680.lovable.app-1783942533748.png",
+      },
+      {
+        name: "twitter:image",
+        content:
+          "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/686d8124-5feb-4af4-b80c-c4e1eb358db1/id-preview-32e5123a--478296c5-0b71-4aef-95a5-365b5a092680.lovable.app-1783942533748.png",
+      },
     ],
     links: [
       {
@@ -125,9 +138,13 @@ function RootShell({ children }: { children: ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const adminAccess = useAdminAccess();
-  const editModeOn = useEditModeFlag();
-  const showEditor = adminAccess.status === "authorized" && editModeOn;
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  // The visual editor is admin-only and only the homepage and the About page
+  // carry editable (data-editor-id) content. No transient flag: any authorized
+  // admin on "/" or "/about" gets the pencil; an editor / signed-out / loading
+  // state never does.
+  const onEditablePage = pathname === "/" || pathname === "/about";
+  const showEditor = adminAccess.status === "authorized" && onEditablePage;
 
   useEffect(() => {
     initEditorRuntime();
