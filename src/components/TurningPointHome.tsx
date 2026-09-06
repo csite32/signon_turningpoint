@@ -7,6 +7,7 @@
 import { useEffect, useLayoutEffect, useRef } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { initHeaderScroll } from "../lib/header-scroll";
+import { scrollToRecommendations, scrollToTop } from "../lib/site-nav";
 import { RecommendationsSection } from "./recommendations/RecommendationsSection";
 import "../styles/turningpoint.css";
 
@@ -38,16 +39,32 @@ export default function TurningPointHome({ projects, recommendations }) {
     document.body.appendChild(s);
   }, []);
   useEffect(() => initHeaderScroll(), []);
+  // Deep-link: arriving at /#recommendations from another page (SPA nav or a
+  // full reload) must scroll to the recommendations strip once it exists.
+  useEffect(() => {
+    if (window.location.hash !== "#recommendations") return;
+    let tries = 0;
+    const timer = window.setInterval(() => {
+      const el = document.getElementById("recommendations");
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
+        window.clearInterval(timer);
+      } else if (++tries > 40) {
+        window.clearInterval(timer);
+      }
+    }, 100);
+    return () => window.clearInterval(timer);
+  }, []);
 
   return (
     <>
       <header>
-        <div className="logo-wrap"><img src="/logo2.png" alt="נקודת מפנה" className="logo-img" /></div>
+        <div className="logo-wrap"><a href="/" onClick={scrollToTop} aria-label="נקודת מפנה — לראש עמוד הבית"><img src="/logo2.png" alt="נקודת מפנה" className="logo-img" /></a></div>
         <nav className="navpill">
           <a href="#" data-editor-id="global__nav-home">בית</a>
           <Link to="/about" data-editor-id="global__nav-about">אודות והשיטה</Link>
           <Link to="/projects" data-editor-id="global__nav-projects">פרויקטים</Link>
-          <a href="#" data-editor-id="global__nav-testimonials">לקוחות ממליצים</a>
+          <a href="#recommendations" data-editor-id="global__nav-testimonials" onClick={scrollToRecommendations}>לקוחות ממליצים</a>
           <Link to="/contact" className="navpill-contact" data-editor-id="global__nav-contact">צור קשר</Link>
         </nav>
         <div className="topbtn-wrap">
@@ -72,7 +89,7 @@ export default function TurningPointHome({ projects, recommendations }) {
         <a href="#">בית</a>
         <a href="#">אודות והשיטה</a>
         <Link to="/projects">פרויקטים</Link>
-        <a href="#">לקוחות ממליצים</a>
+        <a href="#recommendations" onClick={scrollToRecommendations}>לקוחות ממליצים</a>
         <Link to="/contact" className="navpill-contact">צור קשר</Link>
       </div>
 
