@@ -60,7 +60,7 @@ export function RecommendationsSection({
   );
 
   return (
-    <section className="rec-section">
+    <section className="rec-section" id="recommendations">
       <div className="rec-inner">
         <div className="rec-header-col">
           <div className="rec-title-block">
