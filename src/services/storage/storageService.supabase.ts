@@ -211,7 +211,13 @@ export async function listMediaLibrary(): Promise<Result<MediaItem[]>> {
     });
   }
 
-  for (const folder of ["hero", "main_gallery", "brand_colors", "secondary_gallery"]) {
+  for (const folder of [
+    "hero",
+    "main_gallery",
+    "brand_colors",
+    "secondary_gallery",
+    "recommendations",
+  ]) {
     const { data: files, error: listErr } = await supabase.storage
       .from(BUCKET)
       .list(folder, { limit: 1000, sortBy: { column: "name", order: "asc" } });

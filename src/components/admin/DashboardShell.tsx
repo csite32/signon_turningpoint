@@ -1,6 +1,14 @@
 import { type ReactNode, useState } from "react";
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
-import { FolderKanban, Home, LayoutDashboard, LogOut, Menu, Users } from "lucide-react";
+import {
+  FolderKanban,
+  Home,
+  LayoutDashboard,
+  LogOut,
+  Menu,
+  MessageSquareQuote,
+  Users,
+} from "lucide-react";
 import { Toaster } from "@/components/ui/sonner";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
@@ -65,6 +73,14 @@ function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
       >
         <FolderKanban className="h-4 w-4 shrink-0" />
         פרויקטים
+      </Link>
+      <Link
+        to="/admin/dashboard/recommendations"
+        onClick={onNavigate}
+        className={linkClass(pathname.startsWith("/admin/dashboard/recommendations"))}
+      >
+        <MessageSquareQuote className="h-4 w-4 shrink-0" />
+        המלצות
       </Link>
       {role === "admin" && (
         <Link
