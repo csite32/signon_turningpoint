@@ -1,7 +1,7 @@
 @font-face { font-family:'Polin'; src:url('/fonts/polin-96ee94751f.woff2') format('woff2'); font-weight:400; font-style:normal; }
   @font-face { font-family:'Polin'; src:url('/fonts/polin-63a1c96581.woff2') format('woff2'); font-weight:700; font-style:normal; }
 
-  :root{ --blue:rgba(19,53,81,1); --red:rgba(225,78,80,1); --white:#fff; }
+  :root{ --blue:rgba(19,53,81,1); --red:rgba(225,78,80,1); --white:#E5F0FF; }
   *,*::before,*::after{ box-sizing:border-box; margin:0; padding:0; }
   html{ width:100%; scroll-behavior:smooth; overflow-x:hidden; }
   body{
@@ -24,7 +24,10 @@
   }
 
   .logo-wrap{ display:flex; justify-content:flex-start; }
-  .logo-wrap svg{ width:190px; height:auto; }
+  /* logo2.png — natural ratio 2217:1181 (~1.877:1); width chosen so the rendered
+     height matches the previous wordmark (~73px desktop / 35px / 30px) so header
+     rhythm, sticky behaviour and mobile layout are unchanged. */
+  .logo-wrap img{ width:138px; height:auto; display:block; }
 
   .navpill{
     background:var(--white); border-radius:100px;
@@ -38,6 +41,51 @@
   }
   .navpill a:hover{ opacity:.55; }
   .navpill a.navpill-contact, .mobile-menu a.navpill-contact{ color:var(--red); }
+
+  /* ===== Desktop nav behaviour (>=1025px only — the mobile hamburger menu keeps
+     its current design, colours, background and behaviour untouched) =====
+     · before scroll: no pill background, header fully transparent, items #E5F0FF
+     · once the sticky header pins to the top (body>header gets .is-stuck via
+       src/lib/header-scroll.ts): pill background returns, lower/tighter padding,
+       items turn rgba(19,53,81,1)
+     · red is a state, not a default: it shows on hover and on the item whose
+       page is open (TanStack <Link> active) — uniformly, "צור קשר" included */
+  @media (min-width:1025px){
+    header{ transition:padding .25s ease; }
+    header .navpill{
+      background:transparent;
+      transition:background .25s ease, padding .25s ease;
+    }
+    header.is-stuck{ padding-top:10px; padding-bottom:10px; }
+    header.is-stuck .navpill{
+      background:var(--white);
+      padding:12px 74px;
+    }
+
+    header .navpill a,
+    header .navpill a.navpill-contact{
+      color:#E5F0FF;
+      transition:color .2s ease, opacity .2s ease;
+    }
+    header.is-stuck .navpill a,
+    header.is-stuck .navpill a.navpill-contact{
+      color:rgba(19, 53, 81, 1);
+    }
+
+    header .navpill a:hover,
+    header .navpill a.navpill-contact:hover,
+    header .navpill a.active,
+    header .navpill a[data-status="active"],
+    header .navpill a[aria-current="page"],
+    header.is-stuck .navpill a:hover,
+    header.is-stuck .navpill a.navpill-contact:hover,
+    header.is-stuck .navpill a.active,
+    header.is-stuck .navpill a[data-status="active"],
+    header.is-stuck .navpill a[aria-current="page"]{
+      color:var(--red);
+      opacity:1;
+    }
+  }
 
   .topbtn-wrap{ display:flex; justify-content:flex-end; }
   .topbtn{
@@ -235,7 +283,7 @@
       background-repeat:repeat; background-size:cover;
     }
     .logo-wrap{ flex-shrink:0; order:1; }
-    .logo-wrap svg{ width:90px; }
+    .logo-wrap img{ width:65px; }
     .navpill{ display:none; }
     .hamburger{ display:flex; order:2; margin:0 auto; width:28px; height:22px; }
     .topbtn-wrap{ flex-shrink:0; order:3; }
@@ -252,7 +300,7 @@
   @media (max-width:460px){
     header{ padding:14px 14px; }
     .topbtn .txt{ font-size:10px; }
-    .logo-wrap svg{ width:78px; }
+    .logo-wrap img{ width:56px; }
     .overlay p{ font-size:12.5px; }
     .about{ padding:40px 16px 50px; }
     .parshat-pill{ padding:8px 22px 8px 12px; }
@@ -298,6 +346,32 @@
 .hero-overlay .about-cta{ pointer-events:auto; }
 /* טקסט הכפתור בהירו — משקל 500 וממורכז (scope רק להירו, לא משפיע על שאר הכפתורים) */
 .hero-overlay .cta-text{ font-weight:500; text-align:center; }
+
+/* ===== Hero refinements (desktop only, >=1025px — tablet/mobile sizes untouched) =====
+   · רשת החיצים מתפרסת מעט רחב יותר (width cap 1240→1400, 95%→97%)
+   · החיצים עצמם מעט גדולים יותר (30→36px) — העיגול האדום, הכמות, הסידור,
+     הכיוונים, הרקע והאנימציות ללא שינוי
+   · הכותרת שמעל הכפתור: הגדלה ל-56px (ממורכזת, שורה אחת) — בלי לגעת ברשת/בטקסט
+   · הכפתור "להצצה בפרויקטים" מונמך ב-36px כך שיתיישר עם שורת החיצים שמתחתיו;
+     זזה רק המיקום (translateY) — הגודל (scale 1.28), העיצוב והאנימציה ללא שינוי */
+@media (min-width:1025px){
+  .hero-field{ width:min(1400px,97%); }
+  .hero-item .arrow{ width:36px; }
+  .hero-overlay{ gap:44px; }
+  .hero-overlay p{ font-size:56px; line-height:1.2; }
+}
+/* Lower the hero CTA without touching its size or the entrance animation.
+   .about-cta carries scale(1.28) at >=1025px and the .anim-cta entrance composes
+   a second scale(); we add a Y offset into BOTH the hidden and settled states so
+   the 22px rise + easing stay identical, only the resting position drops 30px. */
+@media (min-width:1025px){
+  .anim-ready .hero-overlay .anim-cta{
+    transform:translateY(58px) scale(.97) scale(1.28);
+  }
+  .anim-ready .hero-overlay .anim-cta.in-view{
+    transform:translateY(36px) scale(1) scale(1.28);
+  }
+}
 @media(max-width:760px){
   .hero-field{ top:6%; width:96%; height:50%; }
   .hero-item .arrow{ width:24px; }
@@ -1189,7 +1263,7 @@
     font-family:'Polin',sans-serif;
     font-size:90px;
     font-weight:800;
-    color:#fff;
+    color:#E5F0FF;
     line-height:1;
     white-space:nowrap;
   }

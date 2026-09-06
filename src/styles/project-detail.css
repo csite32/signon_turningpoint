@@ -307,17 +307,25 @@ body.pm-body > header {
   }
 }
 
-/* ---- Testimonial ---- */
+/* ---- Testimonial ----
+   Every dimension below is `N * var(--qs)`. On desktop --qs == --s, so the card
+   + its whole decoration (outline/notch SVG, circle, quote-mark) is byte-for-
+   byte the original. In the <=1024px block --qs is scaled up, so the ENTIRE
+   composition grows as ONE unit — the SVG keeps its 1001:327 ratio (no
+   distortion), and the circle + mark scale with it and stay inside the notch
+   (they are never repositioned on their own). Only the quote text size and the
+   outer bottom gap are handled separately. */
 .pm-quote-card {
+  --qs: var(--s);
   position: relative;
   overflow: visible;
-  width: calc(1001 * var(--s));
+  width: calc(1001 * var(--qs));
   max-width: calc(100% - 40px);
-  margin: 0 auto calc(51 * var(--s));
-  min-height: calc(276 * var(--s));
+  margin: 0 auto calc(51 * var(--qs));
+  min-height: calc(276 * var(--qs));
   background: var(--blue);
-  border-radius: calc(17 * var(--s));
-  padding: calc(44 * var(--s)) calc(60 * var(--s)) calc(110 * var(--s));
+  border-radius: calc(17 * var(--qs));
+  padding: calc(44 * var(--qs)) calc(60 * var(--qs)) calc(110 * var(--qs));
   box-sizing: border-box;
   display: flex;
   align-items: center;
@@ -334,14 +342,15 @@ body.pm-body > header {
   font-size: calc(50 * var(--s));
   line-height: 1.25;
   text-align: center;
-  white-space: pre-line;
+  /* natural wrapping by width — newlines in the text don't force a hard break */
+  white-space: normal;
 }
 .pm-quote-decor {
   position: absolute;
   left: 0;
-  bottom: calc(-51 * var(--s));
-  width: calc(1001 * var(--s));
-  height: calc(327 * var(--s));
+  bottom: calc(-51 * var(--qs));
+  width: calc(1001 * var(--qs));
+  height: calc(327 * var(--qs));
   pointer-events: none;
   z-index: 1;
 }
@@ -354,27 +363,35 @@ body.pm-body > header {
 }
 .pm-quote-circle {
   position: absolute;
-  left: calc(797 * var(--s));
-  top: calc(190 * var(--s));
-  width: calc(108 * var(--s));
-  height: calc(108 * var(--s));
+  left: calc(797 * var(--qs));
+  top: calc(190 * var(--qs));
+  width: calc(108 * var(--qs));
+  height: calc(108 * var(--qs));
   border-radius: 50%;
-  border: calc(4 * var(--s)) solid var(--white);
+  border: calc(4 * var(--qs)) solid var(--white);
   box-sizing: border-box;
 }
 .pm-quote-mark {
   position: absolute;
-  right: calc(125 * var(--s));
-  top: calc(208 * var(--s));
+  right: calc(125 * var(--qs));
+  top: calc(208 * var(--qs));
   font-family: "Polin", sans-serif;
   font-weight: 700;
   color: var(--white);
-  font-size: calc(119.048 * var(--s));
+  font-size: calc(119.048 * var(--qs));
   line-height: 1;
 }
-@media (max-width: 760px) {
+/* Tablet + mobile ONLY: grow the whole blue card + decoration as one unit
+   (--qs scaled — nothing is repositioned by hand), set the quote text to 16px,
+   and add a clear OUTER bottom gap below the blue box. `max-width:100% - 40px`
+   (from the base rule) still guarantees side margins / no horizontal scroll. */
+@media (max-width: 1024px) {
   .pm-quote-card {
-    border-radius: calc(17 * var(--s));
+    --qs: calc(var(--s) * 1.45);
+    margin-bottom: calc(51 * var(--qs) + clamp(36px, 6vw, 72px));
+  }
+  .pm-quote-text {
+    font-size: 16px;
   }
 }
 
@@ -442,7 +459,8 @@ body.pm-body > header {
   font-size: calc(30 * var(--optical) * var(--s));
   line-height: 1.35;
   text-align: right;
-  white-space: pre-line;
+  /* natural wrapping by width — newlines in the text don't force a hard break */
+  white-space: normal;
 }
 @media (max-width: 760px) {
   .pm-subtitle-band {
@@ -506,4 +524,148 @@ body.pm-body > header {
   font-size: 18px;
   color: var(--red);
   text-decoration: underline;
+}
+
+/* The decorative title lockups ("פרשת דרכים" / "נקודת המפנה" / "התוצאה בשטח")
+   are each a group of absolutely-positioned .pm-box + .pm-t children composed
+   at Figma coordinates. `.pm-lockup` wraps that group WITHOUT changing it:
+   `display:contents` makes the wrapper vanish for layout, so on desktop the
+   children position against `.pm-band` byte-for-byte as before. The wrapper
+   only becomes a real (scalable) box in the tablet/mobile media query below. */
+.pm-lockup {
+  display: contents;
+}
+
+/* ---- Tablet + mobile (<=1024px): each `.pm-textband` becomes a full-width
+   flex column — decorative title first, then the bold label, then the body
+   paragraph at a fixed 16px. The title keeps its ENTIRE original composition
+   (frames, fills, colours, the white "דרכים" on the blue pill, masks, the
+   pulsing dot, the spinning star, inner text placement): the `.pm-lockup`
+   wrapper turns into a real block and is scaled up as one unit so the whole
+   lockup stays intact and readable, occupying its own full-width row. Nothing
+   is hidden. Desktop (>=1025px) is 100% untouched. */
+@media (max-width: 1024px) {
+  .pm-textband {
+    height: auto !important;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    padding: clamp(30px, 6vw, 52px) 0;
+    gap: 0;
+    /* the scaled lockup's box extends past the left edge with nothing in it
+       (all its content sits on the right of the 1920 space) — clip that empty
+       bleed on the x-axis only so it can't add a page scrollbar; y stays
+       visible so nothing vertical is ever hidden */
+    overflow-x: clip;
+  }
+
+  /* ----- the decorative title, kept whole, scaled up as one unit ----- */
+  .pm-lockup {
+    display: block;
+    position: relative;
+    order: 0;
+    width: 100%;
+    /* children still use right:/left:/top: in --s units against a 1920 space,
+       so `width:100%` (== 1920*--s on mobile) keeps the composition exact */
+    /* RTL alignment: pin the scale origin ONTO the lockup's right-most piece
+       (--rxr = its design-x), so scaling never moves that edge; then translate
+       the whole group so that edge lands --redge in from the content edge.
+       Holds for any --k and any viewport width. */
+    --redge: clamp(16px, 4vw, 40px);
+    transform-origin: calc(var(--rxr) * var(--s)) 0;
+    transform: translateX(calc((1920 - var(--rxr)) * var(--s) - var(--redge))) scale(var(--k));
+    /* reserve the flow height the scaled lockup content actually occupies
+       (--hy = the lockup's design-unit bottom edge, so K*--hy*--s == the
+       on-screen distance from its top to the bottom of its lowest piece) */
+    height: calc(var(--k) * var(--hy) * var(--s));
+    margin-bottom: 12px;
+    /* it is purely decorative — let taps fall through to what's beneath the
+       (transparent) part of its scaled box */
+    pointer-events: none;
+  }
+  .pm-lockup--challenge {
+    --k: 2.3;
+    --hy: 200;
+    --rxr: 1617;
+  }
+  .pm-lockup--solution {
+    --k: 2.2;
+    --hy: 300;
+    --rxr: 1595;
+  }
+  .pm-lockup--result {
+    --k: 2;
+    --hy: 245;
+    --rxr: 1536;
+  }
+
+  /* ----- label ("האתגר" / "הפתרון") + body paragraph: normal flow ----- */
+  .pm-textband > .pm-t {
+    position: static;
+    right: auto;
+    left: auto;
+    top: auto;
+    transform: none;
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    padding: 0 clamp(20px, 5vw, 40px);
+    box-sizing: border-box;
+    white-space: normal;
+    text-align: right;
+    font-size: 16px;
+    line-height: 1.5;
+  }
+  .pm-textband > .pm-t.is-bold {
+    order: 1;
+    font-weight: 700;
+    font-size: 19px;
+    line-height: 1.3;
+    margin-top: 20px;
+  }
+  .pm-textband > .pm-t.pm-para {
+    order: 2;
+    font-size: 16px;
+    line-height: 1.55;
+    margin-top: 12px;
+  }
+}
+
+/* ---- Desktop (>=1025px): the case-study body paragraphs keep the exact
+   narrow text column the original manual <br> wrapping produced, but now let
+   the browser wrap inside it. Everything else about them is unchanged:
+   position:absolute, the `right:` anchor from --rx, font-size, line-height,
+   text-align:right, and their placement relative to the wordmark. The
+   max-width values are the measured pre-`white-space:normal` render widths
+   in design units (longest hand-wrapped line): challenge 526px, solution
+   605px, result 420px at --s=0.75  ->  707 / 813 / 564 design units. */
+@media (min-width: 1025px) {
+  .pm-para--challenge {
+    max-width: calc(707 * var(--s));
+  }
+  .pm-para--solution {
+    max-width: calc(813 * var(--s));
+  }
+  .pm-para--result {
+    max-width: calc(564 * var(--s));
+  }
+  /* "כותרת מתאימה" paragraph: the flex column (~868 design units) is wider than
+     the original design's text block (prototype #pmTitleFitSection <p>,
+     --fs:30 --rx:1044, widest hand-wrapped line -> 650 design units). The text
+     is wrapped in an inner box capped at that width; here we push that box to
+     the INLINE-START edge of its flex column — its RIGHT side in RTL, i.e. up
+     against the gap that separates it from the heading — so the paragraph sits
+     next to "כותרת מתאימה" instead of hugging the page's left edge. The large
+     `auto` inline-end (left) margin keeps a generous left gutter. Nothing about
+     the width, the wrapping, the <p> flex item, the gap or the heading changes;
+     the text itself stays RTL / right-aligned (never text-align:center). */
+  .pm-subtitle-text-box {
+    display: block;
+    max-width: calc(650 * var(--s));
+    margin-inline-start: 0;
+    margin-inline-end: auto;
+  }
 }
