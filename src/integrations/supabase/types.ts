@@ -145,6 +145,45 @@ export type Database = {
         }
         Relationships: []
       }
+      recommendations: {
+        Row: {
+          created_at: string
+          id: string
+          image: string | null
+          image_alt: string | null
+          image_path: string | null
+          media_type: string
+          sort_order: number
+          text: string
+          updated_at: string
+          youtube_url: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          image?: string | null
+          image_alt?: string | null
+          image_path?: string | null
+          media_type: string
+          sort_order?: number
+          text?: string
+          updated_at?: string
+          youtube_url?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          image?: string | null
+          image_alt?: string | null
+          image_path?: string | null
+          media_type?: string
+          sort_order?: number
+          text?: string
+          updated_at?: string
+          youtube_url?: string | null
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
