@@ -987,6 +987,9 @@
   .rec-section{
     padding:180px 0;
     width:100%;
+    /* Anchor target for the "לקוחות ממליצים" nav link: keep the section
+       title clear of the sticky header when scrolled to via #recommendations. */
+    scroll-margin-top:140px;
   }
   /*
     סדר עמודות desktop:

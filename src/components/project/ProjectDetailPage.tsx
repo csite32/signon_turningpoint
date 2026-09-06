@@ -235,7 +235,9 @@ export default function ProjectDetailPage({
     <>
       <header>
         <div className="logo-wrap">
-          <img src="/logo2.png" alt="נקודת מפנה" className="logo-img" />
+          <Link to="/" aria-label="נקודת מפנה — לעמוד הבית">
+            <img src="/logo2.png" alt="נקודת מפנה" className="logo-img" />
+          </Link>
         </div>
         <nav className="navpill">
           <Link to="/" data-editor-id="global__nav-home">
@@ -247,9 +249,9 @@ export default function ProjectDetailPage({
           <Link to="/projects" data-editor-id="global__nav-projects">
             פרויקטים
           </Link>
-          <a href="#" data-editor-id="global__nav-testimonials">
+          <Link to="/" hash="recommendations" data-editor-id="global__nav-testimonials">
             לקוחות ממליצים
-          </a>
+          </Link>
           <Link to="/contact" className="navpill-contact" data-editor-id="global__nav-contact">
             צור קשר
           </Link>
@@ -324,9 +326,9 @@ export default function ProjectDetailPage({
         <Link to="/projects" onClick={() => setMobileMenuOpen(false)}>
           פרויקטים
         </Link>
-        <a href="#" onClick={() => setMobileMenuOpen(false)}>
+        <Link to="/" hash="recommendations" onClick={() => setMobileMenuOpen(false)}>
           לקוחות ממליצים
-        </a>
+        </Link>
         <Link to="/contact" className="navpill-contact" onClick={() => setMobileMenuOpen(false)}>
           צור קשר
         </Link>
