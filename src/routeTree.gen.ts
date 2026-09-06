@@ -20,6 +20,7 @@ import { Route as AdminLoginRouteImport } from './routes/admin/login'
 import { Route as AdminDashboardRouteImport } from './routes/admin/dashboard'
 import { Route as AdminDashboardIndexRouteImport } from './routes/admin/dashboard/index'
 import { Route as AdminDashboardUsersIndexRouteImport } from './routes/admin/dashboard/users/index'
+import { Route as AdminDashboardRecommendationsIndexRouteImport } from './routes/admin/dashboard/recommendations/index'
 import { Route as AdminDashboardProjectsIndexRouteImport } from './routes/admin/dashboard/projects/index'
 import { Route as AdminDashboardProjectsIdRouteImport } from './routes/admin/dashboard/projects/$id'
 
@@ -79,6 +80,12 @@ const AdminDashboardUsersIndexRoute =
     path: '/users/',
     getParentRoute: () => AdminDashboardRoute,
   } as any)
+const AdminDashboardRecommendationsIndexRoute =
+  AdminDashboardRecommendationsIndexRouteImport.update({
+    id: '/recommendations/',
+    path: '/recommendations/',
+    getParentRoute: () => AdminDashboardRoute,
+  } as any)
 const AdminDashboardProjectsIndexRoute =
   AdminDashboardProjectsIndexRouteImport.update({
     id: '/projects/',
@@ -105,6 +112,7 @@ export interface FileRoutesByFullPath {
   '/admin/dashboard/': typeof AdminDashboardIndexRoute
   '/admin/dashboard/projects/$id': typeof AdminDashboardProjectsIdRoute
   '/admin/dashboard/projects/': typeof AdminDashboardProjectsIndexRoute
+  '/admin/dashboard/recommendations/': typeof AdminDashboardRecommendationsIndexRoute
   '/admin/dashboard/users/': typeof AdminDashboardUsersIndexRoute
 }
 export interface FileRoutesByTo {
@@ -119,6 +127,7 @@ export interface FileRoutesByTo {
   '/admin/dashboard': typeof AdminDashboardIndexRoute
   '/admin/dashboard/projects/$id': typeof AdminDashboardProjectsIdRoute
   '/admin/dashboard/projects': typeof AdminDashboardProjectsIndexRoute
+  '/admin/dashboard/recommendations': typeof AdminDashboardRecommendationsIndexRoute
   '/admin/dashboard/users': typeof AdminDashboardUsersIndexRoute
 }
 export interface FileRoutesById {
@@ -135,6 +144,7 @@ export interface FileRoutesById {
   '/admin/dashboard/': typeof AdminDashboardIndexRoute
   '/admin/dashboard/projects/$id': typeof AdminDashboardProjectsIdRoute
   '/admin/dashboard/projects/': typeof AdminDashboardProjectsIndexRoute
+  '/admin/dashboard/recommendations/': typeof AdminDashboardRecommendationsIndexRoute
   '/admin/dashboard/users/': typeof AdminDashboardUsersIndexRoute
 }
 export interface FileRouteTypes {
@@ -152,6 +162,7 @@ export interface FileRouteTypes {
     | '/admin/dashboard/'
     | '/admin/dashboard/projects/$id'
     | '/admin/dashboard/projects/'
+    | '/admin/dashboard/recommendations/'
     | '/admin/dashboard/users/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -166,6 +177,7 @@ export interface FileRouteTypes {
     | '/admin/dashboard'
     | '/admin/dashboard/projects/$id'
     | '/admin/dashboard/projects'
+    | '/admin/dashboard/recommendations'
     | '/admin/dashboard/users'
   id:
     | '__root__'
@@ -181,6 +193,7 @@ export interface FileRouteTypes {
     | '/admin/dashboard/'
     | '/admin/dashboard/projects/$id'
     | '/admin/dashboard/projects/'
+    | '/admin/dashboard/recommendations/'
     | '/admin/dashboard/users/'
   fileRoutesById: FileRoutesById
 }
@@ -275,6 +288,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminDashboardUsersIndexRouteImport
       parentRoute: typeof AdminDashboardRoute
     }
+    '/admin/dashboard/recommendations/': {
+      id: '/admin/dashboard/recommendations/'
+      path: '/recommendations'
+      fullPath: '/admin/dashboard/recommendations/'
+      preLoaderRoute: typeof AdminDashboardRecommendationsIndexRouteImport
+      parentRoute: typeof AdminDashboardRoute
+    }
     '/admin/dashboard/projects/': {
       id: '/admin/dashboard/projects/'
       path: '/projects'
@@ -296,6 +316,7 @@ interface AdminDashboardRouteChildren {
   AdminDashboardIndexRoute: typeof AdminDashboardIndexRoute
   AdminDashboardProjectsIdRoute: typeof AdminDashboardProjectsIdRoute
   AdminDashboardProjectsIndexRoute: typeof AdminDashboardProjectsIndexRoute
+  AdminDashboardRecommendationsIndexRoute: typeof AdminDashboardRecommendationsIndexRoute
   AdminDashboardUsersIndexRoute: typeof AdminDashboardUsersIndexRoute
 }
 
@@ -303,6 +324,8 @@ const AdminDashboardRouteChildren: AdminDashboardRouteChildren = {
   AdminDashboardIndexRoute: AdminDashboardIndexRoute,
   AdminDashboardProjectsIdRoute: AdminDashboardProjectsIdRoute,
   AdminDashboardProjectsIndexRoute: AdminDashboardProjectsIndexRoute,
+  AdminDashboardRecommendationsIndexRoute:
+    AdminDashboardRecommendationsIndexRoute,
   AdminDashboardUsersIndexRoute: AdminDashboardUsersIndexRoute,
 }
 
