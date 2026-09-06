@@ -4,6 +4,7 @@
 import { useEffect, useLayoutEffect, useRef } from "react";
 import { Link } from "@tanstack/react-router";
 import { initHeaderScroll } from "../lib/header-scroll";
+import { scrollToRecommendations } from "../lib/site-nav";
 import { RecommendationsSection } from "./recommendations/RecommendationsSection";
 import "../styles/turningpoint.css";
 import "../styles/about.css";
@@ -28,12 +29,12 @@ export default function TurningPointAbout({ recommendations }) {
   return (
     <>
       <header>
-        <div className="logo-wrap"><img src="/logo2.png" alt="נקודת מפנה" className="logo-img" /></div>
+        <div className="logo-wrap"><Link to="/" aria-label="נקודת מפנה — לעמוד הבית"><img src="/logo2.png" alt="נקודת מפנה" className="logo-img" /></Link></div>
         <nav className="navpill">
           <Link to="/" data-editor-id="global__nav-home">בית</Link>
           <Link to="/about" data-editor-id="global__nav-about">אודות והשיטה</Link>
           <Link to="/projects" data-editor-id="global__nav-projects">פרויקטים</Link>
-          <a href="#" data-editor-id="global__nav-testimonials">לקוחות ממליצים</a>
+          <a href="#recommendations" data-editor-id="global__nav-testimonials" onClick={scrollToRecommendations}>לקוחות ממליצים</a>
           <Link to="/contact" className="navpill-contact" data-editor-id="global__nav-contact">צור קשר</Link>
         </nav>
         <div className="topbtn-wrap">
@@ -58,7 +59,7 @@ export default function TurningPointAbout({ recommendations }) {
         <Link to="/">בית</Link>
         <Link to="/about">אודות והשיטה</Link>
         <Link to="/projects">פרויקטים</Link>
-        <a href="#">לקוחות ממליצים</a>
+        <a href="#recommendations" onClick={scrollToRecommendations}>לקוחות ממליצים</a>
         <Link to="/contact" className="navpill-contact">צור קשר</Link>
       </div>
 
