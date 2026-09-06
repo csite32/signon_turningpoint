@@ -45,7 +45,7 @@
   /* Drives the "project" text AND every em-based measurement in the icons
      pill, so one value per breakpoint scales both pills together. */
   font-size: 100px;
-  border: 4px solid rgba(255, 255, 255, 1);
+  border: 4px solid #E5F0FF;
   border-radius: 225px;
   display: flex;
   align-items: center;
@@ -61,7 +61,7 @@
   font-family: "Polin", sans-serif;
   font-size: 1em;
   font-weight: 400;
-  color: #fff;
+  color: #E5F0FF;
   line-height: 1;
   white-space: nowrap;
 }
@@ -85,7 +85,7 @@
   aspect-ratio: 1 / 1;
   margin: -4px 0.12em -4px -4px;
   box-sizing: border-box;
-  border: 4px solid rgba(255, 255, 255, 1);
+  border: 4px solid #E5F0FF;
   border-radius: 50%;
   flex: none;
   display: flex;
@@ -161,7 +161,7 @@
   position: relative;
   display: block;
   aspect-ratio: 3 / 2;
-  border: 4px solid rgba(255, 255, 255, 1);
+  border: 4px solid #E5F0FF;
   border-radius: 19px;
   overflow: hidden;
   background: rgba(255, 255, 255, 0.06);
@@ -169,7 +169,7 @@
   -webkit-tap-highlight-color: transparent;
 }
 .pa-card:focus-visible {
-  outline: 3px solid #fff;
+  outline: 3px solid #E5F0FF;
   outline-offset: 3px;
 }
 
@@ -220,7 +220,7 @@
   font-family: "Polin", sans-serif;
   font-size: 22px;
   font-weight: 700;
-  color: #fff;
+  color: #E5F0FF;
   line-height: 1.15;
   direction: rtl;
 }
@@ -344,9 +344,9 @@
 .pa-loadmore-btn {
   font-family: "Polin", sans-serif;
   font-size: 18px;
-  color: #fff;
+  color: #E5F0FF;
   background: transparent;
-  border: 3px solid rgba(255, 255, 255, 1);
+  border: 3px solid #E5F0FF;
   border-radius: 200px;
   padding: 12px 40px;
   cursor: pointer;
@@ -355,7 +355,7 @@
     color 0.2s ease;
 }
 .pa-loadmore-btn:hover:not(:disabled) {
-  background: #fff;
+  background: #E5F0FF;
   color: #133551;
 }
 .pa-loadmore-btn:disabled {
@@ -363,12 +363,12 @@
   cursor: default;
 }
 .pa-loadmore-btn:focus-visible {
-  outline: 3px solid #fff;
+  outline: 3px solid #E5F0FF;
   outline-offset: 3px;
 }
 .pa-loadmore-retry {
   font: inherit;
-  color: #fff;
+  color: #E5F0FF;
   background: none;
   border: none;
   text-decoration: underline;
